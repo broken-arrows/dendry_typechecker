@@ -35,6 +35,8 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DendryValidator = void 0;
 const vscode = __importStar(require("vscode"));
+const esprima = __importStar(require("esprima"));
+const esprima_walk_1 = require("esprima-walk");
 class DendryValidator {
     constructor(strictMode = false) {
         this.sceneIds = new Set();
@@ -44,7 +46,8 @@ class DendryValidator {
             'id', 'title', 'subtitle', 'tags', 'order', 'frequency',
             'max-visits', 'min-choices', 'max-choices', 'new-page',
             'signal', 'content', 'on-arrival', 'on-display', 'on-departure',
-            'view-if', 'choose-if', 'priority', 'unavailable-subtitle'
+            'view-if', 'choose-if', 'priority', 'unavailable-subtitle',
+            'set-jump', 'is-special'
         ]);
         this.QUALITY_PROPERTIES = new Set([
             'id', 'name', 'initial', 'min', 'max', 'signal'
@@ -62,23 +65,24 @@ class DendryValidator {
         this.qualityIds.clear();
         // First pass: collect all scene and quality IDs
         for (const node of ast.nodes) {
-            if (node.type === 'scene' || node.type === 'root') {
-                const id = node.properties.get('id');
-                if (id) {
+            const id = node.properties.get('id');
+            if (id) {
+                if (node.type === 'scene' || node.type === 'root') {
                     this.sceneIds.add(id);
                 }
-            }
-            else if (node.type === 'quality') {
-                const id = node.properties.get('id');
-                if (id) {
+                else if (node.type === 'quality') {
                     this.qualityIds.add(id);
                 }
             }
         }
         // Second pass: validate each node
-        for (const node of ast.nodes) {
+        ast.nodes.forEach((node, index) => {
+            // An explicit scene (not the implicit first one) must have a title.
+            if (index > 0 && (node.type === 'scene' || node.type === 'root') && !node.properties.has('title')) {
+                diagnostics.push(this.createDiagnostic(node.range, `An explicit scene declaration must have a "title" property.`, vscode.DiagnosticSeverity.Error));
+            }
             diagnostics.push(...this.validateNode(node, document));
-        }
+        });
         // Validate rootScene if present in metadata
         if (ast.metadata.rootScene) {
             this.validateSceneReference(ast.metadata.rootScene, new vscode.Range(0, 0, 0, 0), diagnostics); // Use a dummy range for metadata
@@ -106,31 +110,32 @@ class DendryValidator {
     }
     validateScene(node, document) {
         const diagnostics = [];
-        // Check required properties
-        if (!node.properties.has('id')) {
-            diagnostics.push(this.createDiagnostic(node.range, 'Scene must have an "id" property', vscode.DiagnosticSeverity.Error));
-        }
         // Validate property types
         for (const [key, value] of node.properties.entries()) {
             if (!this.SCENE_PROPERTIES.has(key)) {
                 diagnostics.push(this.createDiagnostic(node.range, `Unknown scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
+            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
             // Type checking for specific properties
             if (key === 'max-visits' || key === 'min-choices' || key === 'max-choices' ||
                 key === 'frequency' || key === 'order' || key === 'priority') {
-                this.validateNumber(value, node.range, key, diagnostics);
+                this.validateNumber(value, propertyValueRange, key, diagnostics);
             }
             // Validate boolean properties
-            if (key === 'new-page') {
-                this.validateBoolean(value, node.range, key, diagnostics);
+            if (key === 'new-page' || key === 'is-special') {
+                this.validateBoolean(value, propertyValueRange, key, diagnostics);
             }
             // Validate JavaScript in on-* properties
             if (key.startsWith('on-') || key === 'view-if' || key === 'choose-if') {
-                diagnostics.push(...this.validateJavaScript(value, node.range));
+                diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
             }
             // Validate go-to references
             if (key === 'go-to') {
-                this.validateSceneReference(value, node.range, diagnostics);
+                this.validateGoTo(value, propertyValueRange, diagnostics);
+            }
+            // Validate set-jump references
+            if (key === 'set-jump') {
+                this.validateSceneReference(value, propertyValueRange, diagnostics);
             }
         }
         return diagnostics;
@@ -148,7 +153,8 @@ class DendryValidator {
             }
             // Type checking for numeric properties
             if (key === 'initial' || key === 'min' || key === 'max') {
-                this.validateNumber(value, node.range, key, diagnostics);
+                const propertyValueRange = this.findRangeForProperty(document, node.range, key);
+                this.validateNumber(value, propertyValueRange, key, diagnostics);
             }
         }
         // Validate min/max constraints
@@ -159,7 +165,8 @@ class DendryValidator {
         const numMax = Number(max);
         const numInitial = Number(initial);
         if (!isNaN(numMin) && !isNaN(numMax) && numMin > numMax) {
-            diagnostics.push(this.createDiagnostic(node.range, 'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error));
+            diagnostics.push(this.createDiagnostic(node.range, // This range is still broad, but it's a cross-property check
+            'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error));
         }
         if (!isNaN(numInitial) && !isNaN(numMin) && numInitial < numMin) {
             diagnostics.push(this.createDiagnostic(node.range, 'Quality "initial" value cannot be less than "min" value', vscode.DiagnosticSeverity.Error));
@@ -171,25 +178,87 @@ class DendryValidator {
     }
     validateChoice(node, document) {
         const diagnostics = [];
-        // Validate property types
         for (const [key, value] of node.properties.entries()) {
             if (!this.CHOICE_PROPERTIES.has(key)) {
                 diagnostics.push(this.createDiagnostic(node.range, `Unknown choice property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
-            // Validate JavaScript
+            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
             if (key === 'view-if' || key === 'choose-if' || key === 'on-choose') {
-                diagnostics.push(...this.validateJavaScript(value, node.range));
+                diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
             }
-            // Validate scene references
             if (key === 'go-to') {
-                this.validateSceneReference(value, node.range, diagnostics);
+                this.validateGoTo(value, propertyValueRange, diagnostics);
             }
-            // Type checking for numeric properties
             if (key === 'priority' || key === 'min-choices' || key === 'max-choices') {
-                this.validateNumber(value, node.range, key, diagnostics);
+                this.validateNumber(value, propertyValueRange, key, diagnostics);
             }
         }
         return diagnostics;
+    }
+    validateGoTo(value, range, diagnostics) {
+        const statements = value.split(';');
+        for (const statement of statements) {
+            const trimmedStatement = statement.trim();
+            if (!trimmedStatement)
+                continue;
+            const ifIndex = trimmedStatement.indexOf(' if ');
+            let sceneId;
+            let condition = null;
+            if (ifIndex !== -1) {
+                sceneId = trimmedStatement.substring(0, ifIndex).trim();
+                condition = trimmedStatement.substring(ifIndex + 4).trim();
+            }
+            else {
+                sceneId = trimmedStatement;
+            }
+            if (sceneId && sceneId !== 'jumpScene') {
+                this.validateSceneReference(sceneId, range, diagnostics); // Use property range for now
+            }
+            if (condition) {
+                // Use property range for now, a more advanced impl would find the range of the condition.
+                diagnostics.push(...this.validateJavaScript(condition, range));
+            }
+        }
+    }
+    findRangeForProperty(document, nodeRange, key) {
+        const nodeText = document.getText(nodeRange);
+        const lines = nodeText.split('\n');
+        let propertyLineIndex = -1;
+        let propertyLineText = '';
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].trim().startsWith(key + ':')) {
+                propertyLineIndex = i;
+                propertyLineText = lines[i];
+                break;
+            }
+        }
+        if (propertyLineIndex === -1) {
+            return nodeRange; // Fallback
+        }
+        const valueStartIndex = propertyLineText.indexOf(':') + 1;
+        const valueText = propertyLineText.substring(valueStartIndex);
+        if (valueText.trim().startsWith('{!')) {
+            const startLine = nodeRange.start.line + propertyLineIndex;
+            const startCol = valueStartIndex + valueText.indexOf('{!');
+            let endLine = startLine;
+            let endCol = startCol + 2;
+            for (let i = propertyLineIndex; i < lines.length; i++) {
+                const currentLineText = lines[i];
+                const closingIndex = currentLineText.indexOf('!}');
+                if (closingIndex !== -1) {
+                    endLine = nodeRange.start.line + i;
+                    endCol = closingIndex + 2;
+                    return new vscode.Range(startLine, startCol, endLine, endCol);
+                }
+            }
+            return new vscode.Range(startLine, startCol, startLine, startCol + 2);
+        }
+        else {
+            const line = nodeRange.start.line + propertyLineIndex;
+            const startCol = valueStartIndex + (valueText.length - valueText.trimLeft().length);
+            const endCol = startCol + valueText.trim().length;
+            return new vscode.Range(line, startCol, line, endCol);
+        }
     }
     validateNumber(value, range, propertyName, diagnostics) {
         if (isNaN(Number(value))) {
@@ -203,10 +272,25 @@ class DendryValidator {
     }
     validateJavaScript(code, range) {
         const diagnostics = [];
+        const wrappedCode = `var Q, S, V, P;\n${code}`;
         try {
-            // Basic syntax check using Function constructor
-            new Function(code);
-            // Check for common quality access patterns
+            const ast = esprima.parseScript(wrappedCode, { tolerant: true, loc: true });
+            if (ast.errors && ast.errors.length > 0) {
+                for (const err of ast.errors) {
+                    const lineOffset = err.lineNumber ? err.lineNumber - 1 : 0;
+                    const col = err.column || 0;
+                    const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + 1);
+                    diagnostics.push(this.createDiagnostic(errRange, `JavaScript Syntax Error: ${err.description}`, vscode.DiagnosticSeverity.Error));
+                }
+            }
+            (0, esprima_walk_1.walk)(ast, (node) => {
+                if (node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
+                    const lineOffset = node.loc ? node.loc.start.line - 1 : 0;
+                    const col = node.loc ? node.loc.start.column : 0;
+                    const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + node.expression.name.length);
+                    diagnostics.push(this.createDiagnostic(errRange, `Statement has no effect.`, vscode.DiagnosticSeverity.Warning));
+                }
+            });
             const qualityPattern = /\bQ\.([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
             let match;
             while ((match = qualityPattern.exec(code)) !== null) {
@@ -215,7 +299,6 @@ class DendryValidator {
                     diagnostics.push(this.createDiagnostic(range, `Reference to undefined quality: "${qualityId}"`, vscode.DiagnosticSeverity.Warning));
                 }
             }
-            // Check for scene access patterns
             const scenePattern = /\bS\.([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
             while ((match = scenePattern.exec(code)) !== null) {
                 const sceneId = match[1];
@@ -223,25 +306,23 @@ class DendryValidator {
                     diagnostics.push(this.createDiagnostic(range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Warning));
                 }
             }
-            // Check for other global prefixes (V, P, etc.)
-            const globalPrefixPattern = /\b([A-Z_][A-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-            while ((match = globalPrefixPattern.exec(code)) !== null) {
-                const prefix = match[1];
-                // Q and S are handled separately and have specific validation, so skip them here
-                if (!this.JS_GLOBAL_PREFIXES.has(prefix) && prefix !== 'Q' && prefix !== 'S') {
-                    diagnostics.push(this.createDiagnostic(range, `Reference to unknown global prefix: "${prefix}"`, vscode.DiagnosticSeverity.Warning));
-                }
-            }
         }
         catch (error) {
-            diagnostics.push(this.createDiagnostic(range, `Invalid JavaScript: ${error instanceof Error ? error.message : String(error)}`, vscode.DiagnosticSeverity.Error));
+            if (error instanceof Error && 'lineNumber' in error && 'column' in error) {
+                const lineOffset = error.lineNumber - 1;
+                const col = error.column;
+                const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + 1);
+                diagnostics.push(this.createDiagnostic(errRange, `JavaScript Syntax Error: ${error.message.replace(/Line \d+: /, '')}`, vscode.DiagnosticSeverity.Error));
+            }
+            else {
+                diagnostics.push(this.createDiagnostic(range, `Invalid JavaScript: ${error instanceof Error ? error.message : String(error)}`, vscode.DiagnosticSeverity.Error));
+            }
         }
         return diagnostics;
     }
     validateSceneReference(sceneId, range, diagnostics) {
-        // Handle dynamic references
         if (sceneId.includes('{') || sceneId.includes('$')) {
-            return; // Skip validation for dynamic references
+            return;
         }
         if (!this.sceneIds.has(sceneId)) {
             diagnostics.push(this.createDiagnostic(range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Error));

@@ -1,0 +1,134 @@
+title: Post Event
+new-page: true
+on-arrival: {!
+Q-:..:::;;
+Q.last_advisor_action = 0;
+Q.last_cabinet_action = 0;
+
+// clamp variables to their ranges
+if (Q.public_debt < 0) Q.public_debt = 0;
+if (Q.public_debt > 100) Q.public_debt = 100;
+if (Q.unemployment < 0) Q.unemployment = 0;
+if (Q.unemployment > 100) Q.unemployment = 100;
+if (Q.social_dissent < 0) Q.social_dissent = 0;
+if (Q.social_dissent > 100) Q.social_dissent = 100;
+if (Q.independence_movement < 0) Q.independence_movement = 0;
+if (Q.independence_movement > 100) Q.independence_movement = 100;
+if (Q.independence_trust < 0) Q.independence_trust = 0;
+if (Q.independence_trust > 100) Q.independence_trust = 100;
+if (Q.social_dissent_trust < 0) Q.social_dissent_trust = 0;
+if (Q.social_dissent_trust > 100) Q.social_dissent_trust = 100;
+if (Q.cat_spa_relations < 0) Q.cat_spa_relations = 0;
+if (Q.cat_spa_relations > 100) Q.cat_spa_relations = 100;
+
+// round to integers... (if needed??)
+
+
+
+// set faction strength/dissent to 0
+// re-calculate dissent.
+for (var p of Q.parties) {
+    var total_strength = 0;
+    var total_dissent = 0;
+    if (Q[p+"_factions"]) {
+        for (var c of (Q[p+"_factions"])) {
+            if (Q[c+'_dissent'] < 0) {
+                Q[c+'_dissent'] = 0;
+            } else if (Q[c+'_dissent'] >= 100) {
+                Q[c+'_dissent'] = 99;
+            }
+            if (Q[c+'_strength'] < 0) {
+                Q[c+'_strength'] = 0.1;
+            }
+            total_strength += Q[c+'_strength'];
+        }
+        for (var c of (Q[p+"_factions"])) {
+            Q[c+'_strength'] = 100*Q[c+'_strength']/total_strength;
+            total_dissent += Q[c+'_dissent']*Q[c+'_strength']/total_strength;
+        }
+        Q[p+'_dissent'] = 0.01*total_dissent;
+        Q[p+'_percent_dissent'] = total_dissent;
+        console.log(p+'_dissent', Q[p+'_dissent']);
+    }
+}
+
+// 1. update dates
+var has_time_passed = 0;
+if (Q.rubicon) {
+    if (Q.week_actions > 0) {
+        has_time_passed = 1;
+        Q.time += 1;
+        Q.week_actions = 0;
+        Q.week += 1;
+    }
+    if (Q.week >= 5) {
+        Q.month += 1;
+        Q.week = 1;
+    }
+    if (Q.month >= 13) {
+        Q.month = 1;
+        Q.year += 1;
+    }
+} else {
+    if (Q.month_actions > 0) {
+        has_time_passed = 1;
+        Q.month_actions = 0;
+        Q.time += 1;
+        Q.month += 1;
+    }
+    if (Q.week >= 5) {
+        Q.month += 1;
+        Q.week = 1;
+    }
+    if (Q.month >= 13) {
+        Q.month = 1;
+        Q.year += 1;
+    }
+} 
+if (has_time_passed) {
+    // TODO: trigger monthly timers
+    console.log("Time passed!");
+}
+
+
+
+Q.has_event = 0;
+// check if there are any cards in #event, and then go to main if not.
+var scene = this.game.scenes['post_event.events_choice'];
+var choices = this._compileChoices(scene);
+if (choices && choices[0].title != "Continue...") {
+    Q.has_event = 1;
+}
+
+Q.has_election = 0;
+// check if there are any cards in #election, and then go to main if not.
+var scene = this.game.scenes['post_event.elections_choice'];
+var choices = this._compileChoices(scene);
+if (choices && choices[0].title != "Continue...") {
+    Q.has_election = 1;
+}
+!}
+on-departure: {!
+// TODO: set historical/international events
+if (Q.year == 2012 && Q.month == 10) {
+    Q.historical_event = "Elections have been scheduled for November.";
+} else {
+    Q.historical_event = 0;
+}
+!}
+go-to: events_choice if has_event = 1; elections_choice if has_election = 1; main if has_event = 0 and has_election = 0 and difficulty = 0; main.main_easy if has_event = 0 and has_election = 0 and difficulty < 0; main.main_hard if has_event = 0 and has_election = 0 and difficulty > 0
+
+= [+ month : month +] [+ year +][? if rubicon:, Week [+ week +]?]
+
+@events_choice
+
+- #event
+
+@elections_choice
+go-to: main
+
+# - #election
+
+# go-to: main
+
+# This scene is solely for updating numbers after events, and routing to special events.

@@ -36,18 +36,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DendryParser = void 0;
 const vscode = __importStar(require("vscode"));
 class DendryParser {
-    parse(text) {
+    parse(text, fileName) {
         const lines = text.split('\n');
-        const ast = {
-            nodes: [],
-            metadata: {}
-        };
+        const ast = { nodes: [], metadata: { fileName } };
         let currentNode = null;
         let startLine = 0;
-        let mode = 'dendry';
-        let jsContent = '';
-        let jsStartLine = 0;
-        let currentJsProperty = '';
         const finalizeCurrentNode = (endLine) => {
             if (currentNode) {
                 let finalEndLine = endLine;
@@ -60,56 +53,17 @@ class DendryParser {
             }
         };
         for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (mode === 'javascript') {
-                if (line.includes('!}')) {
-                    const endJsIndex = line.indexOf('!}');
-                    jsContent += line.substring(0, endJsIndex);
-                    ast.nodes.push({ type: 'javascript_block', properties: new Map(), content: jsContent, range: new vscode.Range(jsStartLine, 0, i, endJsIndex + 2) });
-                    jsContent = '';
-                    mode = 'dendry';
-                }
-                else {
-                    jsContent += line + '\n';
-                }
-                continue;
-            }
-            if (mode === 'javascript-property') {
-                if (line.includes('!}')) {
-                    const endJsIndex = line.indexOf('!}');
-                    jsContent += line.substring(0, endJsIndex);
-                    currentNode?.properties.set(currentJsProperty, jsContent);
-                    jsContent = '';
-                    currentJsProperty = '';
-                    mode = 'dendry';
-                }
-                else {
-                    jsContent += line + '\n';
-                }
-                continue;
-            }
-            if (line.includes('{!') && mode !== 'content') {
-                const startJsIndex = line.indexOf('{!');
-                const isProperty = line.substring(0, startJsIndex).match(/^(\s*[a-zA-Z0-9_-]+)\s*:\s*$/);
-                if (isProperty && currentNode) {
-                    finalizeCurrentNode(i - 1);
-                    currentJsProperty = isProperty[1].trim();
-                    jsContent = line.substring(startJsIndex + 2) + '\n';
-                    mode = 'javascript-property';
-                }
-                else {
-                    finalizeCurrentNode(i - 1);
-                    mode = 'javascript';
-                    jsStartLine = i;
-                    jsContent = line.substring(startJsIndex + 2) + '\n';
-                }
-                continue;
-            }
+            let line = lines[i];
             const trimmed = line.trim();
-            const isNodeDeclaration = trimmed.startsWith('@') || trimmed.startsWith('-') || trimmed === '=';
-            if (isNodeDeclaration) {
+            if (!trimmed) {
+                if (currentNode && currentNode.content) {
+                    currentNode.content += '\n';
+                }
+                continue;
+            }
+            // Priority 1: Node Declarations
+            if (trimmed.startsWith('@') || trimmed.startsWith('-') || trimmed === '=') {
                 finalizeCurrentNode(i - 1);
-                mode = 'dendry';
                 startLine = i;
                 let nodeType = 'unknown';
                 let nodeId = '';
@@ -130,31 +84,50 @@ class DendryParser {
                     currentNode.properties.set('id', nodeId);
                 continue;
             }
-            if (mode === 'dendry') {
-                if (!trimmed)
-                    continue;
-                const propertyMatch = trimmed.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
-                if (propertyMatch) {
-                    const key = propertyMatch[1];
-                    const value = propertyMatch[2];
-                    if (currentNode) {
-                        currentNode.properties.set(key, value);
-                    }
-                    else {
-                        ast.metadata[key] = value;
-                    }
-                    continue;
+            // Priority 2: Properties
+            const propertyMatch = trimmed.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
+            if (propertyMatch && (!currentNode || !currentNode.content)) { // Properties can't come after content
+                const key = propertyMatch[1];
+                let value = propertyMatch[2];
+                if (!currentNode) {
+                    startLine = i;
+                    currentNode = { type: 'scene', properties: new Map(), content: '', range: new vscode.Range(i, 0, i, line.length) };
                 }
-                if (trimmed.startsWith('#')) {
-                    continue;
+                // Handle multi-line JS properties
+                if (value.trim().startsWith('{!')) {
+                    let jsContent = value.substring(value.indexOf('{!') + 2);
+                    let foundClosing = false;
+                    if (jsContent.includes('!}')) { // One-liner {! !}\n                        jsContent = jsContent.substring(0, jsContent.indexOf('!}')).trim();
+                        foundClosing = true;
+                    }
+                    if (!foundClosing) {
+                        let currentLineIdx = i + 1;
+                        while (currentLineIdx < lines.length) {
+                            const currentJsLine = lines[currentLineIdx];
+                            if (currentJsLine.includes('!}')) {
+                                jsContent += '\n' + currentJsLine.substring(0, currentJsLine.indexOf('!}')).trim();
+                                i = currentLineIdx; // Update main loop counter to skip processed lines
+                                break;
+                            }
+                            jsContent += '\n' + currentJsLine;
+                            currentLineIdx++;
+                        }
+                    }
+                    currentNode.properties.set(key, jsContent.trim());
                 }
-                mode = 'content';
+                else {
+                    currentNode.properties.set(key, value);
+                }
+                continue;
             }
-            if (mode === 'content') {
-                if (currentNode) {
-                    if (currentNode.content || trimmed !== '') {
-                        currentNode.content = (currentNode.content ? currentNode.content + '\n' : '') + line;
-                    }
+            // Priority 3: Comments
+            if (trimmed.startsWith('#')) {
+                continue;
+            }
+            // Default: Content
+            if (currentNode) {
+                if (currentNode.content || trimmed) {
+                    currentNode.content = (currentNode.content ? currentNode.content + '\n' : '') + line;
                 }
             }
         }

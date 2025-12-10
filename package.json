@@ -57,6 +57,10 @@
   "devDependencies": {
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.80.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "esprima": "^4.0.1",
+    "@types/esprima": "^4.0.2",
+    "esprima-walk": "^0.1.0",
+    "@types/esprima-walk": "^0.1.2"
   }
 }

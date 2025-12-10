@@ -73,7 +73,7 @@ function validateDocument(document) {
     const parser = new parser_1.DendryParser();
     const validator = new validator_1.DendryValidator(config.get('validation.strictMode', false));
     try {
-        const ast = parser.parse(text);
+        const ast = parser.parse(text, document.fileName);
         const diagnostics = validator.validate(ast, document);
         diagnosticCollection.set(document.uri, diagnostics);
     }

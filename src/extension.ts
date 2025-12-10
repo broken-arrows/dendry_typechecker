@@ -52,7 +52,7 @@ function validateDocument(document: vscode.TextDocument) {
     const validator = new DendryValidator(config.get('validation.strictMode', false));
 
     try {
-        const ast = parser.parse(text);
+        const ast = parser.parse(text, document.fileName);
         const diagnostics = validator.validate(ast, document);
         diagnosticCollection.set(document.uri, diagnostics);
     } catch (error) {
