@@ -1,0 +1,78 @@
+{
+  "name": "Dendry",
+  "scopeName": "source.dendry",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#scene-declaration"
+    },
+    {
+      "include": "#quality-declaration"
+    },
+    {
+      "include": "#property"
+    },
+    {
+      "include": "#choice"
+    },
+    {
+      "include": "#javascript"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.dendry",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.number-sign.dendry",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "scene-declaration": {
+      "match": "^(@)(scene|root)\\\\s+(.+)?$",
+      "captures": {
+        "1": { "name": "keyword.operator.dendry" },
+        "2": { "name": "keyword.control.dendry" },
+        "3": { "name": "entity.name.function.dendry" }
+      }
+    },
+    "quality-declaration": {
+      "match": "^(@)(quality)\\\\s+(.+)?$",
+      "captures": {
+        "1": { "name": "keyword.operator.dendry" },
+        "2": { "name": "keyword.control.dendry" },
+        "3": { "name": "entity.name.type.dendry" }
+      }
+    },
+    "property": {
+      "match": "^\\\\s*([a-zA-Z-]+):\\\\s*(.+)$",
+      "captures": {
+        "1": { "name": "variable.parameter.dendry" },
+        "2": { "name": "string.unquoted.dendry" }
+      }
+    },
+    "choice": {
+      "match": "^\\\\s*(-|\\\\*)\\\\s+(.+)$",
+      "captures": {
+        "1": { "name": "keyword.operator.dendry" },
+        "2": { "name": "markup.list.dendry" }
+      }
+    },
+    "javascript": {
+      "begin": "(?<=:)\\\\s*(return|if|function|Q\\\\.)",
+      "end": "$",
+      "name": "meta.embedded.block.javascript",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    }
+  }
+}

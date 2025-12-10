@@ -1,0 +1,62 @@
+{
+  "name": "dendry-typechecker",
+  "displayName": "Dendry Type Checker",
+  "description": "Type checking and validation for Dendry interactive fiction files",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "dendry",
+        "aliases": [
+          "Dendry",
+          "dendry"
+        ],
+        "extensions": [
+          ".dry"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dendry",
+        "scopeName": "source.dendry",
+        "path": "./syntaxes/dendry.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Dendry Type Checker",
+      "properties": {
+        "dendry.validation.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable validation"
+        },
+        "dendry.validation.strictMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable strict type checking"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}
