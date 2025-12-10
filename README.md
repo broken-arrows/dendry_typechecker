@@ -99,6 +99,7 @@ This is the opening scene.
 ```
 
 The extension will:
+
 - Validate property names and types
 - Check JavaScript syntax in on-arrival
 - Verify Q.visited references a defined quality

@@ -3,6 +3,12 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
+      "include": "#js-property"
+    },
+    {
+      "include": "#js-block"
+    },
+    {
       "include": "#comments"
     },
     {
@@ -18,24 +24,47 @@
       "include": "#choice"
     },
     {
-      "include": "#javascript"
+      "include": "#javascript-inline"
     }
   ],
   "repository": {
+    "js-property": {
+      "name": "meta.property.js.dendry",
+      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to)):\\s*(\\{!)",
+      "end": "(!\\})",
+      "beginCaptures": {
+        "1": { "name": "variable.parameter.dendry" },
+        "2": { "name": "punctuation.section.embedded.begin.js" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.section.embedded.end.js" }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "js-block": {
+      "name": "meta.embedded.block.javascript.dendry",
+      "begin": "\\{!\\s*",
+      "end": "\\s*!\\}",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.double-slash.dendry",
-          "match": "//.*$"
-        },
-        {
           "name": "comment.line.number-sign.dendry",
-          "match": "#.*$"
+          "match": "^\\s*#.*$"
         }
       ]
     },
     "scene-declaration": {
-      "match": "^(@)(scene|root)\\\\s+(.+)?$",
+      "match": "^(@)(scene|root)\\s+(.+)?$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -43,7 +72,7 @@
       }
     },
     "quality-declaration": {
-      "match": "^(@)(quality)\\\\s+(.+)?$",
+      "match": "^(@)(quality)\\s+(.+)?$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -51,21 +80,21 @@
       }
     },
     "property": {
-      "match": "^\\\\s*([a-zA-Z-]+):\\\\s*(.+)$",
+      "match": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to):\\s*(.+)$",
       "captures": {
         "1": { "name": "variable.parameter.dendry" },
         "2": { "name": "string.unquoted.dendry" }
       }
     },
     "choice": {
-      "match": "^\\\\s*(-|\\\\*)\\\\s+(.+)$",
+      "match": "^\\s*(-|\\*)\\s+(.+)$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "markup.list.dendry" }
       }
     },
-    "javascript": {
-      "begin": "(?<=:)\\\\s*(return|if|function|Q\\\\.)",
+    "javascript-inline": {
+      "begin": "(?<=:)\\s*(return|if|function|Q\\.|S\\.|V\\.|P\\.)",
       "end": "$",
       "name": "meta.embedded.block.javascript",
       "patterns": [
