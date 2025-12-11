@@ -3,6 +3,9 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
+      "include": "#scene-id-declaration"
+    },
+    {
       "include": "#js-property"
     },
     {
@@ -18,19 +21,25 @@
       "include": "#quality-declaration"
     },
     {
-      "include": "#property"
-    },
-    {
       "include": "#choice"
     },
     {
       "include": "#javascript-inline"
+    },
+    {
+      "include": "#property"
     }
-  ],
-  "repository": {
-    "js-property": {
-      "name": "meta.property.js.dendry",
-      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|is-deck|max-cards)):\\s*(\\{!)",
+  ],    "repository": {
+
+      "scene-id-declaration": {
+        "match": "^(@)([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s|$)",
+        "captures": {
+          "1": { "name": "keyword.operator.dendry" },
+          "2": { "name": "entity.name.function.dendry" }
+        }
+      },
+      "js-property": {
+        "name": "meta.property.js.dendry",      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card)):\\s*(\\{!)",
       "end": "(!\\})",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" },
@@ -64,7 +73,7 @@
       ]
     },
     "scene-declaration": {
-      "match": "^(@)(scene|root)\\s+(.+)?$",
+      "match": "^(@)(scene|root)\\s+([a-zA-Z_][a-zA-Z0-9_]*)$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -80,7 +89,7 @@
       }
     },
     "property": {
-      "match": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|is-deck|max-cards):\\s*(.+)$",
+      "match": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card):\\s*(.+)$",
       "captures": {
         "1": { "name": "variable.parameter.dendry" },
         "2": { "name": "string.unquoted.dendry" }

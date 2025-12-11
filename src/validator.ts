@@ -7,6 +7,7 @@ export class DendryValidator {
     private strictMode: boolean;
     private sceneIds: Set<string> = new Set();
     private qualityIds: Set<string> = new Set();
+    private _allFileData: Map<vscode.Uri, { ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
 
     // Valid Dendry property types
     private readonly SCENE_PROPERTIES = new Set([
@@ -14,7 +15,7 @@ export class DendryValidator {
         'max-visits', 'min-choices', 'max-choices', 'new-page',
         'signal', 'content', 'on-arrival', 'on-display', 'on-departure',
         'view-if', 'choose-if', 'priority', 'unavailable-subtitle',
-        'set-jump', 'is-special', 'go-to', 'set-bg', 'is-hand', 'card-image', 'is-deck', 'max-cards'
+        'set-jump', 'is-special', 'go-to', 'set-bg', 'is-hand', 'card-image', 'face-image', 'is-deck', 'max-cards', 'is-pinned-card', 'is-card'
     ]);
 
     private readonly QUALITY_PROPERTIES = new Set([
@@ -32,33 +33,20 @@ export class DendryValidator {
         this.strictMode = strictMode;
     }
 
-    validate(ast: DendryAST, document: vscode.TextDocument): vscode.Diagnostic[] {
+    validate(ast: DendryAST, document: vscode.TextDocument, allFileData: Map<vscode.Uri, { ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }>): vscode.Diagnostic[] {
         const diagnostics: vscode.Diagnostic[] = [];
+        this._allFileData = allFileData; // Store for other methods to access
+
+        // Clear and rebuild global ID sets from allFileData
         this.sceneIds.clear();
         this.qualityIds.clear();
-
-        // First pass: collect all scene and quality IDs
-        for (const node of ast.nodes) {
-            const id = node.properties.get('id');
-            if (id) {
-                if (node.type === 'scene' || node.type === 'root') {
-                    this.sceneIds.add(id);
-                } else if (node.type === 'quality') {
-                    this.qualityIds.add(id);
-                }
-            }
-        }
+        allFileData.forEach(data => {
+            data.localSceneIds.forEach(id => this.sceneIds.add(id));
+            data.localQualityIds.forEach(id => this.qualityIds.add(id));
+        });
 
         // Second pass: validate each node
         ast.nodes.forEach((node, index) => {
-            // An explicit scene (not the implicit first one) must have a title.
-            if (index > 0 && (node.type === 'scene' || node.type === 'root') && !node.properties.has('title')) {
-                diagnostics.push(this.createDiagnostic(
-                    node.range,
-                    `An explicit scene declaration must have a "title" property.`, 
-                    vscode.DiagnosticSeverity.Error
-                ));
-            }
             diagnostics.push(...this.validateNode(node, document));
         });
 
@@ -76,7 +64,6 @@ export class DendryValidator {
 
         switch (node.type) {
             case 'scene':
-            case 'root':
                 diagnostics.push(...this.validateScene(node, document));
                 break;
             case 'quality':
@@ -95,6 +82,26 @@ export class DendryValidator {
 
     private validateScene(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
         const diagnostics: vscode.Diagnostic[] = [];
+
+        // All scenes declared explicitly with @scene <id> must have a title.
+        if (node.declarationType === 'explicit' && !node.properties.has('title')) {
+            diagnostics.push(this.createDiagnostic(
+                node.range,
+                `An explicit scene must have a "title" property.`, 
+                vscode.DiagnosticSeverity.Error
+            ));
+        }
+
+        // If an ID is provided, ensure it's not empty
+        const id = node.properties.get('id');
+        if (id !== undefined && (typeof id !== 'string' || id.trim() === '')) {
+            const propertyValueRange = this.findRangeForProperty(document, node.range, 'id');
+            diagnostics.push(this.createDiagnostic(
+                propertyValueRange,
+                `Scene "id" cannot be empty.`,
+                vscode.DiagnosticSeverity.Error
+            ));
+        }
 
         // Validate property types
         for (const [key, value] of node.properties.entries()) {
@@ -115,7 +122,7 @@ export class DendryValidator {
             }
 
             // Validate boolean properties
-            if (key === 'new-page' || key === 'is-special' || key === 'is-hand' || key === 'is-deck') {
+            if (key === 'new-page' || key === 'is-special' || key === 'is-hand' || key === 'is-deck' || key === 'is-pinned-card' || key === 'is-card') {
                 this.validateBoolean(value, propertyValueRange, key, diagnostics);
             }
 
@@ -134,9 +141,15 @@ export class DendryValidator {
                 this.validateSceneReference(value, propertyValueRange, diagnostics);
             }
         }
+        
+        // Validate scene references within the content itself
+        // Removed _validateSceneContent call as its logic is moved to validateChoice
+
 
         return diagnostics;
     }
+
+
 
     private validateQuality(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
         const diagnostics: vscode.Diagnostic[] = [];
@@ -203,36 +216,65 @@ export class DendryValidator {
         return diagnostics;
     }
 
-    private validateChoice(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
-        const diagnostics: vscode.Diagnostic[] = [];
-
-        for (const [key, value] of node.properties.entries()) {
-            if (!this.CHOICE_PROPERTIES.has(key)) {
-                diagnostics.push(this.createDiagnostic(
-                    node.range,
-                    `Unknown choice property: "${key}"`, 
-                    this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
-                ));
+        private validateChoice(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+            const diagnostics: vscode.Diagnostic[] = [];
+    
+            for (const [key, value] of node.properties.entries()) {
+                if (!this.CHOICE_PROPERTIES.has(key)) {
+                    diagnostics.push(this.createDiagnostic(
+                        node.range,
+                        `Unknown choice property: "${key}"`, 
+                        this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                    ));
+                }
+                
+                const propertyValueRange = this.findRangeForProperty(document, node.range, key);
+    
+                if (key === 'view-if' || key === 'choose-if' || key === 'on-choose') {
+                    diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
+                }
+    
+                if (key === 'go-to') {
+                    this.validateGoTo(value, propertyValueRange, diagnostics);
+                }
+    
+                if (key === 'priority' || key === 'min-choices' || key === 'max-choices') {
+                    this.validateNumber(value, propertyValueRange, key, diagnostics);
+                }
+            }
+    
+            // Validate scene references within the choice content itself: "- @scenename: Display option name"
+            // The node.content for a choice is typically the text after the leading '-' or '*' and any whitespace.
+            // E.g., for "- @scene_a: Here", node.content would be "@scene_a: Here".
+            const choiceContent = node.content;
+            const regex = /@([a-zA-Z0-9_]+)(?::\s*(.+))?/; // Allow IDs to start with numbers, make display part optional
+            const match = choiceContent.match(regex);
+    
+            if (match) {
+                const sceneId = match[1];
+                // The range of the choice node starts *before* the content.
+                // node.range.start.character is the column of the '-' or '*'.
+                // We need to find the column where the '@' starts within the *line*.
+                const fullLineText = document.lineAt(node.range.start.line).text;
+                const contentStartCol = fullLineText.indexOf(choiceContent, node.range.start.character);
+    
+                if (contentStartCol !== -1) {
+                    const atSymbolIndex = contentStartCol + choiceContent.indexOf('@');
+                    const sceneIdStartCol = atSymbolIndex + 1; // +1 to skip '@'
+                    const sceneIdEndCol = sceneIdStartCol + sceneId.length;
+    
+                    const sceneIdRange = new vscode.Range(
+                        node.range.start.line,
+                        sceneIdStartCol,
+                        node.range.start.line,
+                        sceneIdEndCol
+                    );
+                    this.validateSceneReference(sceneId, sceneIdRange, diagnostics);
+                }
             }
             
-            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
-
-            if (key === 'view-if' || key === 'choose-if' || key === 'on-choose') {
-                diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
-            }
-
-            if (key === 'go-to') {
-                this.validateGoTo(value, propertyValueRange, diagnostics);
-            }
-
-            if (key === 'priority' || key === 'min-choices' || key === 'max-choices') {
-                this.validateNumber(value, propertyValueRange, key, diagnostics);
-            }
-        }
-
-        return diagnostics;
-    }
-    
+            return diagnostics;
+        }    
     private validateGoTo(value: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]) {
         const statements = value.split(';');
         for (const statement of statements) {
@@ -327,7 +369,7 @@ export class DendryValidator {
         const wrappedCode = `var Q, S, V, P;\n${code}`;
 
         try {
-            const ast = esprima.parseScript(wrappedCode, { tolerant: true, loc: true });
+            const ast = esprima.parseScript(wrappedCode, { loc: true });
 
             if ((ast as any).errors && (ast as any).errors.length > 0) {
                 for (const err of (ast as any).errors) {
@@ -351,7 +393,7 @@ export class DendryValidator {
                 }
             });
 
-            const qualityPattern = /\bQ\.([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+            const qualityPattern = /\bQ\.([a-zA-Z0-9_]+)\b/g;
             let match;
             while ((match = qualityPattern.exec(code)) !== null) {
                 const qualityId = match[1];
@@ -362,7 +404,7 @@ export class DendryValidator {
                 }
             }
 
-            const scenePattern = /\bS\.([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+            const scenePattern = /\bS\.([a-zA-Z0-9_]+)\b/g;
             while ((match = scenePattern.exec(code)) !== null) {
                 const sceneId = match[1];
                 if (!this.sceneIds.has(sceneId)) {
@@ -391,15 +433,72 @@ export class DendryValidator {
     }
 
     private validateSceneReference(sceneId: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-        if (sceneId.includes('{') || sceneId.includes('$') || sceneId.includes('.')) {
+        if (sceneId.includes('{') || sceneId.includes('$')) {
+            // Still ignore dynamic references for now, as the prompt didn't specify how to validate them.
             return;
         }
 
-        if (!this.sceneIds.has(sceneId)) {
-            diagnostics.push(this.createDiagnostic(
-                range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Error
-            ));
+        // Case 1: Simple sceneId (local or global) - no dots
+        if (!sceneId.includes('.')) {
+            if (!this.sceneIds.has(sceneId)) {
+                diagnostics.push(this.createDiagnostic(
+                    range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Error
+                ));
+            }
+            return;
         }
+
+        // Case 2: Dotted sceneId (e.g., "filePrefix.sceneId" or "filePrefix.scene.dry")
+        const parts = sceneId.split('.');
+
+        if (parts.length === 2) {
+            const filePrefix = parts[0]; // e.g., "scenename" from "scenename.anotherscenename"
+            const secondPart = parts[1]; // e.g., "anotherscenename" or "scene"
+
+            // Check for "scenename.scene" which refers to scenename.scene.dry (the file itself)
+            if (secondPart === 'scene') {
+                const targetFileName = `${filePrefix}.scene.dry`;
+                const fileFound = Array.from(this._allFileData.keys()).some(uri => {
+                    const uriFileName = uri.fsPath.split('/').pop()?.split('\\').pop(); // Get filename.ext
+                    return uriFileName === targetFileName;
+                });
+                if (!fileFound) {
+                    diagnostics.push(this.createDiagnostic(
+                        range, `Reference to non-existent file: "${targetFileName}"`, vscode.DiagnosticSeverity.Error
+                    ));
+                }
+                return;
+            }
+
+            // Check for "scenename.anotherscenename" (nested scene in another file)
+            let targetFileUri: vscode.Uri | undefined;
+            for (const uri of this._allFileData.keys()) {
+                const fileName = uri.fsPath.split('/').pop()?.split('\\').pop(); // Get filename.ext
+                if (fileName === `${filePrefix}.scene.dry`) {
+                    targetFileUri = uri;
+                    break;
+                }
+            }
+
+            if (targetFileUri) {
+                const fileDataEntry = this._allFileData.get(targetFileUri);
+                if (fileDataEntry && !fileDataEntry.localSceneIds.has(secondPart)) {
+                    diagnostics.push(this.createDiagnostic(
+                        range, `Scene "${secondPart}" not found in file "${filePrefix}.scene.dry"`, vscode.DiagnosticSeverity.Error
+                    ));
+                }
+            } else {
+                diagnostics.push(this.createDiagnostic(
+                    range, `File "${filePrefix}.scene.dry" not found for reference "${sceneId}"`, vscode.DiagnosticSeverity.Error
+                ));
+            }
+            return;
+        }
+
+        // If we reach here, it's an invalid dotted reference format (e.g., too many dots)
+        diagnostics.push(this.createDiagnostic(
+            range, `Invalid scene reference format: "${sceneId}". Expected "sceneId", "file.scene", or "file.nestedSceneId".`, vscode.DiagnosticSeverity.Error
+        ));
     }
 
     private createDiagnostic(

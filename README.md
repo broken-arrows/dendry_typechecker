@@ -1,6 +1,6 @@
 # Dendry Type Checker for VSCode
 
-A Visual Studio Code extension providing type checking and validation for Dendry interactive fiction files (.dry).
+A Visual Studio Code extension providing type checking and validation for Dendry interactive fiction files (.scene.dry).
 
 ## Features
 
@@ -8,7 +8,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 - **Type checking** for property values (numbers, strings, JavaScript expressions)
 - **JavaScript syntax validation** for on-arrival, on-display, view-if, choose-if properties
 - **Reference validation** for scene IDs and quality references
-- **Syntax highlighting** for .dry files
+- **Syntax highlighting** for .scene.dry files
 - **Configurable strictness** with strict mode option
 
 ## Installation
@@ -78,7 +78,7 @@ dendry-typechecker/
 
 ## Usage
 
-1. Open any `.dry` file in VSCode
+1. Open any `.scene.dry` file in VSCode
 2. Extension automatically activates and validates
 3. Errors and warnings appear in Problems panel
 4. Hover over underlined code for details
