@@ -3,14 +3,14 @@
   "displayName": "Dendry Type Checker",
   "description": "Type checking and validation for Dendry interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/dendry-typechecker.git"
+    "url": "https://github.com/broken-arrows/dendry_typechecker.git"
   },
   "categories": [
     "Programming Languages",
