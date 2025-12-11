@@ -41,7 +41,7 @@ export class DendryValidator {
         this.sceneIds.clear();
         this.qualityIds.clear();
         allFileData.forEach(data => {
-            data.localSceneIds.forEach(id => this.sceneIds.add(id));
+            data.localSceneIds.forEach(id => this.sceneIds.add(id.trim()));
             data.localQualityIds.forEach(id => this.qualityIds.add(id));
         });
 
@@ -251,7 +251,7 @@ export class DendryValidator {
             const match = choiceContent.match(regex);
     
             if (match) {
-                const sceneId = match[1];
+                const sceneId = match[1].trim();
                 // The range of the choice node starts *before* the content.
                 // node.range.start.character is the column of the '-' or '*'.
                 // We need to find the column where the '@' starts within the *line*.
@@ -289,7 +289,7 @@ export class DendryValidator {
                 sceneId = trimmedStatement.substring(0, ifIndex).trim();
                 condition = trimmedStatement.substring(ifIndex + 4).trim();
             } else {
-                sceneId = trimmedStatement;
+                sceneId = trimmedStatement.trim();
             }
 
             if (sceneId && sceneId !== 'jumpScene') {
