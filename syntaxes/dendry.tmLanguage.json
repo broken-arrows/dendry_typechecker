@@ -32,7 +32,7 @@
   ],    "repository": {
 
       "scene-id-declaration": {
-        "match": "^(@)([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s|$)",
+        "match": "^(@)([a-zA-Z0-9_]+)(?=\\s|$)",
         "captures": {
           "1": { "name": "keyword.operator.dendry" },
           "2": { "name": "entity.name.function.dendry" }
@@ -73,7 +73,7 @@
       ]
     },
     "scene-declaration": {
-      "match": "^(@)(scene|root)\\s+([a-zA-Z_][a-zA-Z0-9_]*)$",
+      "match": "^(@)(scene|root)\\s+([a-zA-Z0-9_]+)$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -81,7 +81,7 @@
       }
     },
     "quality-declaration": {
-      "match": "^(@)(quality)\\s+(.+)?$",
+      "match": "^(@)(quality)\\s+([a-zA-Z0-9_]+)?$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -96,10 +96,12 @@
       }
     },
     "choice": {
-      "match": "^\\s*(-|\\*)\\s+(.+)$",
+      "match": "^\\s*(-|\\*)\\s+(@)?([a-zA-Z0-9_.]+)(?::\\s*(.+))?$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
-        "2": { "name": "markup.list.dendry" }
+        "2": { "name": "keyword.operator.dendry" },
+        "3": { "name": "entity.name.function.dendry" },
+        "4": { "name": "string.unquoted.dendry" }
       }
     },
     "javascript-inline": {
