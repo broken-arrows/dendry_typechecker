@@ -30,7 +30,7 @@
   "repository": {
     "js-property": {
       "name": "meta.property.js.dendry",
-      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special)):\\s*(\\{!)",
+      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|is-deck|max-cards)):\\s*(\\{!)",
       "end": "(!\\})",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" },
@@ -80,7 +80,7 @@
       }
     },
     "property": {
-      "match": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special):\\s*(.+)$",
+      "match": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|is-deck|max-cards):\\s*(.+)$",
       "captures": {
         "1": { "name": "variable.parameter.dendry" },
         "2": { "name": "string.unquoted.dendry" }

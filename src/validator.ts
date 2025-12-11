@@ -14,7 +14,7 @@ export class DendryValidator {
         'max-visits', 'min-choices', 'max-choices', 'new-page',
         'signal', 'content', 'on-arrival', 'on-display', 'on-departure',
         'view-if', 'choose-if', 'priority', 'unavailable-subtitle',
-        'set-jump', 'is-special'
+        'set-jump', 'is-special', 'go-to', 'set-bg', 'is-hand', 'card-image', 'is-deck', 'max-cards'
     ]);
 
     private readonly QUALITY_PROPERTIES = new Set([
@@ -98,24 +98,24 @@ export class DendryValidator {
 
         // Validate property types
         for (const [key, value] of node.properties.entries()) {
+            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
+
             if (!this.SCENE_PROPERTIES.has(key)) {
                 diagnostics.push(this.createDiagnostic(
-                    node.range,
+                    propertyValueRange, // Use precise range for this error
                     `Unknown scene property: "${key}"`, 
                     this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
                 ));
             }
 
-            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
-
             // Type checking for specific properties
             if (key === 'max-visits' || key === 'min-choices' || key === 'max-choices' || 
-                key === 'frequency' || key === 'order' || key === 'priority') {
+                key === 'frequency' || key === 'order' || key === 'priority' || key === 'max-cards') {
                 this.validateNumber(value, propertyValueRange, key, diagnostics);
             }
 
             // Validate boolean properties
-            if (key === 'new-page' || key === 'is-special') {
+            if (key === 'new-page' || key === 'is-special' || key === 'is-hand' || key === 'is-deck') {
                 this.validateBoolean(value, propertyValueRange, key, diagnostics);
             }
 
@@ -391,7 +391,7 @@ export class DendryValidator {
     }
 
     private validateSceneReference(sceneId: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-        if (sceneId.includes('{') || sceneId.includes('$')) {
+        if (sceneId.includes('{') || sceneId.includes('$') || sceneId.includes('.')) {
             return;
         }
 
