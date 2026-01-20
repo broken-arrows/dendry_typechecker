@@ -383,36 +383,30 @@ export class DendryValidator {
             }
             
             walk(ast, (node) => {
-                if (node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
-                    const lineOffset = node.loc ? node.loc.start.line - 1 : 0;
-                    const col = node.loc ? node.loc.start.column : 0;
-                    const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + node.expression.name.length);
-                    diagnostics.push(this.createDiagnostic(
-                        errRange, `Statement has no effect.`, vscode.DiagnosticSeverity.Warning
-                    ));
+                if (node.type === 'MemberExpression' && node.object.type === 'Identifier' && (node.object.name === 'Q' || node.object.name === 'S')) {
+                    const isQuality = node.object.name === 'Q';
+                    let propName: string | undefined;
+
+                    if (node.property.type === 'Identifier') {
+                        propName = node.property.name;
+                    } else if (node.property.type === 'Literal' && typeof node.property.value === 'string') {
+                        propName = node.property.value;
+                    }
+
+                    if (propName) {
+                        const idSet = isQuality ? this.qualityIds : this.sceneIds;
+                        if (!idSet.has(propName)) {
+                            const lineOffset = node.loc ? node.loc.start.line - 1 : 0;
+                            const col = node.loc ? node.loc.start.column : 0;
+                            const endCol = node.loc ? node.loc.end.column : col + propName.length;
+                            const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, endCol);
+                            diagnostics.push(this.createDiagnostic(
+                                errRange, `Reference to undefined ${isQuality ? 'quality' : 'scene'}: "${propName}"`, vscode.DiagnosticSeverity.Warning
+                            ));
+                        }
+                    }
                 }
             });
-
-            const qualityPattern = /\bQ\.([a-zA-Z0-9_]+)\b/g;
-            let match;
-            while ((match = qualityPattern.exec(code)) !== null) {
-                const qualityId = match[1];
-                if (!this.qualityIds.has(qualityId)) {
-                    diagnostics.push(this.createDiagnostic(
-                        range, `Reference to undefined quality: "${qualityId}"`, vscode.DiagnosticSeverity.Warning
-                    ));
-                }
-            }
-
-            const scenePattern = /\bS\.([a-zA-Z0-9_]+)\b/g;
-            while ((match = scenePattern.exec(code)) !== null) {
-                const sceneId = match[1];
-                if (!this.sceneIds.has(sceneId)) {
-                    diagnostics.push(this.createDiagnostic(
-                        range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Warning
-                    ));
-                }
-            }
 
         } catch (error) {
             if (error instanceof Error && 'lineNumber' in error && 'column' in error) {

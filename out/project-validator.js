@@ -39,7 +39,6 @@ const parser_1 = require("./parser");
 const validator_1 = require("./validator");
 class DendryProjectValidator {
     constructor() {
-        this.parser = new parser_1.DendryParser();
         this.validator = new validator_1.DendryValidator(false); // Initialize with strictMode false for now
         // Caches
         this.fileData = new Map();
@@ -52,10 +51,28 @@ class DendryProjectValidator {
         const localQualityIds = new Set();
         const diagnostics = [];
         try {
-            const ast = this.parser.parse(document.getText(), fileUri.fsPath);
+            const { ast, errors, lexErrors } = (0, parser_1.parseText)(document.getText(), fileUri.fsPath);
+            lexErrors.forEach((error) => {
+                const range = new vscode.Range(error.line - 1, error.column - 1, error.line - 1, error.column - 1 + error.length);
+                diagnostics.push(new vscode.Diagnostic(range, `Lexer Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
+            });
+            errors.forEach((error) => {
+                const token = error.token;
+                const range = new vscode.Range(token.startLine - 1, token.startColumn - 1, token.endLine, token.endColumn);
+                diagnostics.push(new vscode.Diagnostic(range, `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
+            });
+            if (lexErrors.length > 0 || errors.length > 0) {
+                this.fileData.delete(fileUri); // Remove from cache if parsing failed
+                return diagnostics;
+            }
+            const seenIds = new Set();
             for (const node of ast.nodes) {
                 const id = node.properties.get('id');
                 if (id) {
+                    if (seenIds.has(id)) {
+                        diagnostics.push(new vscode.Diagnostic(node.range, `Duplicate ID "${id}" found in this file.`, vscode.DiagnosticSeverity.Error));
+                    }
+                    seenIds.add(id);
                     if (node.type === 'scene') {
                         localSceneIds.add(id);
                     }
@@ -111,14 +128,54 @@ class DendryProjectValidator {
                 finalDiagnostics.set(fileUri, parsingDiags);
             }
         }
-        // 3. Rebuild global IDs from all cached file data
+        // 3. Check for duplicate IDs across all files
+        const globalSceneIdToUri = new Map();
+        const globalQualityIdToUri = new Map();
+        for (const [fileUri, data] of this.fileData) {
+            const addDiagnosticsForDuplicate = (id, existingUri) => {
+                // Add diagnostic for the existing file
+                let existingDiags = finalDiagnostics.get(existingUri) || [];
+                const existingAst = this.fileData.get(existingUri)?.ast;
+                const existingNode = existingAst?.nodes.find(n => n.properties.get('id') === id);
+                if (existingNode) {
+                    existingDiags.push(new vscode.Diagnostic(existingNode.range, `Duplicate ID "${id}" also found in ${fileUri.fsPath}`, vscode.DiagnosticSeverity.Error));
+                    finalDiagnostics.set(existingUri, existingDiags);
+                }
+                // Add diagnostic for the current file
+                let currentDiags = finalDiagnostics.get(fileUri) || [];
+                const currentNode = data.ast.nodes.find(n => n.properties.get('id') === id);
+                if (currentNode) {
+                    currentDiags.push(new vscode.Diagnostic(currentNode.range, `Duplicate ID "${id}" also found in ${existingUri.fsPath}`, vscode.DiagnosticSeverity.Error));
+                    finalDiagnostics.set(fileUri, currentDiags);
+                }
+            };
+            for (const id of data.localSceneIds) {
+                const existingUri = globalSceneIdToUri.get(id);
+                if (existingUri) {
+                    addDiagnosticsForDuplicate(id, existingUri);
+                }
+                else {
+                    globalSceneIdToUri.set(id, fileUri);
+                }
+            }
+            for (const id of data.localQualityIds) {
+                const existingUri = globalQualityIdToUri.get(id);
+                if (existingUri) {
+                    addDiagnosticsForDuplicate(id, existingUri);
+                }
+                else {
+                    globalQualityIdToUri.set(id, fileUri);
+                }
+            }
+        }
+        // 4. Rebuild global IDs from all cached file data
         this.globalSceneIds.clear();
         this.globalQualityIds.clear();
         this.fileData.forEach(data => {
             data.localSceneIds.forEach(id => this.globalSceneIds.add(id));
             data.localQualityIds.forEach(id => this.globalQualityIds.add(id));
         });
-        // 4. Validate all files in cache against updated global IDs
+        // 5. Validate all files in cache against updated global IDs
         for (const [fileUri, data] of this.fileData) {
             // Skip validation if parsing already produced errors for this file
             if (finalDiagnostics.has(fileUri)) {
@@ -140,7 +197,8 @@ class DendryProjectValidator {
             try {
                 const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData);
                 if (validationDiagnostics.length > 0) {
-                    finalDiagnostics.set(fileUri, validationDiagnostics);
+                    const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
+                    finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);
                 }
             }
             catch (error) {

@@ -34,133 +34,196 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DendryParser = void 0;
+exports.parseText = parseText;
 const vscode = __importStar(require("vscode"));
-class DendryParser {
-    parse(text, fileName) {
-        const lines = text.split('\n');
-        const ast = { nodes: [], metadata: { fileName } };
-        let currentNode = null;
-        let startLine = 0;
-        let parsingProperties = false;
-        const finalizeCurrentNode = (endLine) => {
-            if (currentNode) {
-                let finalEndLine = endLine;
-                while (finalEndLine > startLine && lines[finalEndLine]?.trim() === '') {
-                    finalEndLine--;
-                }
-                currentNode.range = new vscode.Range(startLine, 0, finalEndLine, lines[finalEndLine]?.length || 0);
-                ast.nodes.push(currentNode);
-                currentNode = null;
-                parsingProperties = false;
-            }
-        };
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            const trimmed = line.trim();
-            if (!trimmed) {
-                if (currentNode && currentNode.content) {
-                    currentNode.content += '\n';
-                }
-                continue;
-            }
-            if (trimmed.startsWith('---')) {
-                if (currentNode) {
-                    parsingProperties = false;
-                    // The content starts on the next line
-                    // so we skip this line
-                    continue;
-                }
-            }
-            // Priority 1: Node Declarations
-            if (trimmed.startsWith('@') || trimmed.startsWith('-') || trimmed === '=') {
-                finalizeCurrentNode(i - 1);
-                startLine = i;
-                parsingProperties = true;
-                let nodeType = 'unknown';
-                let nodeId = '';
-                let declarationType;
-                if (trimmed.startsWith('@')) {
-                    const parts = trimmed.substring(1).split(' ');
-                    if (parts.length === 1) {
-                        nodeType = 'scene'; // Default to 'scene' if no explicit type given
-                        nodeId = parts[0];
-                        declarationType = 'implicit';
-                    }
-                    else if (parts.length >= 2) {
-                        nodeType = parts[0];
-                        nodeId = parts[1];
-                        if (nodeType === 'scene') { // Only mark explicit if the type is 'scene'
-                            declarationType = 'explicit';
-                        }
-                    }
-                }
-                else if (trimmed.startsWith('-')) {
-                    nodeType = 'choice';
-                }
-                else if (trimmed === '=') {
-                    nodeType = 'divider';
-                }
-                currentNode = { type: nodeType, properties: new Map(), content: '', range: new vscode.Range(i, 0, i, line.length), declarationType };
-                if (nodeId)
-                    currentNode.properties.set('id', nodeId);
-                continue;
-            }
-            // Priority 2: Properties
-            const propertyMatch = trimmed.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
-            if (propertyMatch) {
-                const key = propertyMatch[1];
-                let value = propertyMatch[2];
-                if (!currentNode) {
-                    startLine = i;
-                    currentNode = { type: 'scene', properties: new Map(), content: '', range: new vscode.Range(i, 0, i, line.length) };
-                    parsingProperties = true;
-                }
-                // Handle multi-line JS properties
-                if (value.trim().startsWith('{!')) {
-                    let jsContent = value.substring(value.indexOf('{!') + 2);
-                    let foundClosing = false;
-                    if (jsContent.includes('!}')) { // One-liner {! !}
-                        jsContent = jsContent.substring(0, jsContent.indexOf('!}')).trim();
-                        foundClosing = true;
-                    }
-                    if (!foundClosing) {
-                        let currentLineIdx = i + 1;
-                        while (currentLineIdx < lines.length) {
-                            const currentJsLine = lines[currentLineIdx];
-                            if (currentJsLine.includes('!}')) {
-                                jsContent += '\n' + currentJsLine.substring(0, currentJsLine.indexOf('!}')).trim();
-                                i = currentLineIdx; // Update main loop counter to skip processed lines
-                                break;
-                            }
-                            jsContent += '\n' + currentJsLine;
-                            currentLineIdx++;
-                        }
-                    }
-                    currentNode.properties.set(key, jsContent.trim());
-                }
-                else {
-                    currentNode.properties.set(key, value);
-                }
-                continue;
-            }
-            // Priority 3: Comments
-            if (trimmed.startsWith('#')) {
-                continue;
-            }
-            // Default: Content
-            if (currentNode) {
-                if (currentNode.content || trimmed) {
-                    currentNode.content = (currentNode.content ? currentNode.content + '\n' : '') + line;
-                }
-            }
-            else {
-                // If we are here, it means we have content outside of a node, which is a parsing error.
-                throw new Error(`Invalid syntax on line ${i + 1}: "${line.trim()}". Content can only appear inside a scene or choice.`);
-            }
-        }
-        finalizeCurrentNode(lines.length - 1);
-        return ast;
+const chevrotain_1 = require("chevrotain");
+const lexer_1 = require("./lexer");
+// ----------------- PARSER -----------------
+class DendryParser extends chevrotain_1.CstParser {
+    constructor() {
+        super(lexer_1.allTokens);
+        // --- Entry Rule ---
+        this.dendryFile = this.RULE('dendryFile', () => {
+            this.MANY(() => {
+                this.SUBRULE(this.node);
+            });
+        });
+        // --- Node Rules ---
+        this.node = this.RULE('node', () => {
+            this.OR([
+                { ALT: () => this.SUBRULE(this.sceneNode) },
+                { ALT: () => this.SUBRULE(this.choiceNode) },
+                { ALT: () => this.SUBRULE(this.dividerNode) }
+            ]);
+        });
+        this.sceneNode = this.RULE('sceneNode', () => {
+            this.CONSUME(lexer_1.SceneMarker);
+            this.OPTION(() => {
+                this.CONSUME(lexer_1.Identifier); // Scene ID
+            });
+            this.MANY(() => this.SUBRULE(this.property));
+            this.OPTION2(() => this.SUBRULE(this.content));
+        });
+        this.choiceNode = this.RULE('choiceNode', () => {
+            this.CONSUME(lexer_1.ChoiceMarker);
+            this.MANY(() => this.SUBRULE(this.property));
+            this.OPTION(() => this.SUBRULE(this.content));
+        });
+        this.dividerNode = this.RULE('dividerNode', () => {
+            this.CONSUME(lexer_1.DividerMarker);
+        });
+        // --- Property & Content Rules ---
+        this.property = this.RULE('property', () => {
+            this.CONSUME(lexer_1.Identifier);
+            this.CONSUME(lexer_1.Colon);
+            this.SUBRULE(this.propertyValue);
+        });
+        this.propertyValue = this.RULE('propertyValue', () => {
+            this.OR([
+                { ALT: () => this.CONSUME(lexer_1.FreeText) },
+                { ALT: () => this.SUBRULE(this.jsBlock) }
+            ]);
+        });
+        this.jsBlock = this.RULE('jsBlock', () => {
+            this.CONSUME(lexer_1.JsBlockStart);
+            this.OPTION(() => this.CONSUME(lexer_1.JsCode));
+            this.CONSUME(lexer_1.JsBlockEnd);
+        });
+        this.content = this.RULE('content', () => {
+            this.AT_LEAST_ONE(() => {
+                this.OR([
+                    { ALT: () => this.CONSUME(lexer_1.FreeText) },
+                    { ALT: () => this.CONSUME(lexer_1.NewLine) },
+                    { ALT: () => this.CONSUME(lexer_1.TripleDash) },
+                ]);
+            });
+        });
+        this.performSelfAnalysis();
     }
 }
 exports.DendryParser = DendryParser;
+// ----------------- VISITOR TO CREATE AST -----------------
+const parser = new DendryParser();
+const BaseCstVisitor = parser.getBaseCstVisitorConstructor();
+class CstToAstVisitor extends BaseCstVisitor {
+    constructor() {
+        super();
+        this.validateVisitor();
+    }
+    dendryFile(children) {
+        const nodes = children.node?.map(node => this.visit(node, node)) || [];
+        return { nodes: nodes.filter(n => n), metadata: {} };
+    }
+    sceneNode(children, cstNode) {
+        const properties = new Map();
+        if (children.Identifier) {
+            properties.set('id', children.Identifier[0].image);
+        }
+        const props = children.property?.map((p) => this.visit(p, p)) || [];
+        props.forEach((p) => properties.set(p.key, p.value));
+        // Use the passed CST node's location for the range
+        const location = cstNode.location;
+        if (!location)
+            throw new Error("CST Node is missing location info.");
+        if (!location.startLine || !location.startColumn || !location.endLine || !location.endColumn) {
+            throw new Error("CST Node has incomplete location info.");
+        }
+        return {
+            type: 'scene',
+            properties,
+            content: children.content ? this.visit(children.content[0], children.content[0]) : '',
+            range: new vscode.Range(location.startLine - 1, location.startColumn - 1, location.endLine - 1, location.endColumn - 1)
+        };
+    }
+    choiceNode(children, cstNode) {
+        const properties = new Map();
+        const props = children.property?.map((p) => this.visit(p, p)) || [];
+        props.forEach((p) => properties.set(p.key, p.value));
+        // Use the passed CST node's location for the range
+        const location = cstNode.location;
+        if (!location)
+            throw new Error("CST Node is missing location info.");
+        if (!location.startLine || !location.startColumn || !location.endLine || !location.endColumn) {
+            throw new Error("CST Node has incomplete location info.");
+        }
+        return {
+            type: 'choice',
+            properties,
+            content: children.content ? this.visit(children.content[0], children.content[0]) : '',
+            range: new vscode.Range(location.startLine - 1, location.startColumn - 1, location.endLine - 1, location.endColumn - 1)
+        };
+    }
+    dividerNode(children, cstNode) {
+        // Use the passed CST node's location for the range
+        const location = cstNode.location;
+        if (!location)
+            throw new Error("CST Node is missing location info.");
+        if (!location.startLine || !location.startColumn || !location.endLine || !location.endColumn) {
+            throw new Error("CST Node has incomplete location info.");
+        }
+        return {
+            type: 'divider',
+            properties: new Map(),
+            content: '',
+            range: new vscode.Range(location.startLine - 1, location.startColumn - 1, location.endLine - 1, location.endColumn - 1)
+        };
+    }
+    property(children) {
+        const key = children.Identifier[0].image;
+        const value = this.visit(children.propertyValue[0], children.propertyValue[0]);
+        return { key, value };
+    }
+    propertyValue(children) {
+        if (children.FreeText) {
+            return children.FreeText[0].image;
+        }
+        if (children.jsBlock) {
+            return this.visit(children.jsBlock[0], children.jsBlock[0]);
+        }
+        return '';
+    }
+    jsBlock(children) {
+        return children.JsCode ? children.JsCode[0].image : '';
+    }
+    content(children) {
+        // This is tricky because we need to reconstruct the content with correct spacing and newlines.
+        // For now, let's just join the text. A more sophisticated approach might be needed.
+        let fullContent = '';
+        const allTokens = [];
+        if (children.FreeText)
+            allTokens.push(...children.FreeText);
+        if (children.NewLine)
+            allTokens.push(...children.NewLine);
+        if (children.TripleDash)
+            allTokens.push(...children.TripleDash);
+        // Sort tokens by their start offset to reconstruct the content in order
+        allTokens.sort((a, b) => a.startOffset - b.startOffset);
+        // This is still a simplification. A perfect reconstruction would need to look at
+        // the original text between the tokens.
+        fullContent = allTokens.map(t => t.image).join('');
+        return fullContent;
+    }
+}
+const toAstVisitor = new CstToAstVisitor();
+// ----------------- PARSER INSTANCE -----------------
+function parseText(text, fileName) {
+    const lexResult = lexer_1.DendryLexer.tokenize(text);
+    // setting a new input will RESET the parser instance's state.
+    parser.input = lexResult.tokens;
+    const cst = parser.dendryFile();
+    if (parser.errors.length > 0) {
+        return {
+            ast: { nodes: [], metadata: { fileName } },
+            errors: parser.errors,
+            lexErrors: lexResult.errors
+        };
+    }
+    const ast = toAstVisitor.visit(cst, cst);
+    ast.metadata.fileName = fileName;
+    return {
+        ast,
+        errors: [],
+        lexErrors: lexResult.errors
+    };
+}
 //# sourceMappingURL=parser.js.map

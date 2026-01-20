@@ -1,0 +1,36 @@
+title: Example scene
+new-page: true
+on-arrival: {!
+  console.log("Arrived at example scene");
+  asfasf //this should flag an error
+  if (true) { // this should not flag an error
+    console.log("This is valid JS code");
+  }
+!}
+
+Where do you want to go?
+
+# back is valid, even if it does not have ": something" after. In that case, the scene title will be displayed
+- @back
+- @scene_a: Here
+- @scene_b: There
+- @1800: To 1800
+- @1750: Go even further back
+# when it begins with numbers, we never catch them
+
+@back
+title: You went back...
+
+and found something new!
+
+@scene_a:
+
+You got here!
+
+@scene_b:
+
+You are over there!
+
+@1800:
+# not even here, the numbers are not properly higlighted
+The year is 1800 now!
