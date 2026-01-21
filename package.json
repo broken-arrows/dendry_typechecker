@@ -69,7 +69,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "chevrotain": "^11.1.0",
     "esprima": "^4.0.1",
     "esprima-walk": "^0.1.0"
   }

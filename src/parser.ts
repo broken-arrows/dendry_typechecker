@@ -1,21 +1,4 @@
 import * as vscode from 'vscode';
-import { CstParser, CstNode, IToken } from 'chevrotain';
-import {
-  allTokens,
-  DendryLexer,
-  Identifier,
-  SceneMarker,
-  ChoiceMarker,
-  DividerMarker,
-  Colon,
-  FreeText,
-  JsBlockStart,
-  JsBlockEnd,
-  JsCode,
-  NewLine,
-  TripleDash,
-  TagMarker
-} from './lexer';
 
 // ----------------- AST -----------------
 export interface DendryNode {
@@ -38,420 +21,274 @@ export interface DendryAST {
 }
 
 // ----------------- PARSER -----------------
-export class DendryParser extends CstParser {
-  constructor() {
-    super(allTokens);
-    this.performSelfAnalysis();
+class DendryHandParser {
+  private lines: string[];
+  private currentLine: number = 0;
+  private nodes: DendryNode[] = [];
+  private metadata: DendryAST['metadata'] = {};
+
+  constructor(private text: string, private fileName: string) {
+    this.lines = text.split(/\r?\n/);
   }
 
-  // Helpers: treat markers as "structure" only when they start a line.
-  private startsNodeStructure = () => {
-    const t = this.LA(1) as any;
-    return (
-      (t.tokenType === SceneMarker ||
-      t.tokenType === ChoiceMarker ||
-      t.tokenType === DividerMarker ||
-      t.tokenType === TripleDash) &&
-      t.startColumn === 1
-    );
-  };
+  parse(): { ast: DendryAST; errors: any[] } {
+    const errors: any[] = [];
 
+    try {
+      // Phase 1: Parse metadata at the top
+      this.parseMetadata();
 
-  // --- Entry rule ---
-  public dendryFile = this.RULE('dendryFile', () => {
-    // Consume any leading newlines
-    this.MANY(() => this.CONSUME(NewLine));
-    
-    // Metadata properties at top: "key: value"
-    this.MANY1(() => {
-      this.SUBRULE(this.property);
-    });
-    
-    // Everything else until we hit an explicit scene at column 1
-    this.MANY2(() => {
-      this.OR([
-        {
-          GATE: () => {
-            const t = this.LA(1) as any;
-            return t.tokenType === ChoiceMarker && t.startColumn === 1;
-          },
-          ALT: () => this.SUBRULE(this.choiceNode)
-        },
-        {
-          GATE: () => {
-            const t = this.LA(1) as any;
-            // Don't match if we're at a scene/divider at column 1
-            return !(t.startColumn === 1 && (t.tokenType === SceneMarker || t.tokenType === DividerMarker));
-          },
-          ALT: () => this.SUBRULE(this.contentOrBlank)
-        }
-      ]);
-    });
-    
-    // Explicit nodes (@scene... or divider)
-    this.MANY3(() => this.SUBRULE(this.node));
-  });
+      // Phase 2: Parse root content and choices (before first @scene)
+      this.parseRootSection();
 
-  private sceneNode = this.RULE('sceneNode', () => {
-    this.CONSUME(SceneMarker);
-    this.OPTION(() => this.CONSUME(Identifier));
-    this.OPTION2(() => this.CONSUME(Colon));
-    this.OPTION3(() => this.CONSUME(NewLine));
-    
-    // Properties
-    this.MANY(() => this.SUBRULE(this.property));
-    
-    // Scene body: content and choices until the next scene
-    this.MANY1(() => {
-      this.OR([
-        {
-          GATE: () => {
-            const t = this.LA(1) as any;
-            return t.tokenType === ChoiceMarker && t.startColumn === 1;
-          },
-          ALT: () => this.SUBRULE(this.choiceNode)
-        },
-        {
-          GATE: () => {
-            const t = this.LA(1) as any;
-            // Don't match if we're at a scene/divider at column 1
-            return !(t.startColumn === 1 && (t.tokenType === SceneMarker || t.tokenType === DividerMarker));
-          },
-          ALT: () => this.SUBRULE(this.contentOrBlank)
-        }
-      ]);
-    });
-  });
-
-
-  // New simpler rule that handles both content and blank lines
-  private contentOrBlank = this.RULE('contentOrBlank', () => {
-    this.OR([
-      { ALT: () => this.CONSUME(NewLine) },
-      { ALT: () => this.SUBRULE(this.content) }
-    ]);
-  });
-
-  private content = this.RULE('content', () => {
-    // At least one actual content token (not newline, not structural at col 1)
-    this.AT_LEAST_ONE(() => {
-      this.OR([
-        { ALT: () => this.CONSUME(FreeText) },
-        { ALT: () => this.CONSUME(Identifier) },
-        { ALT: () => this.CONSUME(Colon) },
-        { ALT: () => this.CONSUME(TripleDash) },
-        {
-          GATE: () => ((this.LA(1) as any).startColumn ?? 1) !== 1,
-          ALT: () => this.CONSUME(ChoiceMarker)
-        },
-        {
-          GATE: () => ((this.LA(1) as any).startColumn ?? 1) !== 1,
-          ALT: () => this.CONSUME(DividerMarker)
-        },
-        {
-          GATE: () => ((this.LA(1) as any).startColumn ?? 1) !== 1,
-          ALT: () => this.CONSUME(SceneMarker)
-        }
-      ]);
-    });
-    // Consume trailing newlines as part of this content
-    this.MANY(() => this.CONSUME(NewLine));
-  });
-
-
-
-  private node = this.RULE('node', () => {
-    this.OR([
-      {
-        GATE: () => (this.LA(1) as any).tokenType === SceneMarker && (this.LA(1) as any).startColumn === 1,
-        ALT: () => this.SUBRULE(this.sceneNode)
-      },
-      {
-        GATE: () => (this.LA(1) as any).tokenType === DividerMarker && (this.LA(1) as any).startColumn === 1,
-        ALT: () => this.SUBRULE(this.dividerNode)
-      }
-    ]);
-  });
-
-  private choiceNode = this.RULE('choiceNode', () => {
-    this.CONSUME(ChoiceMarker);
-    
-    // Consume all content tokens on this line until we hit a newline or EOF
-    this.MANY(() => {
-      this.OR([
-        { ALT: () => this.CONSUME(FreeText) },
-        { ALT: () => this.CONSUME(SceneMarker) },
-        { ALT: () => this.CONSUME(Identifier) },
-        { ALT: () => this.CONSUME(Colon) },
-        { ALT: () => this.CONSUME(TripleDash) },
-        { ALT: () => this.CONSUME(TagMarker) },  // Add this line
-        // Allow '=' mid-line in choice content
-        { 
-          GATE: () => ((this.LA(1) as any).startColumn ?? 1) !== 1,
-          ALT: () => this.CONSUME(DividerMarker) 
-        }
-      ]);
-    });
-    
-    // Always try to consume the newline at the end
-    this.OPTION(() => this.CONSUME(NewLine));
-  });
-
-  private dividerNode = this.RULE('dividerNode', () => {
-    this.CONSUME(DividerMarker);
-    this.OPTION(() => this.CONSUME(NewLine));
-  });
-
-  private property = this.RULE('property', () => {
-    // Only treat it as a property if it's "Identifier ':'"
-    this.CONSUME(Identifier);
-    this.CONSUME(Colon);
-    this.SUBRULE(this.propertyValue);
-    this.OPTION(() => this.CONSUME(NewLine));
-  });
-
-  private propertyValue = this.RULE('propertyValue', () => {
-    this.OR([
-      { ALT: () => this.SUBRULE(this.jsBlock) },
-      {
-        ALT: () => {
-          this.AT_LEAST_ONE(() => {
-            this.OR1([
-              { ALT: () => this.CONSUME(FreeText) },
-              { ALT: () => this.CONSUME(Identifier) },
-              { ALT: () => this.CONSUME(Colon) },
-              { ALT: () => this.CONSUME(ChoiceMarker) },
-              { ALT: () => this.CONSUME(DividerMarker) },
-              { ALT: () => this.CONSUME(SceneMarker) },
-              { ALT: () => this.CONSUME(TripleDash) }
-            ]);
-          });
+      // Phase 3: Parse explicit scene declarations
+      while (this.currentLine < this.lines.length) {
+        const line = this.lines[this.currentLine];
+        
+        if (this.isSceneMarker(line)) {
+          this.parseScene();
+        } else if (this.isDivider(line)) {
+          this.parseDivider();
+        } else if (line.trim() === '' || this.isComment(line)) {
+          this.currentLine++;
+        } else {
+          // Unexpected content outside a scene
+          this.currentLine++;
         }
       }
-    ]);
-  });
 
-  private jsBlock = this.RULE('jsBlock', () => {
-    this.CONSUME(JsBlockStart);
-    this.OPTION(() => this.CONSUME(JsCode));
-    this.CONSUME(JsBlockEnd);
-  });
-}
-
-// ----------------- VISITOR (CST -> AST) -----------------
-const parserInstance = new DendryParser();
-const BaseCstVisitor = parserInstance.getBaseCstVisitorConstructor();
-
-function rangeFromCstLocation(cstNode: CstNode): vscode.Range {
-  const loc: any = (cstNode as any).location;
-  if (!loc?.startLine || !loc?.startColumn || !loc?.endLine || !loc?.endColumn) {
-    return new vscode.Range(0, 0, 0, 0);
-  }
-  return new vscode.Range(loc.startLine - 1, loc.startColumn - 1, loc.endLine - 1, loc.endColumn - 1);
-}
-
-function joinTokensPreservingOrder(tokens: IToken[]): string {
-  const sorted = [...tokens].sort((a, b) => a.startOffset - b.startOffset);
-  return sorted.map(t => t.image).join('');
-}
-
-class CstToAstVisitor extends BaseCstVisitor {
-  constructor() {
-    super();
-    this.validateVisitor();
+      this.metadata.fileName = this.fileName;
+      return {
+        ast: { nodes: this.nodes, metadata: this.metadata },
+        errors: []
+      };
+    } catch (error: any) {
+      return {
+        ast: { nodes: this.nodes, metadata: this.metadata },
+        errors: [{ message: error.message, line: this.currentLine }]
+      };
+    }
   }
 
-  dendryFile(children: any): DendryAST {
-    const metadata: DendryAST['metadata'] = {};
+  private parseMetadata() {
+    while (this.currentLine < this.lines.length) {
+      const line = this.lines[this.currentLine];
+      
+      // Stop at first non-metadata line
+      if (line.trim() === '' || this.isComment(line)) {
+        this.currentLine++;
+        continue;
+      }
+      
+      if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
+        const { key, value } = this.parsePropertyLine(line, this.currentLine);
+        this.metadata[key] = value;
+        this.currentLine++;
+      } else {
+        // Not metadata anymore
+        break;
+      }
+    }
+  }
 
-    // Collect top-level properties as metadata
-    if (children.property) {
-      const props = children.property.map((p: any) => this.visit(p));
-      for (const p of props) {
-        if (p) metadata[p.key] = p.value;
+  private parseRootSection() {
+    const contentLines: string[] = [];
+    const contentStart = this.currentLine;
+
+    while (this.currentLine < this.lines.length) {
+      const line = this.lines[this.currentLine];
+
+      // Stop at first explicit scene
+      if (this.isSceneMarker(line) || this.isDivider(line)) {
+        break;
+      }
+
+      if (this.isChoice(line)) {
+        this.parseChoice();
+      } else {
+        contentLines.push(line);
+        this.currentLine++;
+      }
+    }
+  }
+
+  private parseScene() {
+    const startLine = this.currentLine;
+    const line = this.lines[this.currentLine];
+    
+    const match = line.match(/^@(\w+)?(?::(.*))?$/);
+    const sceneId = match?.[1]?.trim() || '';
+    const title = match?.[2]?.trim() || '';
+
+    const properties = new Map<string, any>();
+    if (sceneId) {
+      properties.set('id', sceneId);
+    }
+    if (title) {
+      properties.set('title', title);
+    }
+
+    this.currentLine++;
+
+    // Parse scene properties
+    while (this.currentLine < this.lines.length) {
+      const line = this.lines[this.currentLine];
+      
+      if (line.trim() === '' || this.isComment(line)) {
+        this.currentLine++;
+        continue;
+      }
+
+      if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
+        const { key, value } = this.parsePropertyLine(line, this.currentLine);
+        properties.set(key, value);
+        this.currentLine++;
+      } else {
+        break;
       }
     }
 
-    const nodes: DendryNode[] = [];
+    // Parse scene content and choices
+    const contentStart = this.currentLine;
+    while (this.currentLine < this.lines.length) {
+      const line = this.lines[this.currentLine];
 
-    // Collect root-level choice nodes
-    if (children.choiceNode) {
-      for (const c of children.choiceNode) {
-        const choiceAstNode = this.visit(c);
-        if (choiceAstNode) nodes.push(choiceAstNode);
+      // Stop at next scene or divider
+      if (this.isSceneMarker(line) || this.isDivider(line)) {
+        break;
+      }
+
+      if (this.isChoice(line)) {
+        this.parseChoice();
+      } else {
+        this.currentLine++;
       }
     }
 
-    // Collect explicit scene/divider nodes
-    if (children.node) {
-      for (const n of children.node) {
-        const astNode = this.visit(n);
-        if (astNode) nodes.push(astNode);
-      }
-    }
-
-    return { nodes, metadata };
-  }
-
-  node(children: any): DendryNode {
-    if (children.sceneNode) return this.visit(children.sceneNode[0]);
-    if (children.dividerNode) return this.visit(children.dividerNode[0]);
-    return undefined as any;
-  }
-
-  sceneNode(children: any, cstNode: CstNode): DendryNode {
-    const props = new Map<string, any>();
-
-    // children.Identifier may include the scene id
-    if (children.Identifier?.[0]) {
-      props.set('id', children.Identifier[0].image);
-    }
-
-    if (children.property) {
-      for (const p of children.property) {
-        const kv = this.visit(p);
-        if (kv) props.set(kv.key, kv.value);
-      }
-    }
-
-    const content = '';
-
-    return {
+    const endLine = this.currentLine - 1;
+    this.nodes.push({
       type: 'scene',
       declarationType: 'explicit',
-      properties: props,
-      content,
-      range: rangeFromCstLocation(cstNode)
-    };
+      properties,
+      content: '',
+      range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0)
+    });
   }
 
-  choiceNode(children: any, cstNode: CstNode): DendryNode {
-    const props = new Map();
+  private parseChoice() {
+    const lineNum = this.currentLine;
+    const line = this.lines[this.currentLine];
     
-    // Collect all tokens in order to reconstruct content
-    const tokens: IToken[] = [];
-    if (children.FreeText) tokens.push(...children.FreeText);
-    if (children.SceneMarker) tokens.push(...children.SceneMarker);
-    if (children.Identifier) tokens.push(...children.Identifier);
-    if (children.Colon) tokens.push(...children.Colon);
-    if (children.DividerMarker) tokens.push(...children.DividerMarker);
-    if (children.TripleDash) tokens.push(...children.TripleDash);
-    if (children.TagMarker) tokens.push(...children.TagMarker);
-    
-    const content = joinTokensPreservingOrder(tokens);
-    
-    return {
+    // Remove leading '- ' and trim
+    const content = line.substring(line.indexOf('-') + 1).trim();
+
+    this.nodes.push({
       type: 'choice',
-      properties: props,
+      properties: new Map(),
       content,
-      range: rangeFromCstLocation(cstNode)
-    };
+      range: new vscode.Range(lineNum, 0, lineNum, line.length)
+    });
+
+    this.currentLine++;
   }
 
+  private parseDivider() {
+    const lineNum = this.currentLine;
+    const line = this.lines[this.currentLine];
 
-  dividerNode(children: any, cstNode: CstNode): DendryNode {
-    return {
+    this.nodes.push({
       type: 'divider',
       properties: new Map(),
       content: '',
-      range: rangeFromCstLocation(cstNode)
-    };
+      range: new vscode.Range(lineNum, 0, lineNum, line.length)
+    });
+
+    this.currentLine++;
   }
 
-  property(children: any) {
-    const key = children.Identifier[0].image;
-    const value = this.visit(children.propertyValue[0]);
-    return { key, value };
+  private parsePropertyLine(line: string, lineNum: number): { key: string; value: any; endLine: number } {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) {
+      return { key: '', value: '', endLine: lineNum };
+    }
+
+    const key = line.substring(0, colonIndex).trim();
+    const valueStart = line.substring(colonIndex + 1).trim();
+
+    // Check for JS block
+    if (valueStart.startsWith('{!')) {
+      const { value, endLine } = this.parseJsBlock(valueStart, lineNum);
+      return { key, value, endLine };
+    }
+
+    return { key, value: valueStart, endLine: lineNum };
   }
 
-  propertyValue(children: any) {
-    if (children.jsBlock) return this.visit(children.jsBlock[0]);
+  private parseJsBlock(firstLine: string, startLine: number): { value: string; endLine: number } {
+    let jsCode = '';
+    let currentLineNum = startLine;
 
-    const tokens: IToken[] = [];
-    if (children.FreeText) tokens.push(...children.FreeText);
-    if (children.Identifier) tokens.push(...children.Identifier);
-    if (children.Colon) tokens.push(...children.Colon);
-    if (children.ChoiceMarker) tokens.push(...children.ChoiceMarker);
-    if (children.DividerMarker) tokens.push(...children.DividerMarker);
-    if (children.SceneMarker) tokens.push(...children.SceneMarker);
-    if (children.TripleDash) tokens.push(...children.TripleDash);
+    // Check if it closes on the same line
+    const sameLineMatch = firstLine.match(/\{!(.*?)!\}/s);
+    if (sameLineMatch) {
+      return { value: sameLineMatch[1], endLine: startLine };
+    }
 
-    return joinTokensPreservingOrder(tokens);
+    // Multi-line JS block
+    jsCode = firstLine.substring(2); // Remove {!
+    currentLineNum++;
+
+    while (currentLineNum < this.lines.length) {
+      const line = this.lines[currentLineNum];
+      const closeIndex = line.indexOf('!}');
+      
+      if (closeIndex !== -1) {
+        jsCode += '\n' + line.substring(0, closeIndex);
+        this.currentLine = currentLineNum;
+        return { value: jsCode, endLine: currentLineNum };
+      }
+
+      jsCode += '\n' + line;
+      currentLineNum++;
+    }
+
+    // Unclosed JS block
+    this.currentLine = currentLineNum;
+    return { value: jsCode, endLine: currentLineNum };
   }
 
-  jsBlock(children: any) {
-    return children.JsCode?.[0]?.image ?? '';
+  private isSceneMarker(line: string): boolean {
+    return /^@\w*/.test(line.trim());
   }
 
-  choiceContent(children: any): string {
-    const tokens: IToken[] = [];
-    if (children.FreeText) tokens.push(...children.FreeText);
-    if (children.SceneMarker) tokens.push(...children.SceneMarker);
-    if (children.Identifier) tokens.push(...children.Identifier);
-    if (children.Colon) tokens.push(...children.Colon);
-    if (children.DividerMarker) tokens.push(...children.DividerMarker);
-    if (children.TripleDash) tokens.push(...children.TripleDash);
-    if (children.TagMarker) tokens.push(...children.TagMarker);
-
-    return joinTokensPreservingOrder(tokens);
+  private isChoice(line: string): boolean {
+    return /^-\s/.test(line);
   }
 
-  content(children: any): string {
-    const tokens: IToken[] = [];
-    if (children.FreeText) tokens.push(...children.FreeText);
-    if (children.Identifier) tokens.push(...children.Identifier);
-    if (children.NewLine) tokens.push(...children.NewLine);
-    if (children.TripleDash) tokens.push(...children.TripleDash);
-    if (children.Colon) tokens.push(...children.Colon);
-    if (children.ChoiceMarker) tokens.push(...children.ChoiceMarker);
-    if (children.SceneMarker) tokens.push(...children.SceneMarker);
-    if (children.DividerMarker) tokens.push(...children.DividerMarker);
-    if (children.JsBlockStart) tokens.push(...children.JsBlockStart);
-    if (children.JsBlockEnd) tokens.push(...children.JsBlockEnd);
-    if (children.JsCode) tokens.push(...children.JsCode);
-
-    return joinTokensPreservingOrder(tokens);
+  private isDivider(line: string): boolean {
+    return /^=+$/.test(line.trim());
   }
 
-  contentOrBlank(children: any): string {
-  // This rule just wraps NewLine or content, so delegate
-  if (children.NewLine) {
-    return '\n';
+  private isProperty(line: string): boolean {
+    return /^\w+[\w-]*:/.test(line.trim());
   }
-  if (children.content) {
-    return this.visit(children.content[0]);
+
+  private isComment(line: string): boolean {
+    return /^#(?![a-zA-Z_])/.test(line.trim());
   }
-  return '';
 }
-
-}
-
-const toAstVisitor = new CstToAstVisitor();
 
 // ----------------- PARSER ENTRY -----------------
 export function parseText(
   text: string,
   fileName: string
 ): { ast: DendryAST; errors: any[]; lexErrors: any[] } {
-  const lexResult = DendryLexer.tokenize(text);
-  parserInstance.input = lexResult.tokens;
-
-  const cst = parserInstance.dendryFile();
-
-  if (parserInstance.errors.length > 0) {
-    return {
-      ast: { nodes: [], metadata: { fileName } },
-      errors: parserInstance.errors,
-      lexErrors: lexResult.errors
-    };
-  }
-
-  const ast = toAstVisitor.visit(cst) as DendryAST;
-  ast.metadata.fileName = fileName;
-
+  const parser = new DendryHandParser(text, fileName);
+  const result = parser.parse();
+  
   return {
-    ast,
-    errors: [],
-    lexErrors: lexResult.errors
+    ast: result.ast,
+    errors: result.errors,
+    lexErrors: [] // No lexer in hand-written parser
   };
 }

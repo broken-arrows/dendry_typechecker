@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as esprima from 'esprima';
-
 import { DendryAST, DendryNode } from './parser';
 
 type FileData = {
@@ -11,10 +10,8 @@ type FileData = {
 
 export class DendryValidator {
   private strictMode: boolean;
-
   private sceneIds: Set<string> = new Set();
   private qualityIds: Set<string> = new Set();
-
   private _allFileData: Map<vscode.Uri, FileData> = new Map();
 
   private readonly SCENE_PROPERTIES = new Set([
@@ -73,7 +70,6 @@ export class DendryValidator {
     allFileData: Map<vscode.Uri, FileData>
   ): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-
     this._allFileData = allFileData;
 
     // rebuild global IDs
@@ -215,11 +211,13 @@ export class DendryValidator {
         this.createDiagnostic(node.range, 'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error)
       );
     }
+
     if (!isNaN(initial) && !isNaN(min) && initial < min) {
       diagnostics.push(
         this.createDiagnostic(node.range, 'Quality "initial" value cannot be less than "min" value', vscode.DiagnosticSeverity.Error)
       );
     }
+
     if (!isNaN(initial) && !isNaN(max) && initial > max) {
       diagnostics.push(
         this.createDiagnostic(node.range, 'Quality "initial" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error)
@@ -231,10 +229,10 @@ export class DendryValidator {
 
   private validateChoice(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    
+
     for (const [key, value] of node.properties.entries()) {
       const r = this.findRangeForProperty(document, node.range, key);
-      
+
       if (!this.CHOICE_PROPERTIES.has(key)) {
         diagnostics.push(
           this.createDiagnostic(
@@ -244,33 +242,31 @@ export class DendryValidator {
           )
         );
       }
-      
+
       if (key === 'view-if' || key === 'choose-if' || key === 'on-choose') {
         diagnostics.push(...this.validateJavaScript(String(value ?? ''), r));
       }
-      
+
       if (key === 'go-to') {
         this.validateGoTo(String(value ?? ''), r, diagnostics);
       }
-      
+
       if (key === 'priority' || key === 'min-choices' || key === 'max-choices') {
         this.validateNumber(value, r, key, diagnostics);
       }
     }
-    
+
     let choiceContent = node.content ?? '';
-    
     // If content is empty, try to extract from the document line
     if (!choiceContent || choiceContent.trim() === '') {
       const lineText = document.lineAt(node.range.start.line).text;
       choiceContent = lineText.substring(lineText.indexOf('-') + 1).trim();
     }
-    
+
     // Check for tag references (- #tag_name)
     const tagMatch = choiceContent.match(/^#([a-zA-Z_][a-zA-Z0-9_-]*)/);
     if (tagMatch) {
       const tagName = tagMatch[1];
-      
       // Find the range of the tag in the document
       const fullLineText = document.lineAt(node.range.start.line).text;
       const hashIndex = fullLineText.indexOf('#');
@@ -287,14 +283,12 @@ export class DendryValidator {
       }
       return diagnostics; // Tag choices don't have scene references
     }
-    
+
     // Check for scene references
     const cleaned = choiceContent.replace(/\[\?.*?\?\]/g, ''); // ignore inline dendry brackets
     const match = cleaned.match(/@([a-zA-Z_][a-zA-Z0-9_-]*|[0-9]+)(?::\s*(.+))?/);
-    
     if (match) {
       const sceneId = match[1].trim();
-      
       // Compute precise range for @sceneId on this line
       const fullLineText = document.lineAt(node.range.start.line).text;
       const atIndex = fullLineText.indexOf('@');
@@ -313,14 +307,13 @@ export class DendryValidator {
         this.validateSceneReference(sceneId, node.range, diagnostics);
       }
     }
-    
+
     return diagnostics;
   }
 
   private validateTag(tagName: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
     // Check if any scene in the project has this tag
     let tagFound = false;
-    
     for (const [uri, fileData] of this._allFileData) {
       for (const node of fileData.ast.nodes) {
         if (node.type === 'scene') {
@@ -336,12 +329,12 @@ export class DendryValidator {
       }
       if (tagFound) break;
     }
-    
+
     if (!tagFound) {
       diagnostics.push(
         this.createDiagnostic(
           range,
-          `Tag "#${tagName}" is not defined in any scene`,
+          `Tag "${tagName}" is not defined in any scene`,
           vscode.DiagnosticSeverity.Error
         )
       );
@@ -375,13 +368,12 @@ export class DendryValidator {
     }
   }
 
-  // FIX: for JS blocks, return a range that covers only the JS code (not "{!" / "!}")
   private findRangeForProperty(document: vscode.TextDocument, nodeRange: vscode.Range, key: string): vscode.Range {
     const nodeText = document.getText(nodeRange);
     const lines = nodeText.split('\n');
-
     let propertyLineIndex = -1;
     let propertyLineText = '';
+
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].trim().startsWith(key + ':')) {
         propertyLineIndex = i;
@@ -389,6 +381,7 @@ export class DendryValidator {
         break;
       }
     }
+
     if (propertyLineIndex === -1) return nodeRange;
 
     const valueStartIndex = propertyLineText.indexOf(':') + 1;
@@ -465,26 +458,25 @@ export class DendryValidator {
   private validateJavaScript(code: string, range: vscode.Range): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     const wrappedCode = `var Q, S, V, P;\n${code}`;
-    
+
     try {
       const ast = esprima.parseScript(wrappedCode, { loc: true, tolerant: false });
       // Additional checks for common errors
       this.checkJavaScriptAst(ast, code, range, diagnostics);
       this.checkUndefinedIdentifiers(code, range, diagnostics);
-
     } catch (error: any) {
       const errLineNumber: number = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
       const errColumn: number = typeof error?.column === 'number' ? error.column : 0;
       const lineOffset = Math.max(0, errLineNumber - 2);
       const colBase = lineOffset === 0 ? range.start.character : 0;
-      
+
       const errRange = new vscode.Range(
         range.start.line + lineOffset,
         colBase + errColumn,
         range.start.line + lineOffset,
         colBase + errColumn + 1
       );
-      
+
       diagnostics.push(
         this.createDiagnostic(
           errRange,
@@ -493,14 +485,14 @@ export class DendryValidator {
         )
       );
     }
-    
+
     return diagnostics;
   }
 
   private checkJavaScriptAst(ast: any, code: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
     const walk = (node: any) => {
       if (!node || typeof node !== 'object') return;
-      
+
       // Check for assignment in if condition (common mistake)
       if (node.type === 'IfStatement' && node.test?.type === 'AssignmentExpression') {
         const loc = node.test.loc;
@@ -511,6 +503,7 @@ export class DendryValidator {
             range.start.line + loc.end.line - 2,
             (loc.end.line === 2 ? range.start.character : 0) + loc.end.column
           );
+
           diagnostics.push(
             this.createDiagnostic(
               errRange,
@@ -520,7 +513,7 @@ export class DendryValidator {
           );
         }
       }
-      
+
       // Recursively walk the AST
       for (const key in node) {
         if (key === 'loc' || key === 'range') continue;
@@ -532,7 +525,7 @@ export class DendryValidator {
         }
       }
     };
-    
+
     walk(ast);
   }
 
@@ -540,7 +533,7 @@ export class DendryValidator {
     try {
       const ast = esprima.parseScript(`var Q, S, V, P;\n${code}`, { loc: true, tolerant: false });
       
-      const definedVars = new Set(['Q', 'S', 'V', 'P', 'console', 'Math', 'Date', 'JSON', 'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'null', 'true', 'false', 'if', 'else', 'for', 'while', 'return', 'function']);
+      const definedVars = new Set(['Q', 'S', 'V', 'P', 'console', 'Math', 'Date', 'JSON', 'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'null', 'true', 'false', 'Object', 'Array', 'String', 'Number', 'Boolean']);
       const declaredInCode = new Set<string>();
       
       const collectDeclarations = (node: any) => {
@@ -567,7 +560,7 @@ export class DendryValidator {
       collectDeclarations(ast);
       declaredInCode.forEach(v => definedVars.add(v));
       
-      const checkIdentifiers = (node: any) => {
+      const checkIdentifiers = (node: any, parent: any = null) => {
         if (!node || typeof node !== 'object') return;
         
         if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
@@ -581,7 +574,6 @@ export class DendryValidator {
             );
             
             // Check if this is actually a reference (not a property name)
-            const parent = (node as any)._parent;
             const isPropertyName = parent && (
               (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
               (parent.type === 'Property' && parent.key === node && !parent.computed)
@@ -599,16 +591,14 @@ export class DendryValidator {
           }
         }
         
-        // Set parent reference for context
+        // Recursively check children
         for (const key in node) {
-          if (key === 'loc' || key === 'range' || key === '_parent') continue;
+          if (key === 'loc' || key === 'range') continue;
           const child = node[key];
           if (Array.isArray(child)) {
-            child.forEach(c => { if (c && typeof c === 'object') c._parent = node; });
-            child.forEach(checkIdentifiers);
+            child.forEach(c => checkIdentifiers(c, node));
           } else if (child && typeof child === 'object') {
-            child._parent = node;
-            checkIdentifiers(child);
+            checkIdentifiers(child, node);
           }
         }
       };
@@ -618,7 +608,6 @@ export class DendryValidator {
       // Parsing already failed, errors already reported
     }
   }
-
 
   private validateSceneReference(sceneId: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
     if (sceneId.includes('{') || sceneId.includes('$')) return; // dynamic references ignored for now
@@ -696,7 +685,6 @@ export class DendryValidator {
       );
     }
   }
-
 
   private createDiagnostic(range: vscode.Range, message: string, severity: vscode.DiagnosticSeverity): vscode.Diagnostic {
     const d = new vscode.Diagnostic(range, message, severity);

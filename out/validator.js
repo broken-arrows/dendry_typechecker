@@ -295,7 +295,6 @@ class DendryValidator {
             }
         }
     }
-    // FIX: for JS blocks, return a range that covers only the JS code (not "{!" / "!}")
     findRangeForProperty(document, nodeRange, key) {
         const nodeText = document.getText(nodeRange);
         const lines = nodeText.split('\n');
@@ -408,7 +407,7 @@ class DendryValidator {
     checkUndefinedIdentifiers(code, range, diagnostics) {
         try {
             const ast = esprima.parseScript(`var Q, S, V, P;\n${code}`, { loc: true, tolerant: false });
-            const definedVars = new Set(['Q', 'S', 'V', 'P', 'console', 'Math', 'Date', 'JSON', 'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'null', 'true', 'false', 'if', 'else', 'for', 'while', 'return', 'function']);
+            const definedVars = new Set(['Q', 'S', 'V', 'P', 'console', 'Math', 'Date', 'JSON', 'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'null', 'true', 'false', 'Object', 'Array', 'String', 'Number', 'Boolean']);
             const declaredInCode = new Set();
             const collectDeclarations = (node) => {
                 if (!node || typeof node !== 'object')
@@ -433,7 +432,7 @@ class DendryValidator {
             };
             collectDeclarations(ast);
             declaredInCode.forEach(v => definedVars.add(v));
-            const checkIdentifiers = (node) => {
+            const checkIdentifiers = (node, parent = null) => {
                 if (!node || typeof node !== 'object')
                     return;
                 if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
@@ -441,7 +440,6 @@ class DendryValidator {
                     if (loc) {
                         const errRange = new vscode.Range(range.start.line + loc.start.line - 2, (loc.start.line === 2 ? range.start.character : 0) + loc.start.column, range.start.line + loc.end.line - 2, (loc.end.line === 2 ? range.start.character : 0) + loc.end.column);
                         // Check if this is actually a reference (not a property name)
-                        const parent = node._parent;
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
                         if (!isPropertyName) {
@@ -449,19 +447,16 @@ class DendryValidator {
                         }
                     }
                 }
-                // Set parent reference for context
+                // Recursively check children
                 for (const key in node) {
-                    if (key === 'loc' || key === 'range' || key === '_parent')
+                    if (key === 'loc' || key === 'range')
                         continue;
                     const child = node[key];
                     if (Array.isArray(child)) {
-                        child.forEach(c => { if (c && typeof c === 'object')
-                            c._parent = node; });
-                        child.forEach(checkIdentifiers);
+                        child.forEach(c => checkIdentifiers(c, node));
                     }
                     else if (child && typeof child === 'object') {
-                        child._parent = node;
-                        checkIdentifiers(child);
+                        checkIdentifiers(child, node);
                     }
                 }
             };
