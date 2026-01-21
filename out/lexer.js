@@ -1,44 +1,84 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DendryLexer = exports.allTokens = exports.Comment = exports.JsCode = exports.JsBlockEnd = exports.JsBlockStart = exports.FreeText = exports.Identifier = exports.WhiteSpace = exports.NewLine = exports.Colon = exports.TripleDash = exports.DividerMarker = exports.ChoiceMarker = exports.SceneMarker = void 0;
+exports.allTokens = exports.DendryLexer = exports.Comment = exports.FreeText = exports.TagMarker = exports.Identifier = exports.WhiteSpace = exports.NewLine = exports.Colon = exports.TripleDash = exports.DividerMarker = exports.ChoiceMarker = exports.SceneMarker = exports.JsCode = exports.JsBlockEnd = exports.JsBlockStart = void 0;
 const chevrotain_1 = require("chevrotain");
 // ----------------- T O K E N S -----------------
+// 1) Define the tokens for the JS Block FIRST so they can be referenced in the mode switch
+exports.JsBlockStart = (0, chevrotain_1.createToken)({
+    name: 'JsBlockStart',
+    pattern: /\{!/,
+    push_mode: 'js_mode' // Enter code mode
+});
+exports.JsBlockEnd = (0, chevrotain_1.createToken)({
+    name: 'JsBlockEnd',
+    pattern: /!\}/,
+    pop_mode: true // Exit code mode
+});
+// Match anything (including newlines) until we see !}
+exports.JsCode = (0, chevrotain_1.createToken)({
+    name: 'JsCode',
+    pattern: /[\s\S]+?(?=!\})/,
+    line_breaks: true
+});
 // --- Structural Tokens ---
 exports.SceneMarker = (0, chevrotain_1.createToken)({ name: 'SceneMarker', pattern: /@/ });
 exports.ChoiceMarker = (0, chevrotain_1.createToken)({ name: 'ChoiceMarker', pattern: /-/ });
 exports.DividerMarker = (0, chevrotain_1.createToken)({ name: 'DividerMarker', pattern: /=/ });
 exports.TripleDash = (0, chevrotain_1.createToken)({ name: 'TripleDash', pattern: /---/ });
 exports.Colon = (0, chevrotain_1.createToken)({ name: 'Colon', pattern: /:/ });
-exports.NewLine = (0, chevrotain_1.createToken)({ name: 'NewLine', pattern: /\n|\r\n/ });
+exports.NewLine = (0, chevrotain_1.createToken)({ name: 'NewLine', pattern: /\r\n|\n/ });
 exports.WhiteSpace = (0, chevrotain_1.createToken)({
     name: 'WhiteSpace',
-    pattern: /[ \t]+/, // Corrected: escaped space and tab
+    pattern: /[ \t]+/,
     group: chevrotain_1.Lexer.SKIPPED
 });
 // --- Content Tokens ---
 exports.Identifier = (0, chevrotain_1.createToken)({
     name: 'Identifier',
-    pattern: /[a-zA-Z_][a-zA-Z0-9_-]*/
+    pattern: /[a-zA-Z0-9_][a-zA-Z0-9_-]*/
 });
+exports.TagMarker = (0, chevrotain_1.createToken)({
+    name: 'TagMarker',
+    pattern: /#[a-zA-Z_][a-zA-Z0-9_-]*/
+});
+// Keep excluding @, -, =, :, newline so those become structural tokens.
 exports.FreeText = (0, chevrotain_1.createToken)({
     name: 'FreeText',
-    pattern: /[^@\-=\n\r:]+/ // Corrected: escaped hyphen and other special characters
+    pattern: /[^@\-=#\n\r:]+(?:[ \t]+[^@\-=#\n\r:]+)*/ // allow internal spaces, exclude # to avoid conflicting with tags/comments
 });
-// --- Special Value Tokens ---
-exports.JsBlockStart = (0, chevrotain_1.createToken)({ name: 'JsBlockStart', pattern: /\{!/ }); // Corrected: escaped curly brace
-exports.JsBlockEnd = (0, chevrotain_1.createToken)({ name: 'JsBlockEnd', pattern: /!\}/ }); // Corrected: escaped curly brace
-exports.JsCode = (0, chevrotain_1.createToken)({
-    name: 'JsCode',
-    pattern: /.+?(?=!\})/,
-    line_breaks: true
-});
-// --- Comment Token ---
+// Comments start with '#'
 exports.Comment = (0, chevrotain_1.createToken)({
     name: 'Comment',
-    pattern: /#.*/,
+    pattern: /#(?![a-zA-Z_]).*/, // Negative lookahead: don't match if followed by identifier start
     group: chevrotain_1.Lexer.SKIPPED
 });
-// ----------------- L E X E R -----------------
+// ----------------- L E X E R   D E F I N I T I O N -----------------
+const lexerDefinition = {
+    modes: {
+        structural_mode: [
+            exports.WhiteSpace,
+            exports.NewLine,
+            exports.TripleDash,
+            exports.SceneMarker,
+            exports.ChoiceMarker,
+            exports.DividerMarker,
+            exports.Colon,
+            exports.JsBlockStart,
+            exports.TagMarker,
+            exports.Comment,
+            exports.Identifier,
+            exports.FreeText
+        ],
+        js_mode: [
+            exports.JsBlockEnd,
+            exports.JsCode
+        ]
+    },
+    defaultMode: 'structural_mode'
+};
+exports.DendryLexer = new chevrotain_1.Lexer(lexerDefinition, {
+    positionTracking: 'full'
+});
 exports.allTokens = [
     exports.NewLine,
     exports.WhiteSpace,
@@ -50,13 +90,9 @@ exports.allTokens = [
     exports.JsBlockStart,
     exports.JsBlockEnd,
     exports.JsCode,
+    exports.TagMarker,
     exports.Comment,
     exports.Identifier,
-    exports.FreeText // Must be last as it's a catch-all for content
+    exports.FreeText
 ];
-exports.DendryLexer = new chevrotain_1.Lexer(exports.allTokens, {
-    // Full position tracking is needed for the CST Visitor to get complete
-    // location information for each node.
-    positionTracking: "full"
-});
 //# sourceMappingURL=lexer.js.map

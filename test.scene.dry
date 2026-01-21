@@ -1,36 +1,63 @@
 title: Example scene
+set-bg: example_background.png
 new-page: true
 on-arrival: {!
   console.log("Arrived at example scene");
-  asfasf //this should flag an error
-  if (true) { // this should not flag an error
+  asfasf; //this should flag an error (it does not)
+  if (true) { 
     console.log("This is valid JS code");
+  }
+  Q.yes = true;
+  iff () { // this should DEFINITELY flag an error (it does not)
+  }
+  if (Q.yes = 1) { // this should flag an error (it does not)
+    Q.result = "yes";
+  } else if (Q.no == true) {
+    Q.result = "no";
   }
 !}
 
 Where do you want to go?
 
+[? if yes = 1 or no = 1: some extra text ?]
+# this should not flag an error!
+
+
 # back is valid, even if it does not have ": something" after. In that case, the scene title will be displayed
+# however, we get: Parser Error: Expecting: one of these possible Token sequences: 1. [FreeText] 2. [Identifier] 3. [Colon] 4. [NewLine] 5. [TripleDash] 6. [ChoiceMarker] 7. [DividerMarker] 8. [SceneMarker] but found: '-'
+
 - @back
 - @scene_a: Here
 - @scene_b: There
-- @1800: To 1800
-- @1750: Go even further back
-# when it begins with numbers, we never catch them
+- @1800a: To 1800
+- @non_existing_scene: This should raise an error!
+- #tag_example
+- #tag_unexample
+
+# tag_unexample should raise an error, as no scene in the directory has that tag (it does not)
 
 @back
 title: You went back...
 
 and found something new!
 
-@scene_a:
+@scene_a
+title: You are here!
 
 You got here!
 
-@scene_b:
+@scene_b
+title: You are there!
 
 You are over there!
 
-@1800:
-# not even here, the numbers are not properly higlighted
+@1800a
+title: Year 1800
+
 The year is 1800 now!
+
+@tagged_scene_example
+title: tagged Scene
+tags: tag_example
+
+this is a tagged scene!

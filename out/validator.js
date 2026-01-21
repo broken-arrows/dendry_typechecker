@@ -36,145 +36,155 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DendryValidator = void 0;
 const vscode = __importStar(require("vscode"));
 const esprima = __importStar(require("esprima"));
-const esprima_walk_1 = require("esprima-walk");
 class DendryValidator {
     constructor(strictMode = false) {
         this.sceneIds = new Set();
         this.qualityIds = new Set();
         this._allFileData = new Map();
-        // Valid Dendry property types
         this.SCENE_PROPERTIES = new Set([
-            'id', 'title', 'subtitle', 'tags', 'order', 'frequency',
-            'max-visits', 'min-choices', 'max-choices', 'new-page',
-            'signal', 'content', 'on-arrival', 'on-display', 'on-departure',
-            'view-if', 'choose-if', 'priority', 'unavailable-subtitle',
-            'set-jump', 'is-special', 'go-to', 'set-bg', 'is-hand', 'card-image', 'face-image', 'is-deck', 'max-cards', 'is-pinned-card', 'is-card'
+            'id',
+            'title',
+            'subtitle',
+            'tags',
+            'order',
+            'frequency',
+            'max-visits',
+            'min-choices',
+            'max-choices',
+            'new-page',
+            'signal',
+            'content',
+            'on-arrival',
+            'on-display',
+            'on-departure',
+            'view-if',
+            'choose-if',
+            'priority',
+            'unavailable-subtitle',
+            'set-jump',
+            'is-special',
+            'go-to',
+            'set-bg',
+            'is-hand',
+            'card-image',
+            'face-image',
+            'is-deck',
+            'max-cards',
+            'is-pinned-card',
+            'is-card'
         ]);
-        this.QUALITY_PROPERTIES = new Set([
-            'id', 'name', 'initial', 'min', 'max', 'signal'
-        ]);
+        this.QUALITY_PROPERTIES = new Set(['id', 'name', 'initial', 'min', 'max', 'signal']);
         this.CHOICE_PROPERTIES = new Set([
-            'view-if', 'choose-if', 'on-choose', 'go-to', 'priority',
-            'unavailable-subtitle', 'min-choices', 'max-choices'
+            'view-if',
+            'choose-if',
+            'on-choose',
+            'go-to',
+            'priority',
+            'unavailable-subtitle',
+            'min-choices',
+            'max-choices'
         ]);
-        this.JS_GLOBAL_PREFIXES = new Set(['Q', 'S', 'V', 'P']);
         this.strictMode = strictMode;
     }
     validate(ast, document, allFileData) {
         const diagnostics = [];
-        this._allFileData = allFileData; // Store for other methods to access
-        // Clear and rebuild global ID sets from allFileData
+        this._allFileData = allFileData;
+        // rebuild global IDs
         this.sceneIds.clear();
         this.qualityIds.clear();
-        allFileData.forEach(data => {
-            data.localSceneIds.forEach(id => this.sceneIds.add(id.trim()));
-            data.localQualityIds.forEach(id => this.qualityIds.add(id));
+        allFileData.forEach(d => {
+            d.localSceneIds.forEach(id => this.sceneIds.add(id.trim()));
+            d.localQualityIds.forEach(id => this.qualityIds.add(id));
         });
-        // Second pass: validate each node
-        ast.nodes.forEach((node, index) => {
+        for (const node of ast.nodes) {
             diagnostics.push(...this.validateNode(node, document));
-        });
-        // Validate rootScene if present in metadata
+        }
         if (ast.metadata.rootScene) {
-            this.validateSceneReference(ast.metadata.rootScene, new vscode.Range(0, 0, 0, 0), diagnostics); // Use a dummy range for metadata
+            this.validateSceneReference(ast.metadata.rootScene, new vscode.Range(0, 0, 0, 0), diagnostics);
         }
         return diagnostics;
     }
     validateNode(node, document) {
-        const diagnostics = [];
         switch (node.type) {
             case 'scene':
-                diagnostics.push(...this.validateScene(node, document));
-                break;
+                return this.validateScene(node, document);
             case 'quality':
-                diagnostics.push(...this.validateQuality(node, document));
-                break;
+                return this.validateQuality(node, document);
             case 'choice':
-                diagnostics.push(...this.validateChoice(node, document));
-                break;
-            case 'javascript_block':
-                diagnostics.push(...this.validateJavaScript(node.content, node.range));
-                break;
+                return this.validateChoice(node, document);
+            default:
+                return [];
         }
-        return diagnostics;
     }
     validateScene(node, document) {
         const diagnostics = [];
-        // All scenes declared explicitly with @scene <id> must have a title.
         if (node.declarationType === 'explicit' && !node.properties.has('title')) {
             diagnostics.push(this.createDiagnostic(node.range, `An explicit scene must have a "title" property.`, vscode.DiagnosticSeverity.Error));
         }
-        // If an ID is provided, ensure it's not empty
         const id = node.properties.get('id');
         if (id !== undefined && (typeof id !== 'string' || id.trim() === '')) {
-            const propertyValueRange = this.findRangeForProperty(document, node.range, 'id');
-            diagnostics.push(this.createDiagnostic(propertyValueRange, `Scene "id" cannot be empty.`, vscode.DiagnosticSeverity.Error));
+            const r = this.findRangeForProperty(document, node.range, 'id');
+            diagnostics.push(this.createDiagnostic(r, `Scene "id" cannot be empty.`, vscode.DiagnosticSeverity.Error));
         }
-        // Validate property types
         for (const [key, value] of node.properties.entries()) {
-            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
+            const r = this.findRangeForProperty(document, node.range, key);
             if (!this.SCENE_PROPERTIES.has(key)) {
-                diagnostics.push(this.createDiagnostic(propertyValueRange, // Use precise range for this error
-                `Unknown scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                diagnostics.push(this.createDiagnostic(r, `Unknown scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
-            // Type checking for specific properties
-            if (key === 'max-visits' || key === 'min-choices' || key === 'max-choices' ||
-                key === 'frequency' || key === 'order' || key === 'priority' || key === 'max-cards') {
-                this.validateNumber(value, propertyValueRange, key, diagnostics);
+            if (key === 'max-visits' ||
+                key === 'min-choices' ||
+                key === 'max-choices' ||
+                key === 'frequency' ||
+                key === 'order' ||
+                key === 'priority' ||
+                key === 'max-cards') {
+                this.validateNumber(value, r, key, diagnostics);
             }
-            // Validate boolean properties
-            if (key === 'new-page' || key === 'is-special' || key === 'is-hand' || key === 'is-deck' || key === 'is-pinned-card' || key === 'is-card') {
-                this.validateBoolean(value, propertyValueRange, key, diagnostics);
+            if (key === 'new-page' ||
+                key === 'is-special' ||
+                key === 'is-hand' ||
+                key === 'is-deck' ||
+                key === 'is-pinned-card' ||
+                key === 'is-card') {
+                this.validateBoolean(value, r, key, diagnostics);
             }
-            // Validate JavaScript in on-* properties
             if (key.startsWith('on-') || key === 'view-if' || key === 'choose-if') {
-                diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
+                diagnostics.push(...this.validateJavaScript(String(value ?? ''), r));
             }
-            // Validate go-to references
             if (key === 'go-to') {
-                this.validateGoTo(value, propertyValueRange, diagnostics);
+                this.validateGoTo(String(value ?? ''), r, diagnostics);
             }
-            // Validate set-jump references
             if (key === 'set-jump') {
-                this.validateSceneReference(value, propertyValueRange, diagnostics);
+                this.validateSceneReference(String(value ?? ''), r, diagnostics);
             }
         }
-        // Validate scene references within the content itself
-        // Removed _validateSceneContent call as its logic is moved to validateChoice
         return diagnostics;
     }
     validateQuality(node, document) {
         const diagnostics = [];
-        // Check required properties
         if (!node.properties.has('id')) {
             diagnostics.push(this.createDiagnostic(node.range, 'Quality must have an "id" property', vscode.DiagnosticSeverity.Error));
         }
-        // Validate property types
         for (const [key, value] of node.properties.entries()) {
             if (!this.QUALITY_PROPERTIES.has(key)) {
                 diagnostics.push(this.createDiagnostic(node.range, `Unknown quality property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
-            // Type checking for numeric properties
             if (key === 'initial' || key === 'min' || key === 'max') {
-                const propertyValueRange = this.findRangeForProperty(document, node.range, key);
-                this.validateNumber(value, propertyValueRange, key, diagnostics);
+                const r = this.findRangeForProperty(document, node.range, key);
+                this.validateNumber(value, r, key, diagnostics);
             }
         }
-        // Validate min/max constraints
-        const min = node.properties.get('min');
-        const max = node.properties.get('max');
-        const initial = node.properties.get('initial');
-        const numMin = Number(min);
-        const numMax = Number(max);
-        const numInitial = Number(initial);
-        if (!isNaN(numMin) && !isNaN(numMax) && numMin > numMax) {
-            diagnostics.push(this.createDiagnostic(node.range, // This range is still broad, but it's a cross-property check
-            'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error));
+        // Cross-property checks
+        const min = Number(node.properties.get('min'));
+        const max = Number(node.properties.get('max'));
+        const initial = Number(node.properties.get('initial'));
+        if (!isNaN(min) && !isNaN(max) && min > max) {
+            diagnostics.push(this.createDiagnostic(node.range, 'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error));
         }
-        if (!isNaN(numInitial) && !isNaN(numMin) && numInitial < numMin) {
+        if (!isNaN(initial) && !isNaN(min) && initial < min) {
             diagnostics.push(this.createDiagnostic(node.range, 'Quality "initial" value cannot be less than "min" value', vscode.DiagnosticSeverity.Error));
         }
-        if (!isNaN(numInitial) && !isNaN(numMax) && numInitial > numMax) {
+        if (!isNaN(initial) && !isNaN(max) && initial > max) {
             diagnostics.push(this.createDiagnostic(node.range, 'Quality "initial" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error));
         }
         return diagnostics;
@@ -182,68 +192,110 @@ class DendryValidator {
     validateChoice(node, document) {
         const diagnostics = [];
         for (const [key, value] of node.properties.entries()) {
+            const r = this.findRangeForProperty(document, node.range, key);
             if (!this.CHOICE_PROPERTIES.has(key)) {
                 diagnostics.push(this.createDiagnostic(node.range, `Unknown choice property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
-            const propertyValueRange = this.findRangeForProperty(document, node.range, key);
             if (key === 'view-if' || key === 'choose-if' || key === 'on-choose') {
-                diagnostics.push(...this.validateJavaScript(value, propertyValueRange));
+                diagnostics.push(...this.validateJavaScript(String(value ?? ''), r));
             }
             if (key === 'go-to') {
-                this.validateGoTo(value, propertyValueRange, diagnostics);
+                this.validateGoTo(String(value ?? ''), r, diagnostics);
             }
             if (key === 'priority' || key === 'min-choices' || key === 'max-choices') {
-                this.validateNumber(value, propertyValueRange, key, diagnostics);
+                this.validateNumber(value, r, key, diagnostics);
             }
         }
-        // Validate scene references within the choice content itself: "- @scenename: Display option name"
-        // The node.content for a choice is typically the text after the leading '-' or '*' and any whitespace.
-        // E.g., for "- @scene_a: Here", node.content would be "@scene_a: Here".
-        const choiceContent = node.content;
-        const regex = /@([a-zA-Z0-9_]+)(?::\s*(.+))?/; // Allow IDs to start with numbers, make display part optional
-        const match = choiceContent.match(regex);
+        let choiceContent = node.content ?? '';
+        // If content is empty, try to extract from the document line
+        if (!choiceContent || choiceContent.trim() === '') {
+            const lineText = document.lineAt(node.range.start.line).text;
+            choiceContent = lineText.substring(lineText.indexOf('-') + 1).trim();
+        }
+        // Check for tag references (- #tag_name)
+        const tagMatch = choiceContent.match(/^#([a-zA-Z_][a-zA-Z0-9_-]*)/);
+        if (tagMatch) {
+            const tagName = tagMatch[1];
+            // Find the range of the tag in the document
+            const fullLineText = document.lineAt(node.range.start.line).text;
+            const hashIndex = fullLineText.indexOf('#');
+            if (hashIndex !== -1) {
+                const tagStart = hashIndex + 1; // Position after #
+                const tagEnd = tagStart + tagName.length;
+                const tagRange = new vscode.Range(node.range.start.line, tagStart, node.range.start.line, tagEnd);
+                this.validateTag(tagName, tagRange, diagnostics);
+            }
+            return diagnostics; // Tag choices don't have scene references
+        }
+        // Check for scene references
+        const cleaned = choiceContent.replace(/\[\?.*?\?\]/g, ''); // ignore inline dendry brackets
+        const match = cleaned.match(/@([a-zA-Z_][a-zA-Z0-9_-]*|[0-9]+)(?::\s*(.+))?/);
         if (match) {
             const sceneId = match[1].trim();
-            // The range of the choice node starts *before* the content.
-            // node.range.start.character is the column of the '-' or '*'.
-            // We need to find the column where the '@' starts within the *line*.
+            // Compute precise range for @sceneId on this line
             const fullLineText = document.lineAt(node.range.start.line).text;
-            const contentStartCol = fullLineText.indexOf(choiceContent, node.range.start.character);
-            if (contentStartCol !== -1) {
-                const atSymbolIndex = contentStartCol + choiceContent.indexOf('@');
-                const sceneIdStartCol = atSymbolIndex + 1; // +1 to skip '@'
-                const sceneIdEndCol = sceneIdStartCol + sceneId.length;
-                const sceneIdRange = new vscode.Range(node.range.start.line, sceneIdStartCol, node.range.start.line, sceneIdEndCol);
+            const atIndex = fullLineText.indexOf('@');
+            if (atIndex !== -1) {
+                const start = atIndex + 1; // Position after @
+                const end = start + sceneId.length;
+                const sceneIdRange = new vscode.Range(node.range.start.line, start, node.range.start.line, end);
                 this.validateSceneReference(sceneId, sceneIdRange, diagnostics);
+            }
+            else {
+                // Fallback to node range if we can't find the @ symbol
+                this.validateSceneReference(sceneId, node.range, diagnostics);
             }
         }
         return diagnostics;
     }
+    validateTag(tagName, range, diagnostics) {
+        // Check if any scene in the project has this tag
+        let tagFound = false;
+        for (const [uri, fileData] of this._allFileData) {
+            for (const node of fileData.ast.nodes) {
+                if (node.type === 'scene') {
+                    const tags = node.properties.get('tags');
+                    if (tags) {
+                        const tagList = String(tags).split(/[,\s]+/).map(t => t.trim()).filter(t => t);
+                        if (tagList.includes(tagName)) {
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (tagFound)
+                break;
+        }
+        if (!tagFound) {
+            diagnostics.push(this.createDiagnostic(range, `Tag "#${tagName}" is not defined in any scene`, vscode.DiagnosticSeverity.Error));
+        }
+    }
     validateGoTo(value, range, diagnostics) {
         const statements = value.split(';');
-        for (const statement of statements) {
-            const trimmedStatement = statement.trim();
-            if (!trimmedStatement)
+        for (const st of statements) {
+            const trimmed = st.trim();
+            if (!trimmed)
                 continue;
-            const ifIndex = trimmedStatement.indexOf(' if ');
-            let sceneId;
+            const ifIndex = trimmed.indexOf(' if ');
+            let sceneId = '';
             let condition = null;
             if (ifIndex !== -1) {
-                sceneId = trimmedStatement.substring(0, ifIndex).trim();
-                condition = trimmedStatement.substring(ifIndex + 4).trim();
+                sceneId = trimmed.substring(0, ifIndex).trim();
+                condition = trimmed.substring(ifIndex + 4).trim();
             }
             else {
-                sceneId = trimmedStatement.trim();
+                sceneId = trimmed;
             }
             if (sceneId && sceneId !== 'jumpScene') {
-                this.validateSceneReference(sceneId, range, diagnostics); // Use property range for now
+                this.validateSceneReference(sceneId, range, diagnostics);
             }
             if (condition) {
-                // Use property range for now, a more advanced impl would find the range of the condition.
                 diagnostics.push(...this.validateJavaScript(condition, range));
             }
         }
     }
+    // FIX: for JS blocks, return a range that covers only the JS code (not "{!" / "!}")
     findRangeForProperty(document, nodeRange, key) {
         const nodeText = document.getText(nodeRange);
         const lines = nodeText.split('\n');
@@ -256,33 +308,45 @@ class DendryValidator {
                 break;
             }
         }
-        if (propertyLineIndex === -1) {
-            return nodeRange; // Fallback
-        }
+        if (propertyLineIndex === -1)
+            return nodeRange;
         const valueStartIndex = propertyLineText.indexOf(':') + 1;
         const valueText = propertyLineText.substring(valueStartIndex);
+        // JS block case
         if (valueText.trim().startsWith('{!')) {
-            const startLine = nodeRange.start.line + propertyLineIndex;
-            const startCol = valueStartIndex + valueText.indexOf('{!');
-            let endLine = startLine;
-            let endCol = startCol + 2;
+            const propertyAbsLine = nodeRange.start.line + propertyLineIndex;
+            const openRel = valueText.indexOf('{!');
+            // JS starts either after "{!" on same line, or at next line column 0
+            const afterOpen = valueText.substring(openRel + 2);
+            let startLine;
+            let startCol;
+            if (afterOpen.trim().length > 0) {
+                startLine = propertyAbsLine;
+                startCol = nodeRange.start.character + valueStartIndex + openRel + 2;
+            }
+            else {
+                startLine = propertyAbsLine + 1;
+                startCol = 0;
+            }
+            // Find closing "!}"
             for (let i = propertyLineIndex; i < lines.length; i++) {
-                const currentLineText = lines[i];
-                const closingIndex = currentLineText.indexOf('!}');
+                const closingIndex = lines[i].indexOf('!}');
                 if (closingIndex !== -1) {
-                    endLine = nodeRange.start.line + i;
-                    endCol = closingIndex + 2;
+                    const endLine = nodeRange.start.line + i;
+                    const endCol = (i === propertyLineIndex ? nodeRange.start.character : 0) + closingIndex;
                     return new vscode.Range(startLine, startCol, endLine, endCol);
                 }
             }
-            return new vscode.Range(startLine, startCol, startLine, startCol + 2);
+            // fallback: highlight at least "{!"
+            const openAbsCol = nodeRange.start.character + valueStartIndex + openRel;
+            return new vscode.Range(propertyAbsLine, openAbsCol, propertyAbsLine, openAbsCol + 2);
         }
-        else {
-            const line = nodeRange.start.line + propertyLineIndex;
-            const startCol = valueStartIndex + (valueText.length - valueText.trimLeft().length);
-            const endCol = startCol + valueText.trim().length;
-            return new vscode.Range(line, startCol, line, endCol);
-        }
+        // Normal scalar value on same line
+        const line = nodeRange.start.line + propertyLineIndex;
+        const leftTrim = valueText.length - valueText.trimStart().length;
+        const startCol = nodeRange.start.character + valueStartIndex + leftTrim;
+        const endCol = startCol + valueText.trim().length;
+        return new vscode.Range(line, startCol, line, endCol);
     }
     validateNumber(value, range, propertyName, diagnostics) {
         if (isNaN(Number(value))) {
@@ -290,7 +354,8 @@ class DendryValidator {
         }
     }
     validateBoolean(value, range, propertyName, diagnostics) {
-        if (typeof value !== 'string' || (value.toLowerCase() !== 'true' && value.toLowerCase() !== 'false')) {
+        if (typeof value !== 'string' ||
+            (value.toLowerCase() !== 'true' && value.toLowerCase() !== 'false')) {
             diagnostics.push(this.createDiagnostic(range, `Property "${propertyName}" must be "true" or "false", got: "${value}"`, vscode.DiagnosticSeverity.Error));
         }
     }
@@ -298,107 +363,165 @@ class DendryValidator {
         const diagnostics = [];
         const wrappedCode = `var Q, S, V, P;\n${code}`;
         try {
-            const ast = esprima.parseScript(wrappedCode, { loc: true });
-            if (ast.errors && ast.errors.length > 0) {
-                for (const err of ast.errors) {
-                    const lineOffset = err.lineNumber ? err.lineNumber - 1 : 0;
-                    const col = err.column || 0;
-                    const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + 1);
-                    diagnostics.push(this.createDiagnostic(errRange, `JavaScript Syntax Error: ${err.description}`, vscode.DiagnosticSeverity.Error));
-                }
-            }
-            (0, esprima_walk_1.walk)(ast, (node) => {
-                if (node.type === 'MemberExpression' && node.object.type === 'Identifier' && (node.object.name === 'Q' || node.object.name === 'S')) {
-                    const isQuality = node.object.name === 'Q';
-                    let propName;
-                    if (node.property.type === 'Identifier') {
-                        propName = node.property.name;
-                    }
-                    else if (node.property.type === 'Literal' && typeof node.property.value === 'string') {
-                        propName = node.property.value;
-                    }
-                    if (propName) {
-                        const idSet = isQuality ? this.qualityIds : this.sceneIds;
-                        if (!idSet.has(propName)) {
-                            const lineOffset = node.loc ? node.loc.start.line - 1 : 0;
-                            const col = node.loc ? node.loc.start.column : 0;
-                            const endCol = node.loc ? node.loc.end.column : col + propName.length;
-                            const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, endCol);
-                            diagnostics.push(this.createDiagnostic(errRange, `Reference to undefined ${isQuality ? 'quality' : 'scene'}: "${propName}"`, vscode.DiagnosticSeverity.Warning));
-                        }
-                    }
-                }
-            });
+            const ast = esprima.parseScript(wrappedCode, { loc: true, tolerant: false });
+            // Additional checks for common errors
+            this.checkJavaScriptAst(ast, code, range, diagnostics);
+            this.checkUndefinedIdentifiers(code, range, diagnostics);
         }
         catch (error) {
-            if (error instanceof Error && 'lineNumber' in error && 'column' in error) {
-                const lineOffset = error.lineNumber - 1;
-                const col = error.column;
-                const errRange = new vscode.Range(range.start.line + lineOffset, col, range.start.line + lineOffset, col + 1);
-                diagnostics.push(this.createDiagnostic(errRange, `JavaScript Syntax Error: ${error.message.replace(/Line \d+: /, '')}`, vscode.DiagnosticSeverity.Error));
-            }
-            else {
-                diagnostics.push(this.createDiagnostic(range, `Invalid JavaScript: ${error instanceof Error ? error.message : String(error)}`, vscode.DiagnosticSeverity.Error));
-            }
+            const errLineNumber = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
+            const errColumn = typeof error?.column === 'number' ? error.column : 0;
+            const lineOffset = Math.max(0, errLineNumber - 2);
+            const colBase = lineOffset === 0 ? range.start.character : 0;
+            const errRange = new vscode.Range(range.start.line + lineOffset, colBase + errColumn, range.start.line + lineOffset, colBase + errColumn + 1);
+            diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
         }
         return diagnostics;
     }
-    validateSceneReference(sceneId, range, diagnostics) {
-        if (sceneId.includes('{') || sceneId.includes('$')) {
-            // Still ignore dynamic references for now, as the prompt didn't specify how to validate them.
-            return;
+    checkJavaScriptAst(ast, code, range, diagnostics) {
+        const walk = (node) => {
+            if (!node || typeof node !== 'object')
+                return;
+            // Check for assignment in if condition (common mistake)
+            if (node.type === 'IfStatement' && node.test?.type === 'AssignmentExpression') {
+                const loc = node.test.loc;
+                if (loc) {
+                    const errRange = new vscode.Range(range.start.line + loc.start.line - 2, (loc.start.line === 2 ? range.start.character : 0) + loc.start.column, range.start.line + loc.end.line - 2, (loc.end.line === 2 ? range.start.character : 0) + loc.end.column);
+                    diagnostics.push(this.createDiagnostic(errRange, `Possible mistake: assignment (=) in condition, did you mean comparison (==)?`, vscode.DiagnosticSeverity.Warning));
+                }
+            }
+            // Recursively walk the AST
+            for (const key in node) {
+                if (key === 'loc' || key === 'range')
+                    continue;
+                const child = node[key];
+                if (Array.isArray(child)) {
+                    child.forEach(walk);
+                }
+                else if (child && typeof child === 'object') {
+                    walk(child);
+                }
+            }
+        };
+        walk(ast);
+    }
+    checkUndefinedIdentifiers(code, range, diagnostics) {
+        try {
+            const ast = esprima.parseScript(`var Q, S, V, P;\n${code}`, { loc: true, tolerant: false });
+            const definedVars = new Set(['Q', 'S', 'V', 'P', 'console', 'Math', 'Date', 'JSON', 'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'undefined', 'null', 'true', 'false', 'if', 'else', 'for', 'while', 'return', 'function']);
+            const declaredInCode = new Set();
+            const collectDeclarations = (node) => {
+                if (!node || typeof node !== 'object')
+                    return;
+                if (node.type === 'VariableDeclarator' && node.id?.name) {
+                    declaredInCode.add(node.id.name);
+                }
+                if (node.type === 'FunctionDeclaration' && node.id?.name) {
+                    declaredInCode.add(node.id.name);
+                }
+                for (const key in node) {
+                    if (key === 'loc' || key === 'range')
+                        continue;
+                    const child = node[key];
+                    if (Array.isArray(child)) {
+                        child.forEach(collectDeclarations);
+                    }
+                    else if (child && typeof child === 'object') {
+                        collectDeclarations(child);
+                    }
+                }
+            };
+            collectDeclarations(ast);
+            declaredInCode.forEach(v => definedVars.add(v));
+            const checkIdentifiers = (node) => {
+                if (!node || typeof node !== 'object')
+                    return;
+                if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
+                    const loc = node.loc;
+                    if (loc) {
+                        const errRange = new vscode.Range(range.start.line + loc.start.line - 2, (loc.start.line === 2 ? range.start.character : 0) + loc.start.column, range.start.line + loc.end.line - 2, (loc.end.line === 2 ? range.start.character : 0) + loc.end.column);
+                        // Check if this is actually a reference (not a property name)
+                        const parent = node._parent;
+                        const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
+                            (parent.type === 'Property' && parent.key === node && !parent.computed));
+                        if (!isPropertyName) {
+                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${node.name}"`, vscode.DiagnosticSeverity.Warning));
+                        }
+                    }
+                }
+                // Set parent reference for context
+                for (const key in node) {
+                    if (key === 'loc' || key === 'range' || key === '_parent')
+                        continue;
+                    const child = node[key];
+                    if (Array.isArray(child)) {
+                        child.forEach(c => { if (c && typeof c === 'object')
+                            c._parent = node; });
+                        child.forEach(checkIdentifiers);
+                    }
+                    else if (child && typeof child === 'object') {
+                        child._parent = node;
+                        checkIdentifiers(child);
+                    }
+                }
+            };
+            checkIdentifiers(ast);
         }
-        // Case 1: Simple sceneId (local or global) - no dots
+        catch (error) {
+            // Parsing already failed, errors already reported
+        }
+    }
+    validateSceneReference(sceneId, range, diagnostics) {
+        if (sceneId.includes('{') || sceneId.includes('$'))
+            return; // dynamic references ignored for now
+        // Simple local/global id
         if (!sceneId.includes('.')) {
             if (!this.sceneIds.has(sceneId)) {
                 diagnostics.push(this.createDiagnostic(range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Error));
             }
             return;
         }
-        // Case 2: Dotted sceneId (e.g., "filePrefix.sceneId" or "filePrefix.scene.dry")
+        // Dotted references: file.scene OR file.nestedSceneId
         const parts = sceneId.split('.');
-        if (parts.length === 2) {
-            const filePrefix = parts[0]; // e.g., "scenename" from "scenename.anotherscenename"
-            const secondPart = parts[1]; // e.g., "anotherscenename" or "scene"
-            // Check for "scenename.scene" which refers to scenename.scene.dry (the file itself)
-            if (secondPart === 'scene') {
-                const targetFileName = `${filePrefix}.scene.dry`;
-                const fileFound = Array.from(this._allFileData.keys()).some(uri => {
-                    const uriFileName = uri.fsPath.split('/').pop()?.split('\\').pop(); // Get filename.ext
-                    return uriFileName === targetFileName;
-                });
-                if (!fileFound) {
-                    diagnostics.push(this.createDiagnostic(range, `Reference to non-existent file: "${targetFileName}"`, vscode.DiagnosticSeverity.Error));
-                }
-                return;
-            }
-            // Check for "scenename.anotherscenename" (nested scene in another file)
-            let targetFileUri;
-            for (const uri of this._allFileData.keys()) {
-                const fileName = uri.fsPath.split('/').pop()?.split('\\').pop(); // Get filename.ext
-                if (fileName === `${filePrefix}.scene.dry`) {
-                    targetFileUri = uri;
-                    break;
-                }
-            }
-            if (targetFileUri) {
-                const fileDataEntry = this._allFileData.get(targetFileUri);
-                if (fileDataEntry && !fileDataEntry.localSceneIds.has(secondPart)) {
-                    diagnostics.push(this.createDiagnostic(range, `Scene "${secondPart}" not found in file "${filePrefix}.scene.dry"`, vscode.DiagnosticSeverity.Error));
-                }
-            }
-            else {
-                diagnostics.push(this.createDiagnostic(range, `File "${filePrefix}.scene.dry" not found for reference "${sceneId}"`, vscode.DiagnosticSeverity.Error));
+        if (parts.length !== 2) {
+            diagnostics.push(this.createDiagnostic(range, `Invalid scene reference format: "${sceneId}". Expected "sceneId", "file.scene", or "file.nestedSceneId".`, vscode.DiagnosticSeverity.Error));
+            return;
+        }
+        const filePrefix = parts[0];
+        const second = parts[1];
+        if (second === 'scene') {
+            const targetFileName = `${filePrefix}.scene.dry`;
+            const fileFound = Array.from(this._allFileData.keys()).some(uri => {
+                const fileName = uri.fsPath.split('/').pop()?.split('\\').pop();
+                return fileName === targetFileName;
+            });
+            if (!fileFound) {
+                diagnostics.push(this.createDiagnostic(range, `Reference to non-existent file: "${targetFileName}"`, vscode.DiagnosticSeverity.Error));
             }
             return;
         }
-        // If we reach here, it's an invalid dotted reference format (e.g., too many dots)
-        diagnostics.push(this.createDiagnostic(range, `Invalid scene reference format: "${sceneId}". Expected "sceneId", "file.scene", or "file.nestedSceneId".`, vscode.DiagnosticSeverity.Error));
+        // Look for file.sceneId pattern
+        let targetFileUri;
+        for (const uri of this._allFileData.keys()) {
+            const fileName = uri.fsPath.split('/').pop()?.split('\\').pop();
+            if (fileName === `${filePrefix}.scene.dry`) {
+                targetFileUri = uri;
+                break;
+            }
+        }
+        if (!targetFileUri) {
+            diagnostics.push(this.createDiagnostic(range, `File "${filePrefix}.scene.dry" not found for reference "${sceneId}"`, vscode.DiagnosticSeverity.Error));
+            return;
+        }
+        const entry = this._allFileData.get(targetFileUri);
+        if (entry && !entry.localSceneIds.has(second)) {
+            diagnostics.push(this.createDiagnostic(range, `Scene "${second}" not found in file "${filePrefix}.scene.dry"`, vscode.DiagnosticSeverity.Error));
+        }
     }
     createDiagnostic(range, message, severity) {
-        const diagnostic = new vscode.Diagnostic(range, message, severity);
-        diagnostic.source = 'dendry';
-        return diagnostic;
+        const d = new vscode.Diagnostic(range, message, severity);
+        d.source = 'dendry';
+        return d;
     }
 }
 exports.DendryValidator = DendryValidator;

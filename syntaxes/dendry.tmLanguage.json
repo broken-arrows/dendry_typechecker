@@ -29,17 +29,18 @@
     {
       "include": "#property"
     }
-  ],    "repository": {
-
-      "scene-id-declaration": {
-        "match": "^(@)([a-zA-Z0-9_]+)(?=\\s|$)",
-        "captures": {
-          "1": { "name": "keyword.operator.dendry" },
-          "2": { "name": "entity.name.function.dendry" }
-        }
-      },
-      "js-property": {
-        "name": "meta.property.js.dendry",      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card)):\\s*(\\{!)",
+  ],
+  "repository": {
+    "scene-id-declaration": {
+      "match": "^(@)([a-zA-Z0-9_][a-zA-Z0-9_-]*)(?=\\s|:|$)",
+      "captures": {
+        "1": { "name": "keyword.operator.dendry" },
+        "2": { "name": "entity.name.function.dendry" }
+      }
+    },
+    "js-property": {
+      "name": "meta.property.js.dendry",
+      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|is-special|set-bg|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card)):\\s*(\\{!)",
       "end": "(!\\})",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" },
@@ -68,12 +69,12 @@
       "patterns": [
         {
           "name": "comment.line.number-sign.dendry",
-          "match": "^\\s*#.*$"
+          "match": "^\\s*#(?![a-zA-Z_]).*$"
         }
       ]
     },
     "scene-declaration": {
-      "match": "^(@)(scene|root)\\s+([a-zA-Z0-9_]+)$",
+      "match": "^(@)(scene|root)\\s+([a-zA-Z0-9_][a-zA-Z0-9_-]*)$",
       "captures": {
         "1": { "name": "keyword.operator.dendry" },
         "2": { "name": "keyword.control.dendry" },
@@ -96,13 +97,35 @@
       }
     },
     "choice": {
-      "match": "^\\s*(-|\\*)\\s+(@)?([a-zA-Z0-9_.]+)(?::\\s*(.+))?$",
-      "captures": {
-        "1": { "name": "keyword.operator.dendry" },
-        "2": { "name": "keyword.operator.dendry" },
-        "3": { "name": "entity.name.function.dendry" },
-        "4": { "name": "string.unquoted.dendry" }
-      }
+      "patterns": [
+        {
+          "name": "meta.choice.tag.dendry",
+          "match": "^\\s*(-|\\*)\\s+(#)([a-zA-Z0-9_][a-zA-Z0-9_-]*)\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.dendry" },
+            "2": { "name": "keyword.operator.dendry" },
+            "3": { "name": "entity.name.tag.dendry" }
+          }
+        },
+        {
+          "name": "meta.choice.scene-ref.dendry",
+          "match": "^\\s*(-|\\*)\\s+(@)([a-zA-Z0-9_][a-zA-Z0-9_-]*)(?::\\s*(.+))?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.dendry" },
+            "2": { "name": "keyword.operator.dendry" },
+            "3": { "name": "entity.name.function.dendry" },
+            "4": { "name": "string.unquoted.dendry" }
+          }
+        },
+        {
+          "name": "meta.choice.text.dendry",
+          "match": "^\\s*(-|\\*)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "keyword.operator.dendry" },
+            "2": { "name": "string.unquoted.dendry" }
+          }
+        }
+      ]
     },
     "javascript-inline": {
       "begin": "(?<=:)\\s*(return|if|function|Q\\.|S\\.|V\\.|P\\.)",

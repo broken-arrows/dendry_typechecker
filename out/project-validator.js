@@ -39,8 +39,7 @@ const parser_1 = require("./parser");
 const validator_1 = require("./validator");
 class DendryProjectValidator {
     constructor() {
-        this.validator = new validator_1.DendryValidator(false); // Initialize with strictMode false for now
-        // Caches
+        this.validator = new validator_1.DendryValidator(false);
         this.fileData = new Map();
         this.globalSceneIds = new Set();
         this.globalQualityIds = new Set();
@@ -62,10 +61,11 @@ class DendryProjectValidator {
                 diagnostics.push(new vscode.Diagnostic(range, `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
             });
             if (lexErrors.length > 0 || errors.length > 0) {
-                this.fileData.delete(fileUri); // Remove from cache if parsing failed
+                this.fileData.delete(fileUri);
                 return diagnostics;
             }
             const seenIds = new Set();
+            // First pass: collect explicit scene declarations from properties
             for (const node of ast.nodes) {
                 const id = node.properties.get('id');
                 if (id) {
@@ -81,6 +81,18 @@ class DendryProjectValidator {
                     }
                 }
             }
+            // Second pass: extract scene IDs from @scene markers in the document text
+            // This catches scenes defined as "@sceneid:" in the file
+            const text = document.getText();
+            const sceneMarkerRegex = /@([a-zA-Z_][a-zA-Z0-9_-]*|[0-9]+)(?:\s|:)/g;
+            let match;
+            while ((match = sceneMarkerRegex.exec(text)) !== null) {
+                const sceneId = match[1];
+                if (!seenIds.has(sceneId)) {
+                    localSceneIds.add(sceneId);
+                    seenIds.add(sceneId);
+                }
+            }
             this.fileData.set(fileUri, { ast, localSceneIds, localQualityIds });
         }
         catch (error) {
@@ -88,7 +100,7 @@ class DendryProjectValidator {
             const range = new vscode.Range(0, 0, 0, 1);
             const diagnostic = new vscode.Diagnostic(range, `Error parsing file: ${message}`, vscode.DiagnosticSeverity.Error);
             diagnostics.push(diagnostic);
-            this.fileData.delete(fileUri); // Remove from cache if parsing failed
+            this.fileData.delete(fileUri);
         }
         return diagnostics;
     }
@@ -107,7 +119,6 @@ class DendryProjectValidator {
             filesToParse.push(changedFileUri);
         }
         else {
-            // If no specific file changed, parse all files not yet in cache
             filesToParse = workspaceFiles.filter(uri => !this.fileData.has(uri));
         }
         for (const fileUri of filesToParse) {
@@ -133,7 +144,6 @@ class DendryProjectValidator {
         const globalQualityIdToUri = new Map();
         for (const [fileUri, data] of this.fileData) {
             const addDiagnosticsForDuplicate = (id, existingUri) => {
-                // Add diagnostic for the existing file
                 let existingDiags = finalDiagnostics.get(existingUri) || [];
                 const existingAst = this.fileData.get(existingUri)?.ast;
                 const existingNode = existingAst?.nodes.find(n => n.properties.get('id') === id);
@@ -141,7 +151,6 @@ class DendryProjectValidator {
                     existingDiags.push(new vscode.Diagnostic(existingNode.range, `Duplicate ID "${id}" also found in ${fileUri.fsPath}`, vscode.DiagnosticSeverity.Error));
                     finalDiagnostics.set(existingUri, existingDiags);
                 }
-                // Add diagnostic for the current file
                 let currentDiags = finalDiagnostics.get(fileUri) || [];
                 const currentNode = data.ast.nodes.find(n => n.properties.get('id') === id);
                 if (currentNode) {
@@ -177,13 +186,11 @@ class DendryProjectValidator {
         });
         // 5. Validate all files in cache against updated global IDs
         for (const [fileUri, data] of this.fileData) {
-            // Skip validation if parsing already produced errors for this file
             if (finalDiagnostics.has(fileUri)) {
                 continue;
             }
             let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
             if (!document) {
-                // Should ideally not happen if file is in fileData and still in workspaceFiles, but as a safeguard
                 try {
                     document = await vscode.workspace.openTextDocument(fileUri);
                 }
