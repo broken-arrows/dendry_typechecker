@@ -94,8 +94,10 @@ class DendryValidator {
         this.qualityIds.clear();
         allFileData.forEach(d => {
             d.localSceneIds.forEach(id => this.sceneIds.add(id.trim()));
-            d.localQualityIds.forEach(id => this.qualityIds.add(id));
+            d.localQualityIds.forEach(id => this.qualityIds.add(id.trim()));
         });
+        // Validate metadata (root-level properties)
+        diagnostics.push(...this.validateMetadata(ast.metadata, document));
         for (const node of ast.nodes) {
             diagnostics.push(...this.validateNode(node, document));
         }
@@ -118,13 +120,39 @@ class DendryValidator {
     }
     validateScene(node, document) {
         const diagnostics = [];
+        // Check for standalone "@" (no scene ID)
+        const sceneLine = document.lineAt(node.range.start.line).text.trim();
+        if (sceneLine === '@' || sceneLine.match(/^@\s*$/)) {
+            const sceneDeclarationRange = new vscode.Range(node.range.start.line, 0, node.range.start.line, document.lineAt(node.range.start.line).text.length);
+            diagnostics.push(this.createDiagnostic(sceneDeclarationRange, `Scene declaration missing identifier, expected: "@scene_id"`, vscode.DiagnosticSeverity.Error));
+        }
+        // Create a range for just the scene declaration line
+        const sceneDeclarationRange = new vscode.Range(node.range.start.line, 0, node.range.start.line, document.lineAt(node.range.start.line).text.length);
         if (node.declarationType === 'explicit' && !node.properties.has('title')) {
-            diagnostics.push(this.createDiagnostic(node.range, `An explicit scene must have a "title" property.`, vscode.DiagnosticSeverity.Error));
+            diagnostics.push(this.createDiagnostic(sceneDeclarationRange, `Scene missing "title" property.`, vscode.DiagnosticSeverity.Warning));
         }
         const id = node.properties.get('id');
         if (id !== undefined && (typeof id !== 'string' || id.trim() === '')) {
-            const r = this.findRangeForProperty(document, node.range, 'id');
-            diagnostics.push(this.createDiagnostic(r, `Scene "id" cannot be empty.`, vscode.DiagnosticSeverity.Error));
+            diagnostics.push(this.createDiagnostic(sceneDeclarationRange, `Scene "id" cannot be empty.`, vscode.DiagnosticSeverity.Error));
+        }
+        // Check for duplicate properties
+        const propertyLines = new Map();
+        const nodeText = document.getText(node.range);
+        const nodeLines = nodeText.split('\n');
+        let currentLine = node.range.start.line;
+        for (let i = 0; i < nodeLines.length; i++) {
+            const line = nodeLines[i].trim();
+            const match = line.match(/^([\w-]+):/);
+            if (match) {
+                const propKey = match[1];
+                if (propertyLines.has(propKey)) {
+                    const duplicateRange = new vscode.Range(currentLine + i, 0, currentLine + i, nodeLines[i].length);
+                    diagnostics.push(this.createDiagnostic(duplicateRange, `Duplicate property: "${propKey}" (first defined on line ${propertyLines.get(propKey) + 1})`, vscode.DiagnosticSeverity.Warning));
+                }
+                else {
+                    propertyLines.set(propKey, currentLine + i);
+                }
+            }
         }
         for (const [key, value] of node.properties.entries()) {
             const r = this.findRangeForProperty(document, node.range, key);
@@ -228,8 +256,11 @@ class DendryValidator {
             return diagnostics; // Tag choices don't have scene references
         }
         // Check for scene references
+        // Check for scene references
+        // First remove inline dendry conditions and comments
         const cleaned = choiceContent.replace(/\[\?.*?\?\]/g, ''); // ignore inline dendry brackets
-        const match = cleaned.match(/@([a-zA-Z_][a-zA-Z0-9_-]*|[0-9]+)(?::\s*(.+))?/);
+        // Match scene IDs: can start with letter/digit/underscore, continue with word chars or hyphens
+        const match = cleaned.match(/@([\w][\w-]*)(?::\s*(.+))?/);
         if (match) {
             const sceneId = match[1].trim();
             // Compute precise range for @sceneId on this line
@@ -244,6 +275,74 @@ class DendryValidator {
             else {
                 // Fallback to node range if we can't find the @ symbol
                 this.validateSceneReference(sceneId, node.range, diagnostics);
+            }
+        }
+        return diagnostics;
+    }
+    validateMetadata(metadata, document) {
+        const diagnostics = [];
+        const text = document.getText();
+        const lines = text.split(/\r?\n/);
+        // Find where scenes start (stop checking metadata there)
+        let firstSceneLine = lines.length;
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].trim().match(/^@\w/)) {
+                firstSceneLine = i;
+                break;
+            }
+        }
+        // Check for duplicate metadata properties
+        const seenProperties = new Map();
+        for (let i = 0; i < firstSceneLine; i++) {
+            const trimmed = lines[i].trim();
+            const match = trimmed.match(/^([\w-]+):/);
+            if (match && !trimmed.startsWith('@')) {
+                const propKey = match[1];
+                if (seenProperties.has(propKey)) {
+                    const duplicateRange = new vscode.Range(i, 0, i, lines[i].length);
+                    diagnostics.push(this.createDiagnostic(duplicateRange, `Duplicate metadata property: "${propKey}" (first defined on line ${seenProperties.get(propKey) + 1})`, vscode.DiagnosticSeverity.Warning));
+                }
+                else {
+                    seenProperties.set(propKey, i);
+                }
+            }
+        }
+        for (const [key, value] of Object.entries(metadata)) {
+            // Skip internal properties
+            if (key === 'fileName')
+                continue;
+            // Find the line with this property (only in the metadata section)
+            let lineIndex = -1;
+            for (let i = 0; i < firstSceneLine; i++) {
+                const trimmed = lines[i].trim();
+                if (trimmed.startsWith(`${key}:`) && !trimmed.startsWith('@')) {
+                    lineIndex = i;
+                    break;
+                }
+            }
+            if (lineIndex === -1)
+                continue;
+            const line = lines[lineIndex];
+            const colonIndex = line.indexOf(':');
+            const valueStart = colonIndex + 1;
+            const range = new vscode.Range(lineIndex, valueStart, lineIndex, line.length);
+            // Validate boolean properties
+            if (key === 'new-page' || key === 'is-special' || key === 'is-hand' ||
+                key === 'is-deck' || key === 'is-pinned-card' || key === 'is-card') {
+                this.validateBoolean(value, range, key, diagnostics);
+            }
+            // Validate number properties
+            if (key === 'max-visits' || key === 'min-choices' || key === 'max-choices' ||
+                key === 'frequency' || key === 'order' || key === 'priority' || key === 'max-cards') {
+                this.validateNumber(value, range, key, diagnostics);
+            }
+            // Validate JavaScript properties
+            if (key.startsWith('on-') || key === 'view-if' || key === 'choose-if') {
+                diagnostics.push(...this.validateJavaScript(String(value ?? ''), range));
+            }
+            // Validate go-to
+            if (key === 'go-to') {
+                this.validateGoTo(String(value ?? ''), range, diagnostics);
             }
         }
         return diagnostics;
@@ -268,7 +367,7 @@ class DendryValidator {
                 break;
         }
         if (!tagFound) {
-            diagnostics.push(this.createDiagnostic(range, `Tag "#${tagName}" is not defined in any scene`, vscode.DiagnosticSeverity.Error));
+            diagnostics.push(this.createDiagnostic(range, `Tag "${tagName}" is not defined in any scene`, vscode.DiagnosticSeverity.Error));
         }
     }
     validateGoTo(value, range, diagnostics) {

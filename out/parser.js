@@ -203,7 +203,7 @@ class DendryHandParser {
             return { key: '', value: '', endLine: lineNum };
         }
         const key = line.substring(0, colonIndex).trim();
-        const valueStart = line.substring(colonIndex + 1).trim();
+        let valueStart = line.substring(colonIndex + 1).trim();
         // Check for JS block
         if (valueStart.startsWith('{!')) {
             const { value, endLine } = this.parseJsBlock(valueStart, lineNum);

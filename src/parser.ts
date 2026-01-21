@@ -213,7 +213,7 @@ class DendryHandParser {
     }
 
     const key = line.substring(0, colonIndex).trim();
-    const valueStart = line.substring(colonIndex + 1).trim();
+    let valueStart = line.substring(colonIndex + 1).trim();
 
     // Check for JS block
     if (valueStart.startsWith('{!')) {
@@ -285,6 +285,7 @@ export function parseText(
 ): { ast: DendryAST; errors: any[]; lexErrors: any[] } {
   const parser = new DendryHandParser(text, fileName);
   const result = parser.parse();
+  
   
   return {
     ast: result.ast,
