@@ -40,6 +40,7 @@ const project_validator_1 = require("./project-validator");
 let diagnosticCollection;
 let projectValidator;
 let lastDiagnostics = new Map();
+let isValidating = false; // Move to module level
 // Debounce function
 function debounce(func, delay) {
     let timeout;
@@ -63,12 +64,7 @@ function activate(context) {
             debouncedValidateProject(event.document.uri);
         }
     }));
-    // Validate on open
-    context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(document => {
-        if (document.languageId === 'dendry') {
-            debouncedValidateProject(document.uri);
-        }
-    }));
+    // REMOVED onDidOpenTextDocument - this was causing the loop!
     // Re-validate on save
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(document => {
         if (document.languageId === 'dendry') {
@@ -84,23 +80,27 @@ function activate(context) {
     // Clear diagnostics on close
     context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(document => {
         diagnosticCollection.delete(document.uri);
-        lastDiagnostics.delete(document.uri); // Also remove from our cache
+        lastDiagnostics.delete(document.uri);
     }));
 }
 async function validateProject(changedFileUri) {
-    const config = vscode.workspace.getConfiguration('dendry');
-    if (!config.get('validation.enable', true)) {
+    if (isValidating) {
+        console.log('Validation already in progress, skipping...');
         return;
     }
-    const dendryFiles = await vscode.workspace.findFiles('**/*.scene.dry');
+    isValidating = true;
     try {
+        const config = vscode.workspace.getConfiguration('dendry');
+        if (!config.get('validation.enable', true)) {
+            return; // Now properly handled in finally block
+        }
+        const dendryFiles = await vscode.workspace.findFiles('**/*.scene.dry');
         const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
         const urisWithNewDiagnostics = new Set();
         currentDiagnostics.forEach((newDiags, uri) => {
             urisWithNewDiagnostics.add(uri);
             const oldDiags = lastDiagnostics.get(uri) || [];
             // Simple comparison: check if stringified diagnostics are different
-            // A more robust comparison would compare each diagnostic property
             if (JSON.stringify(newDiags) !== JSON.stringify(oldDiags)) {
                 diagnosticCollection.set(uri, newDiags);
                 lastDiagnostics.set(uri, newDiags);
@@ -121,6 +121,9 @@ async function validateProject(changedFileUri) {
     catch (error) {
         console.error('Dendry project validation error:', error);
         vscode.window.showErrorMessage(`Dendry validation failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    finally {
+        isValidating = false; // Always reset the flag
     }
 }
 function deactivate() {
