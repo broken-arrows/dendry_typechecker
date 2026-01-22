@@ -102,7 +102,7 @@ export class DendryProjectValidator {
       }
       
       // Check for reserved scene ID "jumpScene"
-      if (seenIds.has('jumpScene')) {
+      if (seenIds.has('jumpScene') || seenIds.has("backSpecialScene")) {
           const lines = text.split(/\r?\n/);
           for (let i = 0; i < lines.length; i++) {
               const line = lines[i].trim();
@@ -113,6 +113,18 @@ export class DendryProjectValidator {
                       new vscode.Diagnostic(
                           reservedIdRange,
                           `"jumpScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
+                          vscode.DiagnosticSeverity.Error
+                      )
+                  );
+                  break;
+              }
+              const matchBack = line.match(/^@(backSpecialScene)(?:\s|:|$)/);
+              if (matchBack) {
+                  const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
+                  diagnostics.push(
+                      new vscode.Diagnostic(
+                          reservedIdRange,
+                          `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
                           vscode.DiagnosticSeverity.Error
                       )
                   );
@@ -134,6 +146,21 @@ export class DendryProjectValidator {
                       new vscode.Diagnostic(
                           reservedIdRange,
                           `"jumpScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
+                          vscode.DiagnosticSeverity.Error
+                      )
+                  );
+              } else if (id === "backSpecialScene") {
+                  const nodeLines = text.split(/\r?\n/);
+                  const reservedIdRange = new vscode.Range(
+                      node.range.start.line,  
+                      0,
+                      node.range.start.line,
+                      nodeLines[node.range.start.line]?.length || 0
+                  );
+                  diagnostics.push(
+                      new vscode.Diagnostic(
+                          reservedIdRange,
+                          `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
                           vscode.DiagnosticSeverity.Error
                       )
                   );
@@ -303,21 +330,29 @@ export class DendryProjectValidator {
           }
           
           let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
+          let useRaw = false;
           if (!document) {
               try {
-                  document = await vscode.workspace.openTextDocument(fileUri);
+                  const uint8 = await vscode.workspace.fs.readFile(fileUri);
+                  const text = new TextDecoder().decode(uint8);
+                  const lines = text.split(/\r?\n/);
+                  document = {
+                      lineAt: (lineNum: number) => ({ text: lines[lineNum] } as vscode.TextLine),
+                      getText: () => text,
+                      uri: fileUri
+                  } as vscode.TextDocument;
+                  useRaw = true;
               } catch (error) {
                   const message = error instanceof Error ? error.message : String(error);
                   const range = new vscode.Range(0, 0, 0, 1);
-                  finalDiagnostics.set(fileUri, [new vscode.Diagnostic(range, `Error opening file for validation: ${message}`, vscode.DiagnosticSeverity.Error)]);
+                  finalDiagnostics.set(fileUri, [new vscode.Diagnostic(range, `Error reading file for validation: ${message}`, vscode.DiagnosticSeverity.Error)]);
                   continue;
               }
           }
-          
+
           try {
               const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData);
               if (validationDiagnostics.length > 0) {
-                  // Append validation diagnostics to existing ones (like duplicate ID errors)
                   const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
                   finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);
               }

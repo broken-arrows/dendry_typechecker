@@ -17,6 +17,11 @@
     "Linters"
   ],
   "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:dendry",
+    "workspaceContains:**/*.scene.dry",
+    "onStartupFinished"
+  ],
   "contributes": {
     "languages": [
       {
@@ -46,11 +51,6 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable validation"
-        },
-        "dendry.validation.strictMode": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable strict type checking"
         }
       }
     }
@@ -65,7 +65,6 @@
     "@types/esprima-walk": "^0.1.2",
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.80.0",
-    "esprima": "^4.0.1",
     "typescript": "^5.0.0"
   },
   "dependencies": {

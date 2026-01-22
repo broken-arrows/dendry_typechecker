@@ -3,7 +3,36 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
-      "include": "#inline-conditional"
+      "name": "meta.inline-conditional.dendry",
+      "begin": "(\\[\\?)",
+      "end": "(\\?\\])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.conditional.dendry" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.conditional.dendry" }
+      },
+      "patterns": [
+        {
+          "name": "meta.conditional-separator.dendry",
+          "begin": "(\\s*:\\s*)",
+          "end": "(?=\\?\\])",
+          "beginCaptures": {
+            "1": { "name": "keyword.operator.conditional.separator.dendry" }
+          }
+        },
+        {
+          "include": "#dendry-logic"
+        }
+      ]
+    },
+    {
+      "name": "markup.heading.title.dendry",
+      "match": "^\\s*(=+)\\s*(.+)$",
+      "captures": {
+        "1": { "name": "punctuation.definition.heading.dendry" },
+        "2": { "name": "entity.name.section.dendry" }
+      }
     },
     {
       "include": "#scene-id-declaration"
@@ -245,6 +274,16 @@
             "2": { "name": "keyword.operator.dendry" },
             "3": { "name": "entity.name.function.dendry" },
             "4": { "name": "string.unquoted.dendry" }
+          }
+        },
+        {
+          "name": "meta.choice.conditional.dendry",
+          "match": "^\\s*(-|\\*)\\s+(.+?)\\s+(if)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "keyword.operator.dendry" },
+            "2": { "name": "string.unquoted.dendry" },
+            "3": { "name": "keyword.control.dendry" },
+            "4": { "name": "meta.embedded.inline.dendry" }
           }
         },
         {
