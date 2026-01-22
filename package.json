@@ -3,7 +3,7 @@
   "displayName": "Dendry Type Checker",
   "description": "Type checking and validation for Dendry interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"

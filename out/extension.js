@@ -64,7 +64,6 @@ function activate(context) {
             debouncedValidateProject(event.document.uri);
         }
     }));
-    // REMOVED onDidOpenTextDocument - this was causing the loop!
     // Re-validate on save
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(document => {
         if (document.languageId === 'dendry') {

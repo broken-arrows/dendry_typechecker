@@ -38,7 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     
-    // REMOVED onDidOpenTextDocument - this was causing the loop!
     
     // Re-validate on save
     context.subscriptions.push(

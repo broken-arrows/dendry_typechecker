@@ -3,6 +3,9 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
+      "include": "#inline-conditional"
+    },
+    {
       "include": "#scene-id-declaration"
     },
     {
@@ -24,13 +27,140 @@
       "include": "#choice"
     },
     {
-      "include": "#javascript-inline"
+      "include": "#go-to-property"
+    },
+    {
+      "include": "#dendry-logic-property"
     },
     {
       "include": "#property"
     }
   ],
   "repository": {
+    "inline-conditional": {
+      "name": "meta.inline-conditional.dendry",
+      "begin": "(\\[\\?)",
+      "end": "(\\?\\])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.conditional.dendry" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.conditional.dendry" }
+      },
+      "patterns": [
+        {
+          "name": "meta.conditional-separator.dendry",
+          "begin": "(\\s+:\\s+)",
+          "end": "(?=\\?\\])",
+          "beginCaptures": {
+            "1": { "name": "keyword.operator.conditional.separator.dendry" }
+          }
+        },
+        {
+          "include": "#dendry-logic"
+        }
+      ]
+    },
+    "dendry-logic": {
+      "patterns": [
+        {
+          "name": "variable.language.dendry",
+          "match": "\\b(Q|S|V|P)\\."
+        },
+        {
+          "name": "keyword.operator.logical.dendry",
+          "match": "\\b(and|or|not)\\b"
+        },
+        {
+          "name": "keyword.control.dendry",
+          "match": "\\b(if|else|return|function)\\b"
+        },
+        {
+          "name": "constant.language.dendry",
+          "match": "\\b(true|false|null|undefined)\\b"
+        },
+        {
+          "name": "keyword.operator.comparison.dendry",
+          "match": "(===?|!==?|<=?|>=?)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.dendry",
+          "match": "(\\+|\\-|\\*|\\/|%)"
+        },
+        {
+          "name": "keyword.operator.assignment.dendry",
+          "match": "(=|\\+=|\\-=|\\*=|\\/=)"
+        },
+        {
+          "name": "constant.numeric.dendry",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        },
+        {
+          "name": "string.quoted.single.dendry",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.dendry",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.double.dendry",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.dendry",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "variable.other.dendry",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "dendry-logic-property": {
+      "name": "meta.property.dendry-logic.dendry",
+      "begin": "^\\s*(view-if|choose-if|on-arrival|on-display|on-departure|on-choose):\\s+(?!\\{!)",
+      "end": "$",
+      "beginCaptures": {
+        "1": { "name": "variable.parameter.dendry" }
+      },
+      "patterns": [
+        {
+          "include": "#dendry-logic"
+        }
+      ]
+    },
+    "go-to-property": {
+      "name": "meta.property.go-to.dendry",
+      "begin": "^\\s*(go-to|set-jump):\\s+",
+      "end": "$",
+      "beginCaptures": {
+        "1": { "name": "variable.parameter.dendry" }
+      },
+      "patterns": [
+        {
+          "name": "entity.name.function.dendry",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_-]*\\b(?=\\s*(?:;|if|$))"
+        },
+        {
+          "name": "keyword.control.dendry",
+          "match": "\\b(if)\\b"
+        },
+        {
+          "name": "punctuation.separator.dendry",
+          "match": ";"
+        },
+        {
+          "include": "#dendry-logic"
+        }
+      ]
+    },
     "scene-id-declaration": {
       "match": "^(@)([a-zA-Z0-9_][a-zA-Z0-9_-]*)(?=\\s|:|$)",
       "captures": {
@@ -44,10 +174,10 @@
       "end": "(!\\})",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" },
-        "2": { "name": "punctuation.section.embedded.begin.js" }
+        "2": { "name": "punctuation.section.embedded.begin.dendry" }
       },
       "endCaptures": {
-        "1": { "name": "punctuation.section.embedded.end.js" }
+        "1": { "name": "punctuation.section.embedded.end.dendry" }
       },
       "patterns": [
         {
@@ -124,16 +254,6 @@
             "1": { "name": "keyword.operator.dendry" },
             "2": { "name": "string.unquoted.dendry" }
           }
-        }
-      ]
-    },
-    "javascript-inline": {
-      "begin": "(?<=:)\\s*(return|if|function|Q\\.|S\\.|V\\.|P\\.)",
-      "end": "$",
-      "name": "meta.embedded.block.javascript",
-      "patterns": [
-        {
-          "include": "source.js"
         }
       ]
     }

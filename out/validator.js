@@ -183,10 +183,46 @@ class DendryValidator {
                 this.validateGoTo(String(value ?? ''), r, diagnostics);
             }
             if (key === 'set-jump') {
-                this.validateSceneReference(String(value ?? ''), r, diagnostics);
+                this.validateGoTo(String(value ?? ''), r, diagnostics);
             }
         }
+        this.validateSceneContent(node, document, diagnostics);
         return diagnostics;
+    }
+    validateSceneContent(node, document, diagnostics) {
+        // Get all content from the scene (between properties and next scene/end)
+        const startLine = node.range.start.line;
+        const endLine = node.range.end.line;
+        for (let i = startLine; i <= endLine; i++) {
+            const lineText = document.lineAt(i).text;
+            this.validateInlineConditionalsInLine(lineText, i, diagnostics);
+        }
+    }
+    validateInlineConditionalsInLine(lineText, lineNum, diagnostics) {
+        // Match [? condition : text ?] patterns
+        const regex = /\[\?\s*(.*?)\s*:\s*(.*?)\s*\?\]/g;
+        let match;
+        while ((match = regex.exec(lineText)) !== null) {
+            const fullMatch = match[0];
+            const condition = match[1];
+            // match[2] is the text part - we don't validate it
+            if (!condition || condition.trim() === '') {
+                const startCol = match.index;
+                const endCol = startCol + fullMatch.length;
+                const errRange = new vscode.Range(lineNum, startCol, lineNum, endCol);
+                diagnostics.push(this.createDiagnostic(errRange, 'Inline conditional is missing a condition before ":"', vscode.DiagnosticSeverity.Error));
+                continue;
+            }
+            // Validate the condition part as Dendry logic
+            const conditionStartCol = match.index + 2; // After "[?"
+            const conditionMatch = lineText.substring(match.index).match(/\[\?\s*/);
+            const actualConditionStart = match.index + (conditionMatch ? conditionMatch[0].length : 2);
+            const conditionEndCol = actualConditionStart + condition.length;
+            const conditionRange = new vscode.Range(lineNum, actualConditionStart, lineNum, conditionEndCol);
+            // Validate as inline Dendry logic (similar to choose-if, view-if)
+            const conditionDiagnostics = this.validateJavaScript(condition, conditionRange);
+            diagnostics.push(...conditionDiagnostics);
+        }
     }
     validateQuality(node, document) {
         const diagnostics = [];
@@ -392,20 +428,34 @@ class DendryValidator {
             if (!trimmed)
                 continue;
             const ifIndex = trimmed.indexOf(' if ');
-            let sceneId = '';
-            let condition = null;
             if (ifIndex !== -1) {
-                sceneId = trimmed.substring(0, ifIndex).trim();
-                condition = trimmed.substring(ifIndex + 4).trim();
+                // Format: "scene_id if condition"
+                const sceneId = trimmed.substring(0, ifIndex).trim();
+                const condition = trimmed.substring(ifIndex + 4).trim();
+                if (sceneId && sceneId !== 'jumpScene') {
+                    this.validateSceneReference(sceneId, range, diagnostics);
+                }
+                if (condition) {
+                    // Validate condition as Dendry logic (inline, not a JS block)
+                    const conditionDiagnostics = this.validateJavaScript(condition, range);
+                    diagnostics.push(...conditionDiagnostics);
+                }
             }
             else {
-                sceneId = trimmed;
-            }
-            if (sceneId && sceneId !== 'jumpScene') {
-                this.validateSceneReference(sceneId, range, diagnostics);
-            }
-            if (condition) {
-                diagnostics.push(...this.validateJavaScript(condition, range));
+                // Could be:
+                // 1. Just a scene ID: "scene_id"
+                // 2. An assignment/action: "variable = value"
+                // Check if it looks like a scene reference (no operators)
+                const hasOperators = /[=+\-*/<>]/.test(trimmed);
+                if (!hasOperators && trimmed !== 'jumpScene') {
+                    // Treat as scene reference
+                    this.validateSceneReference(trimmed, range, diagnostics);
+                }
+                else if (hasOperators) {
+                    // It's an action/assignment - validate as Dendry logic
+                    const actionDiagnostics = this.validateJavaScript(trimmed, range);
+                    diagnostics.push(...actionDiagnostics);
+                }
             }
         }
     }
@@ -495,7 +545,13 @@ class DendryValidator {
             const condition = postfixIfMatch[2].trim();
             jsCode = `if (${condition}) { ${action}; }`;
         }
-        // Convert Dendry logical operators to JavaScript (before identifier conversion)
+        // Convert Dendry comparison operators to JavaScript
+        // Do this BEFORE logical operators to avoid issues
+        // Replace = with == but not if it's already ==, !=, <=, >=, or ===
+        jsCode = jsCode.replace(/([^=!<>])=([^=])/g, '$1==$2');
+        // Handle edge case at start of string
+        jsCode = jsCode.replace(/^=([^=])/g, '==$1');
+        // Convert Dendry logical operators to JavaScript (after comparison conversion)
         jsCode = jsCode.replace(/\band\b/g, '&&');
         jsCode = jsCode.replace(/\bor\b/g, '||');
         jsCode = jsCode.replace(/\bnot\b/g, '!');
@@ -511,7 +567,7 @@ class DendryValidator {
         ]);
         // Match identifiers that are not after a dot and not keywords
         // Use a more careful regex that won't break things
-        jsCode = jsCode.replace(/(?:^|[^.])([a-zA-Z_]\w*)(?=[^:\w]|$)/g, (fullMatch, identifier, offset) => {
+        jsCode = jsCode.replace(/(?:^|[^.])([a-zA-Z_]\w*)(?=[^\w:]|$)/g, (fullMatch, identifier, offset) => {
             // If this is a keyword, don't convert
             if (jsKeywords.has(identifier)) {
                 return fullMatch;
@@ -539,27 +595,29 @@ class DendryValidator {
             jsCode = this.convertDendryToJavaScript(code);
         }
         const wrappedCode = `var Q, S, V, P;\n${jsCode}`;
-        // Try to check for undefined identifiers FIRST (before syntax errors break everything)
-        if (isJsBlock) {
-            console.log('Checking undefined identifiers first...');
-            this.checkUndefinedIdentifiers(jsCode, range, diagnostics);
-        }
-        // Then check for syntax errors
+        const errorLines = new Set(); // Track lines with parse errors
+        let parseResult = null;
+        let parseSucceeded = false;
         try {
             console.log('Parsing for syntax errors...');
-            const parseResult = esprima.parseScript(wrappedCode, { loc: true, tolerant: true });
-            // Report parse errors from tolerant mode
+            parseResult = esprima.parseScript(wrappedCode, { loc: true, tolerant: true });
+            parseSucceeded = true;
+            // Collect lines that have parse errors
             if (parseResult.errors && parseResult.errors.length > 0) {
                 console.log(`Found ${parseResult.errors.length} parse errors`);
                 for (const error of parseResult.errors) {
                     const errLineNumber = error.lineNumber || 1;
                     const errColumn = error.column || 0;
                     const codeLineNumber = errLineNumber - 1;
+                    // Track this line as having errors
+                    if (isJsBlock) {
+                        errorLines.add(codeLineNumber - 1); // Adjust for wrapped code
+                    }
                     if (!isJsBlock) {
                         diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
                     }
                     else {
-                        const actualLine = range.start.line + codeLineNumber - 1; // adjust for added line
+                        const actualLine = range.start.line + codeLineNumber - 1;
                         const colBase = (codeLineNumber === 0) ? range.start.character : 0;
                         const actualCol = colBase + errColumn;
                         const errRange = new vscode.Range(actualLine, actualCol, actualLine, actualCol + 1);
@@ -567,28 +625,125 @@ class DendryValidator {
                     }
                 }
             }
-            // Additional checks for common errors
-            this.checkJavaScriptAst(parseResult, jsCode, range, diagnostics);
         }
         catch (error) {
-            // Even tolerant mode threw an error - report it
             console.log('Parse threw exception:', error.message);
             const errLineNumber = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
             const errColumn = typeof error?.column === 'number' ? error.column : 0;
             const codeLineNumber = errLineNumber - 1;
+            // Track this line as having errors
+            if (isJsBlock) {
+                errorLines.add(codeLineNumber - 1);
+            }
             if (!isJsBlock) {
                 diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
             }
             else {
-                const actualLine = range.start.line + codeLineNumber - 1; // adjust for added line
+                const actualLine = range.start.line + codeLineNumber - 1;
                 const colBase = (codeLineNumber === 0) ? range.start.character : 0;
                 const actualCol = colBase + errColumn;
                 const errRange = new vscode.Range(actualLine, actualCol, actualLine, actualCol + 1);
                 diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
             }
         }
+        // Run typo checks ONLY on lines that had parse errors
+        if (errorLines.size > 0) {
+            this.checkTyposOnErrorLines(jsCode, range, diagnostics, errorLines);
+        }
+        // Run additional checks if parsing succeeded
+        if (parseResult && parseSucceeded) {
+            this.checkJavaScriptAst(parseResult, jsCode, range, diagnostics);
+            if (isJsBlock) {
+                console.log('Checking undefined identifiers...');
+                this.checkUndefinedIdentifiers(jsCode, range, diagnostics);
+            }
+        }
         console.log(`Total diagnostics: ${diagnostics.length}`);
         return diagnostics;
+    }
+    checkTyposOnErrorLines(code, range, diagnostics, errorLines) {
+        // JavaScript keywords for typo detection
+        const jsKeywords = [
+            'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
+            'break', 'continue', 'return', 'throw', 'try', 'catch', 'finally',
+            'function', 'var', 'let', 'const', 'new', 'this', 'typeof', 'instanceof',
+            'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await'
+        ];
+        const lines = code.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            // ONLY check lines that had parse errors
+            if (!errorLines.has(i)) {
+                continue;
+            }
+            const line = lines[i];
+            const lineNum = range.start.line + i;
+            // Find all potential identifiers/keywords in the line
+            const words = line.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+            for (const word of words) {
+                // Skip if it's actually a valid keyword
+                if (jsKeywords.includes(word)) {
+                    continue;
+                }
+                // Check if this word is close to any keyword
+                const suggestion = this.findClosestKeyword(word, jsKeywords);
+                if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
+                    // Find the position of this word in the line
+                    const wordIndex = line.indexOf(word);
+                    if (wordIndex !== -1) {
+                        const startCol = wordIndex;
+                        const endCol = startCol + word.length;
+                        const errRange = new vscode.Range(lineNum, startCol, lineNum, endCol);
+                        diagnostics.push(this.createDiagnostic(errRange, `Unknown identifier "${word}". Did you mean "${suggestion.keyword}"?`, vscode.DiagnosticSeverity.Warning));
+                    }
+                }
+            }
+        }
+    }
+    findClosestKeyword(word, keywords) {
+        let minDistance = Infinity;
+        let closestKeyword = '';
+        for (const keyword of keywords) {
+            const distance = this.levenshteinDistance(word.toLowerCase(), keyword.toLowerCase());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestKeyword = keyword;
+            }
+        }
+        // Only suggest if the distance is reasonable (not too far)
+        if (minDistance <= Math.max(2, Math.floor(word.length / 3))) {
+            return { keyword: closestKeyword, distance: minDistance };
+        }
+        return null;
+    }
+    levenshteinDistance(a, b) {
+        const an = a.length;
+        const bn = b.length;
+        if (an === 0)
+            return bn;
+        if (bn === 0)
+            return an;
+        const matrix = Array(bn + 1);
+        for (let i = 0; i <= bn; i++) {
+            matrix[i] = Array(an + 1);
+            matrix[i][0] = i;
+        }
+        for (let j = 0; j <= an; j++) {
+            matrix[0][j] = j;
+        }
+        for (let i = 1; i <= bn; i++) {
+            for (let j = 1; j <= an; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                }
+                else {
+                    matrix[i][j] = Math.min(matrix[i - 1][j - 1], // substitution
+                    matrix[i][j - 1], // insertion
+                    matrix[i - 1][j] // deletion
+                    ) + 1;
+                }
+            }
+        }
+        return matrix[bn][an];
     }
     checkJavaScriptAst(ast, code, range, diagnostics) {
         const walk = (node) => {
