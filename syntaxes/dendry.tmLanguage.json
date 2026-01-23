@@ -23,6 +23,12 @@
         },
         {
           "include": "#dendry-logic"
+        },
+        {
+          "include": "#html-tags"
+        },
+        {
+          "include": "#markdown-formatting"
         }
       ]
     },
@@ -41,9 +47,6 @@
       "include": "#js-property"
     },
     {
-      "include": "#js-block"
-    },
-    {
       "include": "#comments"
     },
     {
@@ -60,6 +63,12 @@
     },
     {
       "include": "#dendry-logic-property"
+    },
+    {
+      "include": "#html-tags"
+    },
+    {
+      "include": "#markdown-formatting"
     },
     {
       "include": "#property"
@@ -292,6 +301,69 @@
           "captures": {
             "1": { "name": "keyword.operator.dendry" },
             "2": { "name": "string.unquoted.dendry" }
+          }
+        }
+      ]
+    },
+    "html-tags": {
+      "patterns": [
+        {
+          "name": "meta.tag.html.dendry",
+          "begin": "(<)([a-zA-Z][a-zA-Z0-9]*)",
+          "end": "(>)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.html" },
+            "2": { "name": "entity.name.tag.html" }
+          },
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.tag.end.html" }
+          },
+          "patterns": [
+            {
+              "name": "entity.other.attribute-name.html",
+              "match": "\\b[a-zA-Z-]+(?=\\s*=)"
+            },
+            {
+              "name": "string.quoted.double.html",
+              "begin": "\"",
+              "end": "\""
+            },
+            {
+              "name": "string.quoted.single.html",
+              "begin": "'",
+              "end": "'"
+            }
+          ]
+        },
+        {
+          "name": "meta.tag.html.closing.dendry",
+          "match": "(</)([a-zA-Z][a-zA-Z0-9]*)(>)",
+          "captures": {
+            "1": { "name": "punctuation.definition.tag.begin.html" },
+            "2": { "name": "entity.name.tag.html" },
+            "3": { "name": "punctuation.definition.tag.end.html" }
+          }
+        }
+      ]
+    },
+    "markdown-formatting": {
+      "patterns": [
+        {
+          "name": "markup.bold.dendry",
+          "match": "(\\*\\*)([^*]+)(\\*\\*)",
+          "captures": {
+            "1": { "name": "punctuation.definition.bold.dendry" },
+            "2": { "name": "markup.bold.dendry" },
+            "3": { "name": "punctuation.definition.bold.dendry" }
+          }
+        },
+        {
+          "name": "markup.italic.dendry",
+          "match": "(\\*)([^*]+)(\\*)",
+          "captures": {
+            "1": { "name": "punctuation.definition.italic.dendry" },
+            "2": { "name": "markup.italic.dendry" },
+            "3": { "name": "punctuation.definition.italic.dendry" }
           }
         }
       ]

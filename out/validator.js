@@ -214,15 +214,14 @@ class DendryValidator {
         }
     }
     validateInlineConditionalsInLine(lineText, lineNum, diagnostics) {
-        // Match: [? condition : text? ] or ? condition : text ?
-        // Captures: condition up to FIRST : after ?, ignores text after (even with extra :)
-        // Handles optional [ ], spaces, and line-end ?
-        const regex = /(\[?\s*\?\s*)([^:]+?)\s*:\s*([^?]*(?:\?|$))/gi;
+        // Match ONLY: [? condition : text ?]
+        // Brackets are REQUIRED
+        const regex = /(\[\?\s*)([^:]+?)\s*:\s*([^?]*)\?\]/gi;
         let match;
         while ((match = regex.exec(lineText)) !== null) {
-            const conditionPrefix = match[1]; // '[?' or '?'
+            const conditionPrefix = match[1]; // '[?'
             const condition = match[2].trim();
-            // match[3] is text part (ignored)
+            // match[3] is text part (ignored for validation purposes)
             if (!condition) {
                 const fullMatchStart = match.index;
                 const fullMatchEnd = regex.lastIndex;
@@ -231,7 +230,7 @@ class DendryValidator {
                 continue;
             }
             const preParsedCondition = '(' + condition.slice(2) + ')';
-            // Precise condition range: after ? if up to (but not including) first :
+            // Precise condition range: after [? if up to (but not including) first :
             const conditionStartCol = match.index + conditionPrefix.length;
             const conditionEndCol = conditionStartCol + condition.length;
             const conditionRange = new vscode.Range(lineNum, conditionStartCol, lineNum, conditionEndCol);
@@ -379,8 +378,48 @@ class DendryValidator {
                 continue;
             const line = lines[lineIndex];
             const colonIndex = line.indexOf(':');
-            const valueStart = colonIndex + 1;
-            const range = new vscode.Range(lineIndex, valueStart, lineIndex, line.length);
+            const valueText = line.substring(colonIndex + 1).trim();
+            // Calculate proper range for JS blocks
+            let range;
+            if (valueText.startsWith('{!')) {
+                // Multi-line JS block - calculate the actual JS code range
+                const afterOpen = valueText.substring(2); // Remove {!
+                if (afterOpen.trim().length > 0 && !afterOpen.includes('!}')) {
+                    // Code starts on same line as {!
+                    const startCol = colonIndex + 1 + valueText.indexOf('{!') + 2;
+                    range = new vscode.Range(lineIndex, startCol, lineIndex, line.length);
+                }
+                else if (valueText.includes('!}')) {
+                    // Single line: {! code !}
+                    const startCol = colonIndex + 1 + valueText.indexOf('{!') + 2;
+                    const endCol = colonIndex + 1 + valueText.indexOf('!}');
+                    range = new vscode.Range(lineIndex, startCol, lineIndex, endCol);
+                }
+                else {
+                    // Multi-line block with code starting on next line
+                    let startLine = lineIndex + 1;
+                    let startCol = 0;
+                    // Find the closing !}
+                    let endLine = startLine;
+                    for (let i = startLine; i < firstSceneLine; i++) {
+                        if (lines[i].includes('!}')) {
+                            endLine = i;
+                            const endCol = lines[i].indexOf('!}');
+                            range = new vscode.Range(startLine, startCol, endLine, endCol);
+                            break;
+                        }
+                    }
+                    // If we didn't find closing, use until end of metadata
+                    if (!range) {
+                        range = new vscode.Range(startLine, startCol, firstSceneLine - 1, lines[firstSceneLine - 1].length);
+                    }
+                }
+            }
+            else {
+                // Regular single-line value
+                const valueStart = colonIndex + 1;
+                range = new vscode.Range(lineIndex, valueStart, lineIndex, line.length);
+            }
             // Validate boolean properties
             if (key === 'new-page' || key === 'is-special' || key === 'is-hand' ||
                 key === 'is-deck' || key === 'is-pinned-card' || key === 'is-card') {
@@ -606,7 +645,6 @@ class DendryValidator {
         if (!isJsBlock) {
             // Convert Dendry shorthand to proper JavaScript
             jsCode = this.convertDendryToJavaScript(code, isActionContext);
-            console.warn('Converted Dendry to JavaScript:', jsCode);
         }
         const wrappedCode = `var Q, S, V, P, d3;\n${jsCode}`;
         const errorLines = new Set(); // Track lines with parse errors
@@ -765,9 +803,9 @@ class DendryValidator {
             if (node.type === 'IfStatement' && node.test?.type === 'AssignmentExpression') {
                 const loc = node.test.loc;
                 if (loc) {
-                    const lineOffset = loc.start.line - 2;
+                    const lineOffset = loc.start.line - 3;
                     const colBase = lineOffset === 0 ? range.start.character : 0;
-                    const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + (loc.end.line - 2), (loc.end.line - 2 === 0 ? range.start.character : 0) + loc.end.column);
+                    const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + (loc.end.line - 3), (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
                     diagnostics.push(this.createDiagnostic(errRange, `Possible mistake: assignment (=) in condition, did you mean comparison (==)?`, vscode.DiagnosticSeverity.Warning));
                 }
             }
@@ -787,6 +825,10 @@ class DendryValidator {
         walk(ast);
     }
     checkUndefinedIdentifiers(code, range, diagnostics) {
+        console.warn('=== DEBUG checkUndefinedIdentifiers ===');
+        console.warn('range.start.line:', range.start.line);
+        console.warn('First 5 lines of code:', code.split('\n').slice(0, 5));
+        console.warn('last 5 lines of code:', code.split('\n').slice(-5));
         try {
             const ast = esprima.parseScript(`var Q, S, V, P, d3;\n${code}`, { loc: true, tolerant: true });
             // Extended list of defined globals
@@ -801,6 +843,7 @@ class DendryValidator {
                 'Infinity', 'NaN', 'window', 'document', 'alert'
             ]);
             const declaredInCode = new Set();
+            const reportedIdentifiers = new Set();
             // Collect all declarations including function parameters
             const collectDeclarations = (node) => {
                 if (!node || typeof node !== 'object')
@@ -877,19 +920,35 @@ class DendryValidator {
                     if (identifier.name && !definedVars.has(identifier.name)) {
                         const loc = identifier.loc;
                         if (loc) {
-                            const lineOffset = loc.start.line - 2;
+                            const lineOffset = loc.start.line - 3;
                             const colBase = lineOffset === 0 ? range.start.character : 0;
-                            const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + (loc.end.line - 2), (loc.end.line - 2 === 0 ? range.start.character : 0) + loc.end.column);
+                            const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
                             diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${identifier.name}"`, vscode.DiagnosticSeverity.Error));
+                            reportedIdentifiers.add(identifier.name);
                         }
                     }
                 }
                 if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
+                    if (reportedIdentifiers.has(node.name)) {
+                        // Skip to children
+                        for (const key in node) {
+                            if (key === 'loc' || key === 'range')
+                                continue;
+                            const child = node[key];
+                            if (Array.isArray(child)) {
+                                child.forEach(c => checkIdentifiers(c, node));
+                            }
+                            else if (child && typeof child === 'object') {
+                                checkIdentifiers(child, node);
+                            }
+                        }
+                        return;
+                    }
                     const loc = node.loc;
                     if (loc) {
                         const lineOffset = loc.start.line - 3;
                         const colBase = lineOffset === 0 ? range.start.character : 0;
-                        const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + (loc.end.line - 3), (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
+                        const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, colBase + loc.end.column);
                         // Check if this is actually a reference (not a property name)
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
