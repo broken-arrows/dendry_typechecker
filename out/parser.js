@@ -209,26 +209,26 @@ class DendryHandParser {
     parseChoice() {
         const lineNum = this.currentLine;
         const line = this.lines[this.currentLine];
-        // Find where the actual content starts (after "- ")
+        // Find where the actual content starts (after "-" with optional space)
         const dashIndex = line.indexOf('-');
-        const contentStart = dashIndex + 1; // Position after '-'
-        // Skip any whitespace after the dash
-        let contentOffset = contentStart;
-        while (contentOffset < line.length && line[contentOffset] === ' ') {
-            contentOffset++;
+        // Start position is after the dash
+        let contentStart = dashIndex + 1;
+        // Skip exactly one space if present (but only one, to preserve indentation in content)
+        if (contentStart < line.length && line[contentStart] === ' ') {
+            contentStart++;
         }
-        // Extract content from after "- "
-        const content = line.substring(contentStart).trim();
+        // Extract content from after "- " or "-"
+        const content = line.substring(contentStart);
         // Parse interpolations from the content
         const interpolations = this.parseInterpolations(content, lineNum);
-        // Adjust all interpolation ranges to account for the "- " prefix
+        // Adjust all interpolation ranges to account for the "- " or "-" prefix
         interpolations.forEach(interp => {
-            interp.range = new vscode.Range(interp.range.start.line, interp.range.start.character + contentOffset, interp.range.end.line, interp.range.end.character + contentOffset);
+            interp.range = new vscode.Range(interp.range.start.line, interp.range.start.character + contentStart, interp.range.end.line, interp.range.end.character + contentStart);
         });
         this.nodes.push({
             type: 'choice',
             properties: new Map(),
-            content,
+            content: content.trim(), // Trim for the content property
             interpolations: interpolations,
             range: new vscode.Range(lineNum, 0, lineNum, line.length)
         });
@@ -357,7 +357,7 @@ class DendryHandParser {
         return /^@\w*/.test(line.trim());
     }
     isChoice(line) {
-        return /^-\s/.test(line);
+        return /^-/.test(line.trim());
     }
     isDivider(line) {
         return /^=+$/.test(line.trim());

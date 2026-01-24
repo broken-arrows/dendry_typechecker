@@ -525,7 +525,15 @@ export class DendryValidator {
     // If content is empty, try to extract from the document line
     if (!choiceContent || choiceContent.trim() === '') {
       const lineText = document.lineAt(node.range.start.line).text;
-      choiceContent = lineText.substring(lineText.indexOf('-') + 1).trim();
+      const dashIndex = lineText.indexOf('-');
+      if (dashIndex !== -1) {
+        let contentStart = dashIndex + 1;
+        // Skip one space if present
+        if (contentStart < lineText.length && lineText[contentStart] === ' ') {
+          contentStart++;
+        }
+        choiceContent = lineText.substring(contentStart).trim();
+      }
     }
 
     // Check for tag references (- #tag_name)
