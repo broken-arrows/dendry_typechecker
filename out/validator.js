@@ -115,6 +115,44 @@ class DendryValidator {
         }
         return diagnostics;
     }
+    validateQDisplayFile(document) {
+        const diagnostics = [];
+        const text = document.getText();
+        const lines = text.split(/\r?\n/);
+        // 1. Check for empty first line
+        if (lines.length > 0 && lines[0].trim() !== '') {
+            diagnostics.push(this.createDiagnostic(new vscode.Range(0, 0, 0, lines[0].length), '`.qdisplay.dry` files must start with an empty line.', vscode.DiagnosticSeverity.Error));
+        }
+        const rangeRegex = /^\(([\d.-]*)\.\.([\d.-]*)\)\s*(.*)/;
+        let previousEnd = null;
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmedLine = line.trim();
+            if (trimmedLine === '' || trimmedLine.startsWith('#')) {
+                continue;
+            }
+            const match = trimmedLine.match(rangeRegex);
+            if (!match) {
+                diagnostics.push(this.createDiagnostic(new vscode.Range(i, 0, i, line.length), 'Invalid format. Expected `(start..end) text` or `(..end) text` or `(start..) text`.', vscode.DiagnosticSeverity.Error));
+                continue;
+            }
+            const [, startStr, endStr, html] = match;
+            const start = startStr === '' ? -Infinity : parseFloat(startStr);
+            const end = endStr === '' ? Infinity : parseFloat(endStr);
+            if (isNaN(start) || isNaN(end)) {
+                diagnostics.push(this.createDiagnostic(new vscode.Range(i, 0, i, line.length), 'Invalid range values. Start and end must be numbers.', vscode.DiagnosticSeverity.Error));
+                continue;
+            }
+            if (start > end) {
+                diagnostics.push(this.createDiagnostic(new vscode.Range(i, 0, i, line.length), 'Start of range must be less than end of range.', vscode.DiagnosticSeverity.Error));
+            }
+            if (previousEnd !== null && start < previousEnd) {
+                diagnostics.push(this.createDiagnostic(new vscode.Range(i, 0, i, line.length), 'Overlapping or out-of-order ranges are not allowed.', vscode.DiagnosticSeverity.Warning));
+            }
+            previousEnd = end;
+        }
+        return diagnostics;
+    }
     validateNode(node, document) {
         switch (node.type) {
             case 'scene':
@@ -643,7 +681,10 @@ class DendryValidator {
             // Convert Dendry shorthand to proper JavaScript
             jsCode = this.convertDendryToJavaScript(code, isActionContext);
         }
-        const wrappedCode = `var Q, S, V, P, d3;\n${jsCode}`;
+        const config = vscode.workspace.getConfiguration('dendry');
+        const extraLibraries = config.get('validation.jsLibraries', ['d3']);
+        const allGlobals = ['Q', 'S', 'V', 'P', ...extraLibraries];
+        const wrappedCode = `var ${allGlobals.join(', ')};\n${jsCode}`;
         const errorLines = new Set(); // Track lines with parse errors
         let parseResult = null;
         let parseSucceeded = false;
@@ -827,10 +868,13 @@ class DendryValidator {
         console.warn('First 5 lines of code:', code.split('\n').slice(0, 5));
         console.warn('last 5 lines of code:', code.split('\n').slice(-5));
         try {
-            const ast = esprima.parseScript(`var Q, S, V, P, d3;\n${code}`, { loc: true, tolerant: true });
+            const config = vscode.workspace.getConfiguration('dendry');
+            const extraLibraries = config.get('validation.jsLibraries', ['d3']);
+            const allGlobals = ['Q', 'S', 'V', 'P', ...extraLibraries];
+            const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
             // Extended list of defined globals
             const definedVars = new Set([
-                'Q', 'S', 'V', 'P', 'd3',
+                ...allGlobals,
                 'console', 'Math', 'Date', 'JSON',
                 'parseInt', 'parseFloat', 'isNaN', 'isFinite',
                 'undefined', 'null', 'true', 'false',

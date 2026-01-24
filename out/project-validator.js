@@ -192,9 +192,17 @@ class DendryProjectValidator {
                         continue;
                     }
                 }
-                const parsingDiags = await this._parseAndExtractLocalIds(document);
-                if (parsingDiags.length > 0) {
-                    finalDiagnostics.set(fileUri, parsingDiags);
+                if (fileUri.fsPath.endsWith('.qdisplay.dry')) {
+                    const qdisplayDiags = this.validator.validateQDisplayFile(document);
+                    if (qdisplayDiags.length > 0) {
+                        finalDiagnostics.set(fileUri, qdisplayDiags);
+                    }
+                }
+                else {
+                    const parsingDiags = await this._parseAndExtractLocalIds(document);
+                    if (parsingDiags.length > 0) {
+                        finalDiagnostics.set(fileUri, parsingDiags);
+                    }
                 }
             }
             // 3. Check for duplicate IDs across all files
@@ -327,10 +335,19 @@ class DendryProjectValidator {
                     }
                 }
                 try {
-                    const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData);
-                    if (validationDiagnostics.length > 0) {
-                        const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
-                        finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);
+                    if (fileUri.fsPath.endsWith('.qdisplay.dry')) {
+                        const qdisplayDiags = this.validator.validateQDisplayFile(document);
+                        if (qdisplayDiags.length > 0) {
+                            const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
+                            finalDiagnostics.set(fileUri, [...existingDiagnostics, ...qdisplayDiags]);
+                        }
+                    }
+                    else {
+                        const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData);
+                        if (validationDiagnostics.length > 0) {
+                            const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
+                            finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);
+                        }
                     }
                 }
                 catch (error) {

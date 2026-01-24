@@ -74,9 +74,33 @@
     },
     {
       "include": "#property"
+    },
+    {
+      "include": "#qdisplay-range"
     }
   ],
   "repository": {
+    "qdisplay-range": {
+      "name": "meta.qdisplay.range.dendry",
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.range.dendry" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.range.dendry" }
+      },
+      "patterns": [
+        {
+          "name": "constant.numeric.dendry",
+          "match": "(-?(\\d*\\.\\d+)|\\d+)"
+        },
+        {
+          "name": "keyword.operator.range.dendry",
+          "match": "\\.\\."
+        }
+      ]
+    },
     "inline-conditional": {
       "name": "meta.inline-conditional.dendry",
       "begin": "(\\[\\?)",

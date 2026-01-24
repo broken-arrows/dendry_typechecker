@@ -85,7 +85,7 @@ function activate(context) {
         }
     }));
     context.subscriptions.push(vscode.workspace.onDidDeleteFiles(event => {
-        if (event.files.some(file => file.path.endsWith('.scene.dry'))) {
+        if (event.files.some(file => file.path.endsWith('.scene.dry') || file.path.endsWith('.qdisplay.dry'))) {
             outputChannel.appendLine('Delete detected');
             debouncedValidateProject();
         }
@@ -138,8 +138,11 @@ async function validateProject(changedFileUri) {
         const excludePattern = excludePatterns.length > 1
             ? `{${excludePatterns.join(',')}}`
             : excludePatterns[0] || undefined;
-        const dendryFiles = await vscode.workspace.findFiles('**/*.scene.dry', excludePattern);
-        outputChannel.appendLine(`Found ${dendryFiles.length} .scene.dry files`);
+        const sceneFilesPromise = vscode.workspace.findFiles('**/*.scene.dry', excludePattern);
+        const qdisplayFilesPromise = vscode.workspace.findFiles('**/*.qdisplay.dry', excludePattern);
+        const [sceneFiles, qdisplayFiles] = await Promise.all([sceneFilesPromise, qdisplayFilesPromise]);
+        const dendryFiles = [...sceneFiles, ...qdisplayFiles];
+        outputChannel.appendLine(`Found ${dendryFiles.length} Dendry files (${sceneFiles.length} scenes, ${qdisplayFiles.length} qdisplays)`);
         const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
         // Stable key: sort diags by position + msg/severity (ignores order)
         function stableDiagKey(diags) {

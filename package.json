@@ -20,6 +20,7 @@
   "activationEvents": [
     "onLanguage:dendry",
     "workspaceContains:**/*.scene.dry",
+    "workspaceContains:**/*.qdisplay.dry",
     "onStartupFinished"
   ],
   "contributes": {
@@ -31,7 +32,8 @@
           "dendry"
         ],
         "extensions": [
-          ".scene.dry"
+          ".scene.dry",
+          ".qdisplay.dry"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -64,7 +66,17 @@
           "items": {
             "type": "string"
           },
-          "description": "Glob patterns for files/folders to exclude from Dendry validation"
+          "description": "Global patterns for files/folders to exclude from Dendry validation"
+        },
+        "dendry.validation.jsLibraries": {
+          "type": "array",
+          "default": [
+            "d3"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of global JavaScript libraries to assume are available during validation."
         }
       }
     }
