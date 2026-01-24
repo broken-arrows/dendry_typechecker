@@ -114,7 +114,7 @@ class DendryProjectValidator {
                 seenIds.add(fileBasedSceneId);
             }
             // Check for reserved scene ID "jumpScene"
-            if (seenIds.has('jumpScene') || seenIds.has("backSpecialScene")) {
+            if (seenIds.has('jumpScene') || seenIds.has("backSpecialScene") || seenIds.has("backScene")) {
                 const lines = text.split(/\r?\n/);
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].trim();
@@ -124,10 +124,16 @@ class DendryProjectValidator {
                         diagnostics.push(new vscode.Diagnostic(reservedIdRange, `"jumpScene" is a reserved scene ID and cannot be used. Choose a different ID.`, vscode.DiagnosticSeverity.Error));
                         break;
                     }
-                    const matchBack = line.match(/^@(backSpecialScene)(?:\s|:|$)/);
-                    if (matchBack) {
+                    const matchBackSpecialScene = line.match(/^@(backSpecialScene)(?:\s|:|$)/);
+                    if (matchBackSpecialScene) {
                         const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
                         diagnostics.push(new vscode.Diagnostic(reservedIdRange, `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`, vscode.DiagnosticSeverity.Error));
+                        break;
+                    }
+                    const matchBackScene = line.match(/^@(backScene)(?:\s|:|$)/);
+                    if (matchBackScene) {
+                        const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
+                        diagnostics.push(new vscode.Diagnostic(reservedIdRange, `"backScene" is a reserved scene ID and cannot be used. Choose a different ID.`, vscode.DiagnosticSeverity.Error));
                         break;
                     }
                 }
@@ -143,6 +149,11 @@ class DendryProjectValidator {
                         const nodeLines = text.split(/\r?\n/);
                         const reservedIdRange = new vscode.Range(node.range.start.line, 0, node.range.start.line, nodeLines[node.range.start.line]?.length || 0);
                         diagnostics.push(new vscode.Diagnostic(reservedIdRange, `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`, vscode.DiagnosticSeverity.Error));
+                    }
+                    else if (id === "backScene") {
+                        const nodeLines = text.split(/\r?\n/);
+                        const reservedIdRange = new vscode.Range(node.range.start.line, 0, node.range.start.line, nodeLines[node.range.start.line]?.length || 0);
+                        diagnostics.push(new vscode.Diagnostic(reservedIdRange, `"backScene" is a reserved scene ID and cannot be used. Choose a different ID.`, vscode.DiagnosticSeverity.Error));
                     }
                 }
             }

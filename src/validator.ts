@@ -63,7 +63,8 @@ export class DendryValidator {
     'is-card',
     'broad-difficulty',
     'check-quality',
-    'game-over'
+    'game-over',
+    'achievement'
   ]);
 
   private readonly QUALITY_PROPERTIES = new Set(['id', 'name', 'initial', 'min', 'max', 'signal']);
@@ -315,9 +316,24 @@ export class DendryValidator {
     const nodeText = document.getText(node.range);
     const nodeLines = nodeText.split('\n');
     let currentLine = node.range.start.line;
+    let insideJsBlock = false;
 
     for (let i = 0; i < nodeLines.length; i++) {
       const line = nodeLines[i].trim();
+      // Check for JS block start/end in the line
+      if (line.includes('{!')) {
+        insideJsBlock = true;
+      }
+      if (line.includes('!}')) {
+        insideJsBlock = false;
+        continue; // Skip the closing line
+      }
+      
+      // Skip duplicate checking inside JS blocks
+      if (insideJsBlock) {
+        continue;
+      }
+
       const match = line.match(/^([\w-]+):/);
       if (match) {
         const propKey = match[1];
@@ -995,7 +1011,6 @@ export class DendryValidator {
           
           // Collect lines that have parse errors
           if (parseResult.errors && parseResult.errors.length > 0) {
-      
               for (const error of parseResult.errors) {
                   const errLineNumber: number = error.lineNumber || 1;
                   const errColumn: number = error.column || 0;

@@ -267,7 +267,7 @@
     },
     "js-property": {
       "name": "meta.property.js.dendry",
-      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over)):\\s*(\\{!)",
+      "begin": "(^\\s*(?:id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over|achievement)):\\s*(\\{!)",
       "end": "(!\\})",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" },
@@ -318,7 +318,7 @@
     },
     "property": {
       "name": "meta.property.dendry",
-      "begin": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over):\\s*",
+      "begin": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over|achievement):\\s*",
       "end": "$",
       "beginCaptures": {
         "1": { "name": "variable.parameter.dendry" }

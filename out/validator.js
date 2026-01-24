@@ -72,11 +72,14 @@ class DendryValidator {
             'priority',
             'unavailable-subtitle',
             'set-jump',
+            'call',
             'check-success-go-to',
             'check-failure-go-to',
             'is-special',
             'go-to',
             'set-bg',
+            'audio',
+            'call',
             'is-hand',
             'card-image',
             'face-image',
@@ -86,7 +89,8 @@ class DendryValidator {
             'is-card',
             'broad-difficulty',
             'check-quality',
-            'game-over'
+            'game-over',
+            'achievement'
         ]);
         this.QUALITY_PROPERTIES = new Set(['id', 'name', 'initial', 'min', 'max', 'signal']);
         this.CHOICE_PROPERTIES = new Set([
@@ -225,8 +229,21 @@ class DendryValidator {
         const nodeText = document.getText(node.range);
         const nodeLines = nodeText.split('\n');
         let currentLine = node.range.start.line;
+        let insideJsBlock = false;
         for (let i = 0; i < nodeLines.length; i++) {
             const line = nodeLines[i].trim();
+            // Check for JS block start/end in the line
+            if (line.includes('{!')) {
+                insideJsBlock = true;
+            }
+            if (line.includes('!}')) {
+                insideJsBlock = false;
+                continue; // Skip the closing line
+            }
+            // Skip duplicate checking inside JS blocks
+            if (insideJsBlock) {
+                continue;
+            }
             const match = line.match(/^([\w-]+):/);
             if (match) {
                 const propKey = match[1];
@@ -269,7 +286,7 @@ class DendryValidator {
             else if (key.startsWith('on-')) {
                 diagnostics.push(...this.validateDendryAction(value ?? '', r));
             }
-            if (key === 'go-to' || key === 'set-jump' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
+            if (key === 'go-to' || key === 'set-jump' || key === 'call' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
                 this.validateGoTo(String(value ?? ''), r, diagnostics);
             }
         }
@@ -575,7 +592,7 @@ class DendryValidator {
                 // Format: "scene_id if condition"
                 const sceneId = trimmed.substring(0, ifIndex).trim();
                 const condition = trimmed.substring(ifIndex + 4).trim();
-                if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene") {
+                if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !== 'backScene') {
                     this.validateSceneReference(sceneId, range, diagnostics);
                 }
                 if (condition) {
@@ -589,7 +606,7 @@ class DendryValidator {
                 // 2. An assignment/action: "variable = value"
                 // Check if it looks like a scene reference (no operators)
                 const hasOperators = /[=+\-*/<>]/.test(trimmed);
-                if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene") {
+                if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !== 'backScene') {
                     // Treat as scene reference
                     this.validateSceneReference(trimmed, range, diagnostics);
                 }
@@ -1058,7 +1075,7 @@ class DendryValidator {
         if (sceneId.includes('{') || sceneId.includes('}')) {
             return; // dynamic references ignored for now
         }
-        if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene') {
+        if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene' || sceneId === 'backScene') {
             return; // Valid reference, no error
         }
         // Check for qualified scene reference (filename.sceneid)
