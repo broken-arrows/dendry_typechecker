@@ -408,29 +408,69 @@ class DendryValidator {
             }
             return diagnostics; // Tag choices don't have scene references
         }
-        // Check for scene references
+        // Check for scene references - similar to go-to but without conditional support
         // First remove inline dendry conditions and comments
         const cleaned = choiceContent.replace(/\{[^}]*\?\?[^}]*\}/g, ''); // ignore inline dendry brackets
         // Match scene IDs (can start with letter/digit/underscore, continue with word chars or hyphens, including qualified refs)
         const match = cleaned.match(/@([\w-]+(?:\.[\w-]+)?)/);
         if (match) {
             const sceneRef = match[1].trim();
-            // Compute precise range for sceneId on this line
+            // Compute precise range for sceneRef on this line
             const fullLineText = document.lineAt(node.range.start.line).text;
             const atIndex = fullLineText.indexOf('@');
             if (atIndex !== -1) {
                 const start = atIndex + 1; // Position after '@'
                 const end = start + sceneRef.length;
                 const sceneRefRange = new vscode.Range(node.range.start.line, start, node.range.start.line, end);
-                // Reuse the same validation logic as go-to
-                this.validateGoTo(sceneRef, sceneRefRange, diagnostics);
+                // Validate scene reference (supports both simple and qualified references)
+                this.validateSceneReferenceOrQualified(sceneRef, sceneRefRange, diagnostics);
             }
             else {
                 // Fallback to node range if we can't find the '@' symbol
-                this.validateGoTo(sceneRef, node.range, diagnostics);
+                this.validateSceneReferenceOrQualified(sceneRef, node.range, diagnostics);
             }
         }
         return diagnostics;
+    }
+    validateSceneReferenceOrQualified(sceneRef, range, diagnostics) {
+        // Check for qualified scene reference (filename.sceneid)
+        if (sceneRef.includes('.')) {
+            const parts = sceneRef.split('.');
+            if (parts.length === 2) {
+                const [fileName, localSceneId] = parts;
+                // Find the file with this name
+                let fileFound = false;
+                let sceneFound = false;
+                for (const [uri, fileData] of this._allFileData) {
+                    // Extract filename without .scene.dry extension
+                    const pathParts = uri.fsPath.split(/[/\\]/);
+                    const fullFileName = pathParts.pop();
+                    const uriFileName = fullFileName?.replace('.scene.dry', '');
+                    if (uriFileName === fileName) {
+                        fileFound = true;
+                        // Check if the scene exists in that file
+                        if (fileData.localSceneIds.has(localSceneId)) {
+                            sceneFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (!fileFound) {
+                    diagnostics.push(this.createDiagnostic(range, `Reference to undefined file "${fileName}". Expected a file named ${fileName}.scene.dry`, vscode.DiagnosticSeverity.Error));
+                }
+                else if (!sceneFound) {
+                    diagnostics.push(this.createDiagnostic(range, `Scene "${localSceneId}" not found in file ${fileName}.scene.dry`, vscode.DiagnosticSeverity.Error));
+                }
+            }
+            else {
+                // Invalid format (multiple dots or other issues)
+                diagnostics.push(this.createDiagnostic(range, `Invalid qualified scene reference "${sceneRef}". Expected format: filename.sceneid`, vscode.DiagnosticSeverity.Error));
+            }
+        }
+        else {
+            // Simple local id - check global scene IDs
+            this.validateSceneReference(sceneRef, range, diagnostics);
+        }
     }
     validateMetadata(metadata, document) {
         const diagnostics = [];
