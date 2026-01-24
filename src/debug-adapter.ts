@@ -86,11 +86,11 @@ function runBuildCommand(command: string, cwd: string, outputChannel: vscode.Out
     });
 
     process.stdout.on('data', (data) => {
-      outputChannel.append(data.toString());
+      outputChannel.append(data.toString().replace(/\x1b\[[0-9;]*m/g, ''));
     });
 
     process.stderr.on('data', (data) => {
-      outputChannel.append(data.toString());
+      outputChannel.append(data.toString().replace(/\x1b\[[0-9;]*m/g, ''));
     });
 
     process.on('close', (code) => {

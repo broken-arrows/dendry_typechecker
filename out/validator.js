@@ -737,8 +737,6 @@ class DendryValidator {
             ;
             return jsCode;
         });
-        convertedStatements.forEach((stmt, index) => {
-        });
         // Join statements back together
         let jsCode = convertedStatements.join('; ');
         return jsCode;
