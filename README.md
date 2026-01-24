@@ -4,12 +4,13 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 
 ## Features
 
+- **Syntax Highlighting**: Supporting Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
 - **Real-time Validation**: Validates your `.scene.dry` and `.qdisplay.dry` files as you type.
 - **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
 - **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
-- **Variable Interpolation Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existance/q.
-- **Basic Debug Support**: Support for F5 run to easily test your DendryNexus project directly from VSCode.
+- **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existance/q.
+- **Basic Debugginh Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode.
 
 ## Configuration
 
@@ -53,7 +54,7 @@ Game's over :/ - [+ var : foo +]
 
 The extension will:
 
-- Provide proper syntax highlighting for Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
+- Provide proper syntax highlighting.
 - Validate scene property names and types.
 - Check JavaScript syntax when relevant, both on scene qualities (e.g. on-arrival) and in-line conditionals.
 - Ensure referenced scenes and subscenes exist.
