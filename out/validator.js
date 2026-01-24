@@ -719,7 +719,6 @@ class DendryValidator {
         return jsCode;
     }
     validateJavaScript(code, range, isActionContext = false) {
-        console.log('Validating JavaScript code:', code);
         const diagnostics = [];
         // Check if this is a full JS block or inline Dendry syntax
         const isJsBlock = range.start.line !== range.end.line || code.includes('\n');
@@ -736,12 +735,10 @@ class DendryValidator {
         let parseResult = null;
         let parseSucceeded = false;
         try {
-            console.log('Parsing for syntax errors...');
             parseResult = esprima.parseScript(wrappedCode, { loc: true, tolerant: true });
             parseSucceeded = true;
             // Collect lines that have parse errors
             if (parseResult.errors && parseResult.errors.length > 0) {
-                console.log(`Found ${parseResult.errors.length} parse errors`);
                 for (const error of parseResult.errors) {
                     const errLineNumber = error.lineNumber || 1;
                     const errColumn = error.column || 0;
@@ -764,12 +761,10 @@ class DendryValidator {
             }
         }
         catch (error) {
-            console.log('Parse threw exception:', error.message);
             const errLineNumber = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
             const errColumn = typeof error?.column === 'number' ? error.column : 0;
             const codeLineNumber = errLineNumber - 1;
             if (!isJsBlock) {
-                console.warn("Parse error from: ", jsCode, errLineNumber, codeLineNumber);
                 diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
             }
             else {
@@ -789,11 +784,9 @@ class DendryValidator {
         if (parseResult && parseSucceeded) {
             this.checkJavaScriptAst(parseResult, jsCode, range, diagnostics);
             if (isJsBlock) {
-                console.log('Checking undefined identifiers...');
                 this.checkUndefinedIdentifiers(jsCode, range, diagnostics);
             }
         }
-        console.info(`Total diagnostics: ${diagnostics.length}`);
         return diagnostics;
     }
     validateDendryCondition(code, range) {
@@ -910,10 +903,6 @@ class DendryValidator {
         walk(ast);
     }
     checkUndefinedIdentifiers(code, range, diagnostics) {
-        console.warn('=== DEBUG checkUndefinedIdentifiers ===');
-        console.warn('range.start.line:', range.start.line);
-        console.warn('First 5 lines of code:', code.split('\n').slice(0, 5));
-        console.warn('last 5 lines of code:', code.split('\n').slice(-5));
         try {
             const config = vscode.workspace.getConfiguration('dendry');
             const extraLibraries = config.get('validation.jsLibraries', ['d3']);
@@ -1058,12 +1047,9 @@ class DendryValidator {
                     }
                 }
             };
-            console.log('Starting identifier check...');
             checkIdentifiers(ast);
-            console.log('Identifier check completed, total diagnostics so far:', diagnostics.length);
         }
         catch (error) {
-            console.log('Cannot check undefined identifiers due to syntax errors', error);
             // Parsing already failed, errors already reported
             return;
         }

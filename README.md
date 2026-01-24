@@ -9,12 +9,15 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 - **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
 - **Variable Interpolation Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existance/q.
+- **Basic Debug Support**: Support for F5 run to easily test your DendryNexus project directly from VSCode.
 
 ## Configuration
 
 - `dendry.validation.enable`: Enable/disable validation (default: `true`).
-- `dendry.validation.exclude`: Glob patterns for files/folders to exclude from Dendry validation.
+- `dendry.validation.exclude`: Glob patterns for files/folders to exclude from DendryNexus validation.
 - `dendry.validation.jsLibraries`: An array of strings representing additional global JavaScript variables that should be recognized during validation (default: `["d3"]`). This is useful when your project uses external JavaScript libraries that introduce global variables.
+- `dendry.debug.buildCommand`: Command to build the DendryNexus project (default: `npm run dendrynexus make-html -- --pretty`).
+- `dendry.debug.outputPath`: Relative path to the built HTML file from workspace root (default: `out/html/index.html`).
 
 ## Example
 
@@ -32,7 +35,7 @@ This is the opening scene.
 
 @back
 new-page: true
-go-to: another_scene
+go-to: another_scene.elsewhere
 
 @continue
 title: Continue
@@ -44,15 +47,17 @@ on-arrival: {!
 
 [? if visited: <img src="https://media.tenor.com/EMVZYUqX-cgAAAAC/pepe-saber.gif"/>]
 
-Game's over :/ - [+ var +]
+Game's over :/ - [+ var : foo +]
 
 ```
 
 The extension will:
 
-- Validate property names and types
-- Check JavaScript syntax in on-arrival
-- Ensure next_scene exists
+- Provide proper syntax highlighting for Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
+- Validate scene property names and types.
+- Check JavaScript syntax when relevant, both on scene qualities (e.g. on-arrival) and in-line conditionals.
+- Ensure referenced scenes and subscenes exist.
+- Check for valid varible insertion in text, as well as for valid qdisplay casting (e.g. does a file named `foo.qdisplay.dry` exist?)
 
 ## Usage
 
