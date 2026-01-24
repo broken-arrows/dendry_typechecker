@@ -46,6 +46,8 @@ export class DendryValidator {
     'priority',
     'unavailable-subtitle',
     'set-jump',
+    'check-success-go-to',
+    'check-failure-go-to',
     'is-special',
     'go-to',
     'set-bg',
@@ -55,7 +57,10 @@ export class DendryValidator {
     'is-deck',
     'max-cards',
     'is-pinned-card',
-    'is-card'
+    'is-card',
+    'broad-difficulty',
+    'check-quality',
+    'game-over'
   ]);
 
   private readonly QUALITY_PROPERTIES = new Set(['id', 'name', 'initial', 'min', 'max', 'signal']);
@@ -355,7 +360,8 @@ export class DendryValidator {
         key === 'frequency' ||
         key === 'order' ||
         key === 'priority' ||
-        key === 'max-cards'
+        key === 'max-cards' ||
+        key === 'broad-difficulty'
       ) {
         this.validateNumber(value, r, key, diagnostics);
       }
@@ -366,22 +372,19 @@ export class DendryValidator {
         key === 'is-hand' ||
         key === 'is-deck' ||
         key === 'is-pinned-card' ||
-        key === 'is-card'
+        key === 'is-card' ||
+        key === 'game-over'
       ) {
         this.validateBoolean(value, r, key, diagnostics);
       }
 
-      if (key === 'view-if' || key === 'choose-if') {
+      if (key === 'view-if' || key === 'choose-if' || key === 'check-quality') {
           diagnostics.push(...this.validateDendryCondition(value ?? '', r));
       } else if (key.startsWith('on-')) {
           diagnostics.push(...this.validateDendryAction(value ?? '', r));
       }
 
-      if (key === 'go-to') {
-        this.validateGoTo(String(value ?? ''), r, diagnostics);
-      }
-
-      if (key === 'set-jump') {
+      if (key === 'go-to' || key === 'set-jump' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
         this.validateGoTo(String(value ?? ''), r, diagnostics);
       }
     }
