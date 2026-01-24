@@ -46,11 +46,14 @@ export class DendryValidator {
     'priority',
     'unavailable-subtitle',
     'set-jump',
+    'call',
     'check-success-go-to',
     'check-failure-go-to',
     'is-special',
     'go-to',
     'set-bg',
+    'audio',
+    'call',
     'is-hand',
     'card-image',
     'face-image',
@@ -384,7 +387,7 @@ export class DendryValidator {
           diagnostics.push(...this.validateDendryAction(value ?? '', r));
       }
 
-      if (key === 'go-to' || key === 'set-jump' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
+      if (key === 'go-to' || key === 'set-jump' || key === 'call' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
         this.validateGoTo(String(value ?? ''), r, diagnostics);
       }
     }
@@ -783,7 +786,7 @@ export class DendryValidator {
               const sceneId = trimmed.substring(0, ifIndex).trim();
               const condition = trimmed.substring(ifIndex + 4).trim();
               
-              if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene") {
+              if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !=='backScene') {
                   this.validateSceneReference(sceneId, range, diagnostics);
               }
               
@@ -798,7 +801,7 @@ export class DendryValidator {
               // Check if it looks like a scene reference (no operators)
               const hasOperators = /[=+\-*/<>]/.test(trimmed);
               
-              if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene") {
+              if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !=='backScene') {
                   // Treat as scene reference
                   this.validateSceneReference(trimmed, range, diagnostics);
               } else if (hasOperators) {
@@ -1437,7 +1440,7 @@ export class DendryValidator {
       return; // dynamic references ignored for now
     }
     
-    if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene') {
+    if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene' || sceneId === 'backScene') {
       return; // Valid reference, no error
     }
     

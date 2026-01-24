@@ -25,7 +25,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 ```dendry
 title: Beginning
 max-visits: 3
-on-arrival: Q.visited = true
+on-arrival: visited = true
 
 = Beginning
 This is the opening scene.
