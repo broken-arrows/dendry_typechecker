@@ -695,45 +695,60 @@ class DendryValidator {
             diagnostics.push(this.createDiagnostic(range, `Property "${propertyName}" must be "true" or "false", got: "${value}"`, vscode.DiagnosticSeverity.Error));
         }
     }
-    convertDendryToJavaScript(dendryCode, isActionContext = false) {
-        let jsCode = dendryCode.trim();
-        // Handle postfix 'if' syntax: "action if condition" -> "if (condition) { action; }"
-        const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
-        if (postfixIfMatch) {
-            const action = postfixIfMatch[1].trim();
-            const condition = postfixIfMatch[2].trim();
-            jsCode = `if (${condition}) { ${action}; }`;
-        }
-        // Convert Dendry comparison operators to JavaScript
-        // Do this BEFORE logical operators to avoid issues
-        // Replace = with == but not if it's already ==, !=, <=, >=, or ===
-        if (!isActionContext) {
-            jsCode = jsCode.replace(/([^=!<>+\-*/%])=([^=])/g, '$1==$2');
-            // Handle edge case at start of string
-            jsCode = jsCode.replace(/^=([^=])/g, '==$1');
-        }
-        // Convert Dendry logical operators to JavaScript (after comparison conversion)
-        jsCode = jsCode.replace(/\band\b/g, '&&');
-        jsCode = jsCode.replace(/\bor\b/g, '||');
-        jsCode = jsCode.replace(/\bnot\b/g, '!');
-        // Match identifiers that are not after a dot and not keywords
-        // Use a more careful regex that won't break things
-        jsCode = jsCode.replace(/(?:^|[^.])([a-zA-Z_]\w*)(?=[^\w:]|$)/g, (fullMatch, identifier, offset) => {
-            // If this is a keyword, don't convert
-            if (jsKeywords.has(identifier)) {
-                return fullMatch;
+    convertDendryToJavaScript(dendryCode, isActionContext = false, diagnostics = [], range) {
+        // Split by semicolons to handle each statement separately
+        const statements = dendryCode.split(';').map(s => s.trim()).filter(s => s);
+        const convertedStatements = statements.map(stmt => {
+            let jsCode = stmt;
+            // Handle postfix if syntax: action if condition
+            const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
+            if (postfixIfMatch) {
+                const action = postfixIfMatch[1].trim();
+                const condition = postfixIfMatch[2].trim();
+                // Convert condition comparators only
+                const convertedCondition = this.convertComparators(condition);
+                // Convert logical operators in condition
+                const convertedConditionWithLogic = convertedCondition
+                    .replace(/\band\b/g, '&&')
+                    .replace(/\bor\b/g, '||')
+                    .replace(/\bnot\b/g, '!');
+                jsCode = `if (${convertedConditionWithLogic}) { ${action} }`;
             }
-            // Get the character before the identifier in the full match
-            const prefix = fullMatch.substring(0, fullMatch.length - identifier.length);
-            // Don't convert if it's already Q., S., V., or P.
-            if (prefix.endsWith('Q.') || prefix.endsWith('S.') ||
-                prefix.endsWith('V.') || prefix.endsWith('P.')) {
-                return fullMatch;
+            else if (!isActionContext) {
+                // Only convert = to == if we're in condition context (not action)
+                jsCode = this.convertComparators(jsCode);
             }
-            // Add Q. prefix, keeping any prefix character (like space, operator, etc.)
-            return prefix + 'Q.' + identifier;
+            // Convert logical operators (if not already done for postfix if)
+            if (!postfixIfMatch) {
+                jsCode = jsCode
+                    .replace(/\band\b/g, '&&')
+                    .replace(/\bor\b/g, '||')
+                    .replace(/\bnot\b/g, '!');
+            }
+            if (stmt.includes('Q.') || stmt.includes('S.') || stmt.includes('V.') || stmt.includes('P.')) {
+                console.log('Found prefix in statement:', stmt);
+                const prefix = stmt.includes('Q.') ? 'Q' :
+                    stmt.includes('S.') ? 'S' :
+                        stmt.includes('V.') ? 'V' : 'P';
+                const identifier = stmt.split(`${prefix}.`)[1].split(/[\s;(){}]/)[0];
+                const warningRange = new vscode.Range(range.start.line, range.start.character + dendryCode.indexOf(stmt), range.start.line, range.start.character + dendryCode.indexOf(stmt) + stmt.length);
+                diagnostics.push(this.createDiagnostic(warningRange, `Potentially invalid use of prefix "${prefix}". Are you sure you are not referring to "${identifier}"?`, vscode.DiagnosticSeverity.Warning));
+            }
+            ;
+            return jsCode;
         });
+        convertedStatements.forEach((stmt, index) => {
+        });
+        // Join statements back together
+        let jsCode = convertedStatements.join('; ');
         return jsCode;
+    }
+    convertComparators(code) {
+        // Replace = with == but not if it's already ==, !=, <=, >=, or ===
+        let result = code.replace(/([^=!<>])=([^=])/g, '$1==$2');
+        // Handle edge case at start of string
+        result = result.replace(/^=([^=])/g, '==$1');
+        return result;
     }
     validateJavaScript(code, range, isActionContext = false) {
         const diagnostics = [];
@@ -742,7 +757,7 @@ class DendryValidator {
         let jsCode = code;
         if (!isJsBlock) {
             // Convert Dendry shorthand to proper JavaScript
-            jsCode = this.convertDendryToJavaScript(code, isActionContext);
+            jsCode = this.convertDendryToJavaScript(code, isActionContext, diagnostics, range);
         }
         const config = vscode.workspace.getConfiguration('dendry');
         const extraLibraries = config.get('validation.jsLibraries', ['d3']);
