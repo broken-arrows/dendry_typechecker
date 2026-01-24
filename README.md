@@ -10,7 +10,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 - **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
 - **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existance/q.
-- **Basic Debugginh Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode.
+- **Basic Debugging Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode.
 
 ## Configuration
 
