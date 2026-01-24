@@ -1,6 +1,6 @@
 # Dendry Type Checker for VSCode
 
-A Visual Studio Code extension providing type checking and validation for DendryNexys interactive fiction files. Currently an **alpha** release, expect bugs and incomplete checking and highlighting.
+A Visual Studio Code extension providing type checking and validation for DendryNexys interactive fiction files. This extension is currently in **alpha** versions, expect bugs and incomplete checking and highlighting.
 
 ## Features
 
@@ -9,7 +9,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 - **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
 - **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
-- **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existance/q.
+- **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existence.
 - **Basic Debugging Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode.
 
 ## Configuration
@@ -103,7 +103,7 @@ dendry-typechecker/
 ## Contributing & Issue Reporting
 
 Please report any issues via [GitHub Issues](https://github.com/broken-arrows/dendry_typechecker/issues).
-When doing so, please do your best to include as much informatiuon as possible. I.e.:
+When doing so, please do your best to include as much information as possible. I.e.:
 
 - A detailed description of the bug/issue.
 - Steps to reproduce it, if applicable.
