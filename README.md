@@ -4,65 +4,42 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 
 ## Features
 
-- **Robust Real-time Validation**: Provides immediate feedback on your `.scene.dry` files as you type. The extension uses a powerful `chevrotain`-based parser that can gracefully handle syntax errors, providing accurate and easy-to-understand error messages.
-- **Duplicate ID Detection**: Automatically detects when a scene or quality `id` is used more than once, both within a single file and across your entire project, preventing common and hard-to-find bugs.
-- **Advanced JavaScript Validation**: Goes beyond simple syntax checking. The extension parses your embedded JavaScript (in `on-arrival`, `view-if`, etc.) to intelligently find and validate references to scenes (`S.`) and qualities (`Q.`), including complex cases like `Q['my-quality']`.
-- **Comprehensive Type Checking**: Checks that your property values are the correct type (e.g., numbers for `max-visits`, booleans for `new-page`).
+- **Real-time Validation**: Validates your `.scene.dry` files as you type, providing immediate feedback.
+- **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
+- **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
 - **Syntax Highlighting**: Comes with a TextMate grammar for `.scene.dry` files to make your code easier to read.
-- **Configurable Strictness**: Allows you to enable a `strictMode` for more stringent validation rules.
 
 ## Configuration
 
-- `dendry.validation.enable`: Enable/disable validation (default: true)
-- `dendry.validation.strictMode`: Enable strict type checking (default: false)
-
-## Validation Features
-
-### Scene Validation
-
-- Required `id` property
-- Valid property names (id, title, tags, max-visits, etc.)
-- Numeric type checking for frequency, order, priority
-- JavaScript validation in on-* properties
-- Scene reference validation in go-to
-
-### Quality Validation
-
-- Required `id` property
-- Numeric type checking for initial, min, max values
-- Min/max constraint validation
-
-### Choice Validation
-
-- Property name validation
-- JavaScript validation in conditional properties
-- Scene reference validation
-
-### JavaScript Type Checking
-
-- Syntax validation using Function constructor
-
-## Usage
-
-1. Open any `.scene.dry` file in VSCode
-2. Extension automatically activates and validates
-3. Errors and warnings appear in Problems panel
-4. Hover over underlined code for details
+- `dendry.validation.enable`: Enable/disable validation (default: true).
+- `dendry.validation.exclude`: Glob patterns for files/folders to exclude from Dendry validation.
 
 ## Example
 
 ```dendry
-@scene start
-id: start
 title: Beginning
 max-visits: 3
 on-arrival: Q.visited = true
 
+= Beginning
 This is the opening scene.
+*what can you do next?*
 
-- Continue onwards
-  go-to: next_scene
+- @back: Go home
+- @continue
+
+@continue
+title: Continue
+game-over: true
+on-arrival: {!
+   console.log("Player continued...");
+!}
+
+[? if visited: <img src="https://media.tenor.com/EMVZYUqX-cgAAAAC/pepe-saber.gif"/>]
+
+Game's over :(
+
 ```
 
 The extension will:
@@ -71,9 +48,16 @@ The extension will:
 - Check JavaScript syntax in on-arrival
 - Ensure next_scene exists
 
+## Usage
+
+1. Open any `.scene.dry` file in VSCode.
+2. The extension automatically activates and validates your files.
+3. Errors and warnings will appear in the "Problems" panel.
+4. Hover over the underlined code to see detailed error messages.
+
 ## Installation
 
-1. Clone or download this extension
+1. Clone or download this extension.
 2. Install dependencies:
 
    ```bash
@@ -86,7 +70,7 @@ The extension will:
    npm run compile
    ```
 
-4. Press F5 in VSCode to launch extension development host
+4. Press F5 in VSCode to launch an extension development host with the extension running.
 
 ## Extension Structure
 
@@ -99,8 +83,7 @@ dendry-typechecker/
 │   └── dendry.tmLanguage.json       # Syntax highlighting
 └── src/
     ├── extension.ts                  # Extension entry point
-    ├── lexer.ts                      # Chevrotain lexer for tokenizing
-    ├── parser.ts                     # Chevrotain parser and CST-to-AST visitor
+    ├── parser.ts                     # Esprima-based parser for JavaScript
     ├── project-validator.ts          # Orchestrates project-wide validation
     └── validator.ts                  # Contains the specific validation rules
 ```
@@ -112,7 +95,7 @@ npm install -g vsce
 vsce package
 ```
 
-This creates a `.vsix` file you can install or distribute.
+This creates a `.vsix` file that you can install in VSCode or distribute.
 
 ## License
 
