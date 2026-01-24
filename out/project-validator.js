@@ -253,7 +253,6 @@ class DendryProjectValidator {
                     let currentDiags = finalDiagnostics.get(fileUri) || [];
                     const currentRange = await createSceneDeclarationRange(fileUri, id);
                     if (currentRange) {
-                        const currentFileName = fileUri.fsPath.split('/').pop();
                         currentDiags.push(new vscode.Diagnostic(currentRange, `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in ${existingUri.fsPath.split('/').pop()}`, vscode.DiagnosticSeverity.Error));
                         finalDiagnostics.set(fileUri, currentDiags);
                     }

@@ -37,6 +37,7 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const project_validator_1 = require("./project-validator");
+const debug_adapter_1 = require("./debug-adapter");
 let diagnosticCollection;
 let projectValidator;
 let lastDiagnostics = new Map();
@@ -110,6 +111,28 @@ function activate(context) {
     context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(document => {
         diagnosticCollection.delete(document.uri);
         lastDiagnostics.delete(document.uri);
+    }));
+    // Register debug configuration provider
+    const debugConfigProvider = new debug_adapter_1.DendryDebugConfigurationProvider();
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('dendry', debugConfigProvider));
+    // Register command to build and launch
+    context.subscriptions.push(vscode.commands.registerCommand('dendry.debug', async () => {
+        const config = vscode.workspace.getConfiguration('dendry.debug');
+        const buildCommand = config.get('buildCommand', 'npm run dendrynexus make-html -- --pretty');
+        const outputPath = config.get('outputPath', 'out/html/index.html');
+        await (0, debug_adapter_1.runDendryDebug)({ buildCommand, outputPath });
+    }));
+    // Handle F5 debug launches
+    context.subscriptions.push(vscode.debug.onDidStartDebugSession(async (session) => {
+        if (session.type === 'dendry') {
+            // Stop the debug session immediately since we don't need a real debugger
+            vscode.debug.stopDebugging(session);
+            // Run our build and launch
+            await (0, debug_adapter_1.runDendryDebug)({
+                buildCommand: session.configuration.buildCommand,
+                outputPath: session.configuration.outputPath
+            });
+        }
     }));
 }
 async function validateProject(changedFileUri) {

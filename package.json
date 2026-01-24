@@ -1,7 +1,7 @@
 {
   "name": "dendry-typechecker",
-  "displayName": "Dendry Type Checker",
-  "description": "Type checking and validation for Dendry interactive fiction files",
+  "displayName": "DendryNexus",
+  "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
   "version": "0.1.0",
   "icon": "icon.png",
@@ -28,8 +28,10 @@
       {
         "id": "dendry",
         "aliases": [
+          "DendryNexus",
+          "dendrynexus",
+          "dendry-nexus",
           "Dendry",
-          "dendry",
           "dry"
         ],
         "extensions": [
@@ -48,7 +50,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Dendry Type Checker",
+      "title": "Dendry",
       "properties": {
         "dendry.validation.enable": {
           "type": "boolean",
@@ -78,9 +80,56 @@
             "type": "string"
           },
           "description": "A list of global JavaScript libraries to assume are available during validation."
+        },
+        "dendry.debug.buildCommand": {
+          "type": "string",
+          "default": "npm run dendrynexus make-html -- --pretty",
+          "description": "Command to build the Dendry project"
+        },
+        "dendry.debug.outputPath": {
+          "type": "string",
+          "default": "out/html/index.html",
+          "description": "Relative path to the built HTML file from workspace root"
         }
       }
-    }
+    },
+    "debuggers": [
+      {
+        "type": "dendry",
+        "label": "Dendry Debug",
+        "configurationSnippets": [
+          {
+            "label": "Dendry: Launch",
+            "description": "Build and launch Dendry project",
+            "body": {
+              "type": "dendry",
+              "request": "launch",
+              "name": "Launch Dendry",
+              "buildCommand": "${config:dendry.debug.buildCommand}",
+              "outputPath": "${config:dendry.debug.outputPath}"
+            }
+          }
+        ]
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "dendry"
+      }
+    ],
+    "commands": [
+      {
+        "command": "dendry.debug",
+        "title": "Dendry: Build and Launch"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "dendry.debug",
+        "key": "f5",
+        "when": "editorLangId == dendry"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
