@@ -258,90 +258,102 @@ export class DendryProjectValidator {
         }
       }
 
-      // 3. Check for duplicate IDs across all files
-      const globalSceneIdToUri: Map<string, vscode.Uri> = new Map();
+      // 3. Check for duplicate filename-based scene IDs and quality IDs across files
+      const fileNameToUri: Map<string, vscode.Uri> = new Map();
       const globalQualityIdToUri: Map<string, vscode.Uri> = new Map();
 
-      for (const [fileUri, data] of this.fileData) {
-        const addDiagnosticsForDuplicate = async (id: string, existingUri: vscode.Uri, currentUri: vscode.Uri, isScene: boolean) => {
-            // Skip if it's the same file (handled separately in parseAndExtractLocalIds)
-            if (existingUri.toString() === currentUri.toString()) {
-              return;
-            }
-          
-          // Helper to create range for just the scene line (async to read unopened files)
-          const createSceneDeclarationRange = async (uri: vscode.Uri, sceneId: string): Promise<vscode.Range | null> => {
-            // First try to get from already open documents
-            let doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === uri.toString());
-            let text: string;
-            
-            if (doc) {
-              text = doc.getText();
-            } else {
-              // File not open - read from filesystem
-              try {
-                const uint8 = await vscode.workspace.fs.readFile(uri);
-                text = new TextDecoder().decode(uint8);
-              } catch (error) {
-                return null;
-              }
-            }
-            
-            const lines = text.split('\n');
-            for (let i = 0; i < lines.length; i++) {
-              const line = lines[i].trim();
-              if (line.startsWith(`@${sceneId}`) && (line === `@${sceneId}` || line[`@${sceneId}`.length] === ' ' || line[`@${sceneId}`.length] === ':')) {
-                return new vscode.Range(i, 0, i, lines[i].length);
-              }
-            }
+      // Helper to create diagnostic range for scene line
+      const createSceneDeclarationRange = async (uri: vscode.Uri, sceneId: string): Promise<vscode.Range | null> => {
+        let doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === uri.toString());
+        let text: string;
+        
+        if (doc) {
+          text = doc.getText();
+        } else {
+          // File not open - read from filesystem
+          try {
+            const uint8 = await vscode.workspace.fs.readFile(uri);
+            text = new TextDecoder().decode(uint8);
+          } catch (error) {
             return null;
-          };
-
-          // Add diagnostic to existing file
-          let existingDiags = finalDiagnostics.get(existingUri) || [];
-          const existingRange = await createSceneDeclarationRange(existingUri, id);
-          if (existingRange) {
-            const existingFileName = existingUri.fsPath.split('/').pop();
-            existingDiags.push(new vscode.Diagnostic(
-              existingRange,
-              `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in ${fileUri.fsPath.split('/').pop()}`,
-              vscode.DiagnosticSeverity.Error
-            ));
-            finalDiagnostics.set(existingUri, existingDiags);
           }
+        }
+        
+        const lines = text.split(/\r?\n/);
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (line.startsWith(`@${sceneId}`) && (line === `@${sceneId}` || lines[sceneId.length] === ' ')) {
+            return new vscode.Range(i, 0, i, lines[i].length);
+          }
+        }
+        return null;
+      };
 
-          // Add diagnostic to current file
-          let currentDiags = finalDiagnostics.get(fileUri) || [];
-          const currentRange = await createSceneDeclarationRange(fileUri, id);
-          if (currentRange) {
+      // Check for duplicate filenames (e.g., two files both named "myScene.scene.dry")
+      for (const [fileUri, data] of this.fileData) {
+        // Extract filename without .scene.dry extension
+        const pathParts = fileUri.fsPath.split(/[/\\]/);
+        const fullFileName = pathParts.pop();
+        const fileName = fullFileName?.replace('.scene.dry', '');
+        
+        if (fileName && fileName !== fullFileName) { // Only check .scene.dry files
+          const existingUri = fileNameToUri.get(fileName);
+          if (existingUri && existingUri.toString() !== fileUri.toString()) {
+            // Duplicate filename found
+            let currentDiags = finalDiagnostics.get(fileUri) || [];
             currentDiags.push(new vscode.Diagnostic(
-              currentRange,
-              `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in ${existingUri.fsPath.split('/').pop()}`,
+              new vscode.Range(0, 0, 0, 0),
+              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${existingUri.fsPath}`,
               vscode.DiagnosticSeverity.Error
             ));
             finalDiagnostics.set(fileUri, currentDiags);
-          }
-
-        };
-
-        for (const id of data.localSceneIds) {
-          const existingUri = globalSceneIdToUri.get(id);
-          if (existingUri) {
-            await addDiagnosticsForDuplicate(id, existingUri, fileUri, true);
+            
+            // Also add diagnostic to existing file
+            let existingDiags = finalDiagnostics.get(existingUri) || [];
+            existingDiags.push(new vscode.Diagnostic(
+              new vscode.Range(0, 0, 0, 0),
+              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${fileUri.fsPath}`,
+              vscode.DiagnosticSeverity.Error
+            ));
+            finalDiagnostics.set(existingUri, existingDiags);
           } else {
-            globalSceneIdToUri.set(id, fileUri);
+            fileNameToUri.set(fileName, fileUri);
           }
         }
+      }
 
+      // Check for duplicate quality IDs across files (qualities must be unique globally)
+      for (const [fileUri, data] of this.fileData) {
         for (const id of data.localQualityIds) {
           const existingUri = globalQualityIdToUri.get(id);
-          if (existingUri) {
-            await addDiagnosticsForDuplicate(id, existingUri, fileUri, false);
+          if (existingUri && existingUri.toString() !== fileUri.toString()) {
+            // Add diagnostic to existing file
+            let existingDiags = finalDiagnostics.get(existingUri) || [];
+            const existingRange = await createSceneDeclarationRange(existingUri, id);
+            if (existingRange) {
+                existingDiags.push(new vscode.Diagnostic(
+                existingRange,
+                `Duplicate quality ID "${id}" also found in ${fileUri.fsPath.split(/[/\\]/).pop()}`,
+                vscode.DiagnosticSeverity.Error
+              ));
+              finalDiagnostics.set(existingUri, existingDiags);
+            }
+            
+            // Add diagnostic to current file
+            let currentDiags = finalDiagnostics.get(fileUri) || [];
+            const currentRange = await createSceneDeclarationRange(fileUri, id);
+            if (currentRange) {
+              currentDiags.push(new vscode.Diagnostic(
+                currentRange,
+                `Duplicate quality ID "${id}" also found in ${existingUri.fsPath.split(/[/\\]/).pop()}`,
+                vscode.DiagnosticSeverity.Error
+              ));
+              finalDiagnostics.set(fileUri, currentDiags);
+            }
           } else {
             globalQualityIdToUri.set(id, fileUri);
           }
         }
-
       }
 
       // 4. Rebuild global IDs from all cached file data

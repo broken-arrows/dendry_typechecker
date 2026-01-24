@@ -580,33 +580,33 @@ export class DendryValidator {
     }
 
     // Check for scene references
-    // Check for scene references
     // First remove inline dendry conditions and comments
-    const cleaned = choiceContent.replace(/\[\?.*?\?\]/g, '');// ignore inline dendry brackets
-    // Match scene IDs: can start with letter/digit/underscore, continue with word chars or hyphens
-    const match = cleaned.match(/@([\w][\w-]*)(?::\s*(.+))?/);
+    const cleaned = choiceContent.replace(/\{[^}]*\?\?[^}]*\}/g, ''); // ignore inline dendry brackets
+    // Match scene IDs (can start with letter/digit/underscore, continue with word chars or hyphens, including qualified refs)
+    const match = cleaned.match(/@([\w-]+(?:\.[\w-]+)?)/);
 
     if (match) {
-      const sceneId = match[1].trim();
-      // Compute precise range for @sceneId on this line
+      const sceneRef = match[1].trim();
+      
+      // Compute precise range for sceneId on this line
       const fullLineText = document.lineAt(node.range.start.line).text;
       const atIndex = fullLineText.indexOf('@');
       if (atIndex !== -1) {
-        const start = atIndex + 1; // Position after @
-        const end = start + sceneId.length;
-        const sceneIdRange = new vscode.Range(
+        const start = atIndex + 1; // Position after '@'
+        const end = start + sceneRef.length;
+        const sceneRefRange = new vscode.Range(
           node.range.start.line,
           start,
           node.range.start.line,
           end
         );
-        this.validateSceneReference(sceneId, sceneIdRange, diagnostics);
+        // Reuse the same validation logic as go-to
+        this.validateGoTo(sceneRef, sceneRefRange, diagnostics);
       } else {
-        // Fallback to node range if we can't find the @ symbol
-        this.validateSceneReference(sceneId, node.range, diagnostics);
+        // Fallback to node range if we can't find the '@' symbol
+        this.validateGoTo(sceneRef, node.range, diagnostics);
       }
     }
-
     return diagnostics;
   }
 
