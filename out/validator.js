@@ -167,12 +167,11 @@ class DendryValidator {
             // Validate qdisplay reference
             if (interpolation.qdisplay) {
                 if (!this.qdisplayFiles.has(interpolation.qdisplay)) {
-                    // Find the exact position of the qdisplay identifier within the full match
+                    // Calculate the exact position of the qdisplay identifier
                     // Pattern: [+ variable : qdisplay +]
-                    // We need to find where "qdisplay" starts within the range
-                    const fullMatch = `[+ ${interpolation.variable} : ${interpolation.qdisplay} +]`;
-                    const qdisplayOffset = fullMatch.indexOf(interpolation.qdisplay);
-                    const qdisplayStart = interpolation.range.start.character + qdisplayOffset;
+                    // The qdisplay comes after "[+ ", variable, " : "
+                    const prefixLength = 3 + interpolation.variable.length + 3; // "[+ " + variable + " : "
+                    const qdisplayStart = interpolation.range.start.character + prefixLength;
                     const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
                     const qdisplayRange = new vscode.Range(interpolation.range.start.line, qdisplayStart, interpolation.range.end.line, qdisplayEnd);
                     diagnostics.push(this.createDiagnostic(qdisplayRange, `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`, vscode.DiagnosticSeverity.Error));
@@ -283,7 +282,6 @@ class DendryValidator {
         while ((match = regex.exec(lineText)) !== null) {
             const conditionPrefix = match[1]; // '[?'
             const condition = match[2].trim();
-            const textPart = match[3]; // text after colon
             if (!condition) {
                 const fullMatchStart = match.index;
                 const fullMatchEnd = regex.lastIndex;
@@ -299,27 +297,6 @@ class DendryValidator {
             // Validate ONLY condition as Dendry logic (condition context: = -> ==)
             const conditionDiagnostics = this.validateDendryCondition(preParsedCondition, conditionRange);
             diagnostics.push(...conditionDiagnostics);
-            // NEW: Check for interpolations in the text part
-            const textStartCol = match.index + conditionPrefix.length + condition.length + 1; // +1 for ':'
-            const interpolationRegex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
-            let interpMatch;
-            while ((interpMatch = interpolationRegex.exec(textPart)) !== null) {
-                const [fullInterpMatch, variable, qdisplay] = interpMatch;
-                const interpStartCol = textStartCol + interpMatch.index;
-                const interpRange = new vscode.Range(lineNum, interpStartCol, lineNum, interpStartCol + fullInterpMatch.length);
-                // Validate the interpolation
-                if (variable.includes(' ')) {
-                    diagnostics.push(this.createDiagnostic(interpRange, `Variable name "${variable}" cannot contain spaces.`, vscode.DiagnosticSeverity.Error));
-                }
-                if (qdisplay) {
-                    if (!this.qdisplayFiles.has(qdisplay)) {
-                        // Calculate precise qdisplay range
-                        const qdisplayOffset = fullInterpMatch.indexOf(qdisplay);
-                        const qdisplayRange = new vscode.Range(lineNum, interpStartCol + qdisplayOffset, lineNum, interpStartCol + qdisplayOffset + qdisplay.length);
-                        diagnostics.push(this.createDiagnostic(qdisplayRange, `QDisplay file "${qdisplay}.qdisplay.dry" not found.`, vscode.DiagnosticSeverity.Error));
-                    }
-                }
-            }
         }
     }
     validateQuality(node, document) {
