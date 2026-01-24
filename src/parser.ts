@@ -9,6 +9,7 @@ export interface DendryNode {
     variable: string;
     qdisplay?: string;
     range: vscode.Range;
+    fullText?: string;
   }[];
   range: vscode.Range;
   declarationType?: 'explicit' | 'implicit';
@@ -226,19 +227,43 @@ class DendryHandParser {
     const lineNum = this.currentLine;
     const line = this.lines[this.currentLine];
     
-    // Remove leading '- ' and trim
-    const content = line.substring(line.indexOf('-') + 1).trim();
-
+    // Find where the actual content starts (after "- ")
+    const dashIndex = line.indexOf('-');
+    const contentStart = dashIndex + 1; // Position after '-'
+    
+    // Skip any whitespace after the dash
+    let contentOffset = contentStart;
+    while (contentOffset < line.length && line[contentOffset] === ' ') {
+      contentOffset++;
+    }
+    
+    // Extract content from after "- "
+    const content = line.substring(contentStart).trim();
+    
+    // Parse interpolations from the content
+    const interpolations = this.parseInterpolations(content, lineNum);
+    
+    // Adjust all interpolation ranges to account for the "- " prefix
+    interpolations.forEach(interp => {
+      interp.range = new vscode.Range(
+        interp.range.start.line,
+        interp.range.start.character + contentOffset,
+        interp.range.end.line,
+        interp.range.end.character + contentOffset
+      );
+    });
+    
     this.nodes.push({
       type: 'choice',
       properties: new Map(),
       content,
-      interpolations: this.parseInterpolations(content, lineNum),
+      interpolations: interpolations,
       range: new vscode.Range(lineNum, 0, lineNum, line.length)
     });
-
+    
     this.currentLine++;
-  }
+}
+
 
   private parseDivider() {
     const lineNum = this.currentLine;
@@ -289,24 +314,25 @@ class DendryHandParser {
       }
       
       // Parse interpolations from the full text (including those in conditionals)
-      const interpolationRegex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
+      const interpolationRegex = /\[\+\s*([^\s:]+)\s*(?::\s*([^\s+]+))?\s*\+\]/g;
       let match;
       
       while ((match = interpolationRegex.exec(processedText)) !== null) {
-          const [fullMatch, variable, qdisplay] = match;
-          const start = match.index;
-          
-          // Calculate line and character position
-          const textBeforeMatch = processedText.substring(0, start);
-          const lineBreaks = textBeforeMatch.split('\n');
-          const line = lineBreaks.length - 1 + offset;
-          const character = lineBreaks[lineBreaks.length - 1].length;
-          
-          interpolations.push({
-              variable,
-              qdisplay,
-              range: new vscode.Range(line, character, line, character + fullMatch.length)
-          });
+        const [fullMatch, variable, qdisplay] = match;
+        const start = match.index;
+
+        // Calculate line and character position
+        const textBeforeMatch = processedText.substring(0, start);
+        const lineBreaks = textBeforeMatch.split('\n');
+        const line = lineBreaks.length - 1 + offset;
+        const character = lineBreaks[lineBreaks.length - 1].length;
+
+        interpolations.push({
+          variable,
+          qdisplay,
+          range: new vscode.Range(line, character, line, character + fullMatch.length),
+          fullText: fullMatch 
+        });
       }
       
       return interpolations;
@@ -317,7 +343,7 @@ class DendryHandParser {
       if (typeof propertyValue !== 'string') return [];
       
       const interpolations: DendryNode['interpolations'] = [];
-      const regex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
+      const regex = /\[\+\s*([^\s:]+)\s*(?::\s*([^\s+]+))?\s*\+\]/g;
       let match;
       
       while ((match = regex.exec(propertyValue)) !== null) {
@@ -327,7 +353,8 @@ class DendryHandParser {
           interpolations.push({
               variable,
               qdisplay,
-              range: new vscode.Range(lineNumber, startCol, lineNumber, startCol + fullMatch.length)
+              range: new vscode.Range(lineNumber, startCol, lineNumber, startCol + fullMatch.length),
+              fullText: fullMatch
           });
       }
       

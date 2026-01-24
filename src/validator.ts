@@ -192,45 +192,65 @@ export class DendryValidator {
   }
 
   private validateInterpolations(interpolations: DendryNode['interpolations'], diagnostics: vscode.Diagnostic[]): void {
-      for (const interpolation of interpolations) {
-          // Validate variable name (no spaces)
-          if (interpolation.variable.includes(' ')) {
-              diagnostics.push(
-                  this.createDiagnostic(
-                      interpolation.range,
-                      `Variable name "${interpolation.variable}" cannot contain spaces.`,
-                      vscode.DiagnosticSeverity.Error
-                  )
-              );
-          }
-          
-          // Validate qdisplay reference
-          if (interpolation.qdisplay) {
-            if (!this.qdisplayFiles.has(interpolation.qdisplay)) {
-              // Calculate the exact position of the qdisplay identifier
-              // Pattern: [+ variable : qdisplay +]
-              // The qdisplay comes after "[+ ", variable, " : "
-              const prefixLength = 3 + interpolation.variable.length + 3; // "[+ " + variable + " : "
-              const qdisplayStart = interpolation.range.start.character + prefixLength;
-              const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
-
-                  const qdisplayRange = new vscode.Range(
-                      interpolation.range.start.line, 
-                      qdisplayStart, 
-                      interpolation.range.end.line, 
-                      qdisplayEnd
-                  );
-                  
-                  diagnostics.push(
-                      this.createDiagnostic(
-                          qdisplayRange,
-                          `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-              }
-          }
+    const validIdentifierRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    
+    for (const interpolation of interpolations) {
+      // Validate variable name format
+      if (!validIdentifierRegex.test(interpolation.variable)) {
+        diagnostics.push(
+          this.createDiagnostic(
+            interpolation.range,
+            `Invalid variable name "${interpolation.variable}". Variable names must start with a letter or underscore, followed by letters, numbers, or underscores only.`,
+            vscode.DiagnosticSeverity.Error
+          )
+        );
       }
+
+      // Validate qdisplay reference
+      if (interpolation.qdisplay) {
+        // First validate the qdisplay name format
+        if (!validIdentifierRegex.test(interpolation.qdisplay)) {
+          diagnostics.push(
+            this.createDiagnostic(
+              interpolation.range,
+              `Invalid qdisplay name "${interpolation.qdisplay}". QDisplay names must start with a letter or underscore, followed by letters, numbers, or underscores only.`,
+              vscode.DiagnosticSeverity.Error
+            )
+          );
+        } else if (!this.qdisplayFiles.has(interpolation.qdisplay)) {
+          // Use the fullText to find the exact position of the qdisplay identifier
+          const fullText = interpolation.fullText || '';
+          const qdisplayIndex = fullText.lastIndexOf(interpolation.qdisplay);
+          
+          if (qdisplayIndex !== -1) {
+            const qdisplayStart = interpolation.range.start.character + qdisplayIndex;
+            const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
+            const qdisplayRange = new vscode.Range(
+              interpolation.range.start.line,
+              qdisplayStart,
+              interpolation.range.end.line,
+              qdisplayEnd
+            );
+            diagnostics.push(
+              this.createDiagnostic(
+                qdisplayRange,
+                `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
+                vscode.DiagnosticSeverity.Error
+              )
+            );
+          } else {
+            // Fallback if we can't find it
+            diagnostics.push(
+              this.createDiagnostic(
+                interpolation.range,
+                `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
+                vscode.DiagnosticSeverity.Error
+              )
+            );
+          }
+        }
+      }
+    }
   }
 
 
