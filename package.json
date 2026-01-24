@@ -51,6 +51,20 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable validation"
+        },
+        "dendry.validation.exclude": {
+          "type": "array",
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/out/**"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns for files/folders to exclude from Dendry validation"
         }
       }
     }

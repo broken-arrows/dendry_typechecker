@@ -75,13 +75,12 @@ export class DendryProjectValidator {
         }
       }
 
-      // Second pass: extract scene IDs from @scene markers at the START OF LINES only
-      // This catches scenes defined as "@sceneid" or "@sceneid:" at column 0
+      // Second pass: extract scene IDs from scene markers at the START OF LINES only
       const lines = text.split(/\r?\n/);
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        // Only match @scene at the START of a line (scene declarations, not references)
-        const match = line.match(/^@([\w][\w-]*)(?:\s|:|$)/);
+        // Only match scene at the START of a line (scene declarations, not references)
+        const match = line.match(/^@([a-zA-Z0-9_][\w-]*)(?:\s|:|$)/); // Added boundary check
         if (match) {
           const sceneId = match[1];
           if (!seenIds.has(sceneId)) {
@@ -89,7 +88,8 @@ export class DendryProjectValidator {
             seenIds.add(sceneId);
           }
         }
-      } 
+      }
+
       
       // Extract scene ID from filename (e.g., "scene_id.scene.dry" -> "scene_id")
       const fileName = fileUri.fsPath.split(/[/\\]/).pop() || '';
@@ -229,65 +229,72 @@ export class DendryProjectValidator {
       const globalQualityIdToUri: Map<string, vscode.Uri> = new Map();
 
       for (const [fileUri, data] of this.fileData) {
-        const addDiagnosticsForDuplicate = (id: string, existingUri: vscode.Uri, isScene: boolean) => {
-          // Skip if it's the same file (handled separately in _parseAndExtractLocalIds)
-          if (existingUri.toString() === fileUri.toString()) {
-            return;
-          }
-
-          // Helper to create range for just the @scene line
-          const createSceneDeclarationRange = (uri: vscode.Uri, sceneId: string): vscode.Range | null => {
-            const doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === uri.toString());
-            if (!doc) return null;
-
-            const text = doc.getText();
-            const lines = text.split(/\r?\n/);
+        const addDiagnosticsForDuplicate = async (id: string, existingUri: vscode.Uri, currentUri: vscode.Uri, isScene: boolean) => {
+            // Skip if it's the same file (handled separately in parseAndExtractLocalIds)
+            if (existingUri.toString() === currentUri.toString()) {
+              return;
+            }
+          
+          // Helper to create range for just the scene line (async to read unopened files)
+          const createSceneDeclarationRange = async (uri: vscode.Uri, sceneId: string): Promise<vscode.Range | null> => {
+            // First try to get from already open documents
+            let doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === uri.toString());
+            let text: string;
             
-            for (let i = 0; i < lines.length; i++) {
-              const line = lines[i].trim();
-              if (line.startsWith(`@${sceneId}`) && (line === `@${sceneId}` || line[sceneId.length + 1] === ':' || line[sceneId.length + 1] === ' ')) {
-                return new vscode.Range(i, 0, i, lines[i].length);
+            if (doc) {
+              text = doc.getText();
+            } else {
+              // File not open - read from filesystem
+              try {
+                const uint8 = await vscode.workspace.fs.readFile(uri);
+                text = new TextDecoder().decode(uint8);
+              } catch (error) {
+                return null;
               }
             }
             
+            const lines = text.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (line.startsWith(`@${sceneId}`) && (line === `@${sceneId}` || line[`@${sceneId}`.length] === ' ' || line[`@${sceneId}`.length] === ':')) {
+                return new vscode.Range(i, 0, i, lines[i].length);
+              }
+            }
             return null;
           };
 
           // Add diagnostic to existing file
           let existingDiags = finalDiagnostics.get(existingUri) || [];
-          const existingRange = createSceneDeclarationRange(existingUri, id);
+          const existingRange = await createSceneDeclarationRange(existingUri, id);
           if (existingRange) {
-            const existingFileName = existingUri.fsPath.split(/[/\\]/).pop();
-            existingDiags.push(
-              new vscode.Diagnostic(
-                existingRange, 
-                `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in "${fileUri.fsPath.split(/[/\\]/).pop()}"`, 
-                vscode.DiagnosticSeverity.Error
-              )
-            );
+            const existingFileName = existingUri.fsPath.split('/').pop();
+            existingDiags.push(new vscode.Diagnostic(
+              existingRange,
+              `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in ${fileUri.fsPath.split('/').pop()}`,
+              vscode.DiagnosticSeverity.Error
+            ));
             finalDiagnostics.set(existingUri, existingDiags);
           }
 
           // Add diagnostic to current file
           let currentDiags = finalDiagnostics.get(fileUri) || [];
-          const currentRange = createSceneDeclarationRange(fileUri, id);
+          const currentRange = await createSceneDeclarationRange(fileUri, id);
           if (currentRange) {
-            const currentFileName = fileUri.fsPath.split(/[/\\]/).pop();
-            currentDiags.push(
-              new vscode.Diagnostic(
-                currentRange, 
-                `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in "${existingUri.fsPath.split(/[/\\]/).pop()}"`, 
-                vscode.DiagnosticSeverity.Error
-              )
-            );
+            const currentFileName = fileUri.fsPath.split('/').pop();
+            currentDiags.push(new vscode.Diagnostic(
+              currentRange,
+              `Duplicate ${isScene ? 'scene' : 'quality'} ID "${id}" also found in ${existingUri.fsPath.split('/').pop()}`,
+              vscode.DiagnosticSeverity.Error
+            ));
             finalDiagnostics.set(fileUri, currentDiags);
           }
+
         };
 
         for (const id of data.localSceneIds) {
           const existingUri = globalSceneIdToUri.get(id);
           if (existingUri) {
-            addDiagnosticsForDuplicate(id, existingUri, true);
+            await addDiagnosticsForDuplicate(id, existingUri, fileUri, true);
           } else {
             globalSceneIdToUri.set(id, fileUri);
           }
@@ -296,11 +303,12 @@ export class DendryProjectValidator {
         for (const id of data.localQualityIds) {
           const existingUri = globalQualityIdToUri.get(id);
           if (existingUri) {
-            addDiagnosticsForDuplicate(id, existingUri, false);
+            await addDiagnosticsForDuplicate(id, existingUri, fileUri, false);
           } else {
             globalQualityIdToUri.set(id, fileUri);
           }
         }
+
       }
 
       // 4. Rebuild global IDs from all cached file data
@@ -333,15 +341,29 @@ export class DendryProjectValidator {
           let useRaw = false;
           if (!document) {
               try {
-                  const uint8 = await vscode.workspace.fs.readFile(fileUri);
-                  const text = new TextDecoder().decode(uint8);
-                  const lines = text.split(/\r?\n/);
-                  document = {
-                      lineAt: (lineNum: number) => ({ text: lines[lineNum] } as vscode.TextLine),
-                      getText: () => text,
-                      uri: fileUri
-                  } as vscode.TextDocument;
-                  useRaw = true;
+                const uint8 = await vscode.workspace.fs.readFile(fileUri);
+                const text = new TextDecoder().decode(uint8);
+                const lines = text.split('\n');
+                document = {
+                  lineAt: (lineNum: number) => ({ text: lines[lineNum] } as vscode.TextLine),
+                  getText: (range?: vscode.Range) => {
+                    if (!range) {
+                      return text;
+                    }
+                    // Handle range parameter properly
+                    const rangeLines = lines.slice(range.start.line, range.end.line + 1);
+                    if (rangeLines.length === 0) return '';
+                    if (rangeLines.length === 1) {
+                      return rangeLines[0].substring(range.start.character, range.end.character);
+                    }
+                    // Multi-line range
+                    rangeLines[0] = rangeLines[0].substring(range.start.character);
+                    rangeLines[rangeLines.length - 1] = rangeLines[rangeLines.length - 1].substring(0, range.end.character);
+                    return rangeLines.join('\n');
+                  },
+                  uri: fileUri
+                } as vscode.TextDocument;
+                useRaw = true;
               } catch (error) {
                   const message = error instanceof Error ? error.message : String(error);
                   const range = new vscode.Range(0, 0, 0, 1);

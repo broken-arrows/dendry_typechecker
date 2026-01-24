@@ -148,16 +148,6 @@ export class DendryValidator {
       document.lineAt(node.range.start.line).text.length
     );
 
-    if (node.declarationType === 'explicit' && !node.properties.has('title')) {
-      diagnostics.push(
-        this.createDiagnostic(
-          sceneDeclarationRange,
-          `Scene missing "title" property.`,
-          vscode.DiagnosticSeverity.Warning
-        )
-      );
-    }
-
     const id = node.properties.get('id');
     if (id !== undefined && (typeof id !== 'string' || id.trim() === '')) {
       diagnostics.push(this.createDiagnostic(sceneDeclarationRange, `Scene "id" cannot be empty.`, vscode.DiagnosticSeverity.Error));
@@ -1281,22 +1271,73 @@ export class DendryValidator {
 
 
   private validateSceneReference(sceneId: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-      if (sceneId.includes('{') || sceneId.includes('$')) return; // dynamic references ignored for now
-      
-      // "jumpScene" is a reserved keyword, valid as a reference but not as a definition
-      if (sceneId === 'jumpScene' || sceneId === "backSpecialScene") {
-          return; // Valid reference, no error
-      }
-      
-      // Simple local/global id
-      if (!sceneId.includes('.')) {
-          if (!this.sceneIds.has(sceneId)) {
-              diagnostics.push(
-                  this.createDiagnostic(range, `Reference to undefined scene: "${sceneId}"`, vscode.DiagnosticSeverity.Error)
-              );
+    if (sceneId.includes('{') || sceneId.includes('}')) {
+      return; // dynamic references ignored for now
+    }
+    
+    if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene') {
+      return; // Valid reference, no error
+    }
+    
+    // Check for qualified scene reference (filename.sceneid)
+    if (sceneId.includes('.')) {
+      const parts = sceneId.split('.');
+      if (parts.length === 2) {
+        const [fileName, localSceneId] = parts;
+        
+        // Find the file with this name
+        let fileFound = false;
+        let sceneFound = false;
+        
+        for (const [uri, fileData] of this._allFileData) {
+          // Extract filename without .scene.dry extension
+          // Handle both forward and backward slashes
+          const pathParts = uri.fsPath.split(/[/\\]/);
+          const fullFileName = pathParts.pop();
+          const uriFileName = fullFileName?.replace(/\.scene\.dry$/, '');
+          
+          if (uriFileName === fileName) {
+            fileFound = true;
+            // Check if the scene exists in that file
+            if (fileData.localSceneIds.has(localSceneId)) {
+              sceneFound = true;
+              break;
+            }
           }
-          return;
+        }
+
+        
+        if (!fileFound) {
+          diagnostics.push(this.createDiagnostic(
+            range,
+            `Reference to undefined file '${fileName}'. Expected a file named '${fileName}.scene.dry'`,
+            vscode.DiagnosticSeverity.Error
+          ));
+        } else if (!sceneFound) {
+          diagnostics.push(this.createDiagnostic(
+            range,
+            `Scene '${localSceneId}' not found in file '${fileName}.scene.dry'`,
+            vscode.DiagnosticSeverity.Error
+          ));
+        }
+      } else {
+        // Invalid format (multiple dots or other issues)
+        diagnostics.push(this.createDiagnostic(
+          range,
+          `Invalid qualified scene reference '${sceneId}'. Expected format: 'filename.sceneid'`,
+          vscode.DiagnosticSeverity.Error
+        ));
       }
+    } else {
+      // Simple local id - check global scene IDs
+      if (!this.sceneIds.has(sceneId)) {
+        diagnostics.push(this.createDiagnostic(
+          range,
+          `Reference to undefined scene '${sceneId}'`,
+          vscode.DiagnosticSeverity.Error
+        ));
+      }
+    }
   }
 
   private createDiagnostic(range: vscode.Range, message: string, severity: vscode.DiagnosticSeverity): vscode.Diagnostic {

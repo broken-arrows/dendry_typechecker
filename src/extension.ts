@@ -118,7 +118,24 @@ async function validateProject(changedFileUri?: vscode.Uri) {
     isValidating = true;
     openSuppressCount++;
     try {
-        const dendryFiles = await vscode.workspace.findFiles('**/*.scene.dry');
+        // Get exclude patterns from configuration
+        const excludePatterns = config.get<string[]>('validation.exclude', [
+            '**/node_modules/**',
+            '**/.git/**',
+            '**/dist/**',
+            '**/build/**',
+            '**/out/**'
+        ]);
+
+        // Build exclude pattern string
+        const excludePattern = excludePatterns.length > 1 
+            ? `{${excludePatterns.join(',')}}` 
+            : excludePatterns[0] || undefined;
+
+        const dendryFiles = await vscode.workspace.findFiles(
+            '**/*.scene.dry',
+            excludePattern
+        );
         outputChannel.appendLine(`Found ${dendryFiles.length} .scene.dry files`);
 
         const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
