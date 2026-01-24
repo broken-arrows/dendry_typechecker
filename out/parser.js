@@ -149,7 +149,7 @@ class DendryHandParser {
                 break;
             }
         }
-        // Parse scene content and choices
+        const contentLines = [];
         const contentStart = this.currentLine;
         while (this.currentLine < this.lines.length) {
             const line = this.lines[this.currentLine];
@@ -161,17 +161,50 @@ class DendryHandParser {
                 this.parseChoice();
             }
             else {
+                contentLines.push(line);
                 this.currentLine++;
             }
         }
+        const content = contentLines.join('\n');
+        const contentInterpolations = this.parseInterpolations(content, contentStart);
+        // Also collect interpolations from property values
+        const propertyInterpolations = [];
+        for (const [key, value] of properties.entries()) {
+            // Check properties that can contain text with interpolations
+            if (key === 'title' || key === 'subtitle' || key === 'unavailable-subtitle') {
+                const propLine = this.findPropertyLine(startLine, key);
+                const propInterps = this.parsePropertyInterpolations(value, key, propLine);
+                // Adjust column offset to account for "key: " prefix
+                const colonOffset = key.length + 2; // "key: "
+                propInterps.forEach(interp => {
+                    interp.range = new vscode.Range(interp.range.start.line, interp.range.start.character + colonOffset, interp.range.end.line, interp.range.end.character + colonOffset);
+                });
+                propertyInterpolations.push(...propInterps);
+            }
+        }
+        const allInterpolations = [...contentInterpolations, ...propertyInterpolations];
         const endLine = this.currentLine - 1;
         this.nodes.push({
             type: 'scene',
             declarationType: 'explicit',
             properties,
-            content: '',
+            content,
+            interpolations: allInterpolations,
             range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0)
         });
+    }
+    findPropertyLine(startLine, propertyKey) {
+        // Search from startLine forward to find the line with this property
+        for (let i = 0; i < 20; i++) { // Search up to 20 lines ahead
+            const lineIndex = startLine + i;
+            if (lineIndex >= this.lines.length)
+                break;
+            const line = this.lines[lineIndex];
+            if (line.trim().startsWith(`${propertyKey}:`)) {
+                return lineIndex;
+            }
+        }
+        return startLine;
     }
     parseChoice() {
         const lineNum = this.currentLine;
@@ -182,6 +215,7 @@ class DendryHandParser {
             type: 'choice',
             properties: new Map(),
             content,
+            interpolations: this.parseInterpolations(content, lineNum),
             range: new vscode.Range(lineNum, 0, lineNum, line.length)
         });
         this.currentLine++;
@@ -193,9 +227,75 @@ class DendryHandParser {
             type: 'divider',
             properties: new Map(),
             content: '',
+            interpolations: [],
             range: new vscode.Range(lineNum, 0, lineNum, line.length)
         });
         this.currentLine++;
+    }
+    parseInterpolations(text, offset) {
+        const interpolations = [];
+        // Split text into lines and filter out comment lines
+        const lines = text.split('\n');
+        let processedText = '';
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            // Skip comment lines
+            if (line.trim().startsWith('#')) {
+                processedText += '\n';
+            }
+            else {
+                processedText += line + '\n';
+            }
+        }
+        // First, find all inline conditionals and extract their text parts
+        const inlineConditionalRegex = /\[\?\s*[^:]+?\s*:\s*([^?]*)\?\]/g;
+        let conditionalMatch;
+        const conditionalTextRanges = [];
+        while ((conditionalMatch = inlineConditionalRegex.exec(processedText)) !== null) {
+            const textPart = conditionalMatch[1];
+            const textStartOffset = conditionalMatch.index + conditionalMatch[0].indexOf(':') + 1;
+            // Trim leading whitespace and adjust offset
+            const trimmedStart = textPart.length - textPart.trimStart().length;
+            conditionalTextRanges.push({
+                text: textPart.trim(),
+                startOffset: textStartOffset + trimmedStart
+            });
+        }
+        // Parse interpolations from the full text (including those in conditionals)
+        const interpolationRegex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
+        let match;
+        while ((match = interpolationRegex.exec(processedText)) !== null) {
+            const [fullMatch, variable, qdisplay] = match;
+            const start = match.index;
+            // Calculate line and character position
+            const textBeforeMatch = processedText.substring(0, start);
+            const lineBreaks = textBeforeMatch.split('\n');
+            const line = lineBreaks.length - 1 + offset;
+            const character = lineBreaks[lineBreaks.length - 1].length;
+            interpolations.push({
+                variable,
+                qdisplay,
+                range: new vscode.Range(line, character, line, character + fullMatch.length)
+            });
+        }
+        return interpolations;
+    }
+    parsePropertyInterpolations(propertyValue, propertyKey, lineNumber) {
+        if (typeof propertyValue !== 'string')
+            return [];
+        const interpolations = [];
+        const regex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
+        let match;
+        while ((match = regex.exec(propertyValue)) !== null) {
+            const [fullMatch, variable, qdisplay] = match;
+            const startCol = match.index;
+            interpolations.push({
+                variable,
+                qdisplay,
+                range: new vscode.Range(lineNumber, startCol, lineNumber, startCol + fullMatch.length)
+            });
+        }
+        return interpolations;
     }
     parsePropertyLine(line, lineNum) {
         const colonIndex = line.indexOf(':');

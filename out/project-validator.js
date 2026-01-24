@@ -298,6 +298,9 @@ class DendryProjectValidator {
                     console.warn(`Skipping validation for ${fileUri.fsPath} due to parsing errors`);
                     continue;
                 }
+                const qdisplayFiles = workspaceFiles
+                    .filter(file => file.fsPath.endsWith('.qdisplay.dry'))
+                    .map(file => file.fsPath.split(/[/\\]/).pop()?.replace('.qdisplay.dry', '') || '');
                 let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
                 let useRaw = false;
                 if (!document) {
@@ -343,7 +346,7 @@ class DendryProjectValidator {
                         }
                     }
                     else {
-                        const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData);
+                        const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData, qdisplayFiles);
                         if (validationDiagnostics.length > 0) {
                             const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
                             finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);

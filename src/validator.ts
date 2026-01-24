@@ -22,6 +22,7 @@ export class DendryValidator {
   private strictMode: boolean;
   private sceneIds: Set<string> = new Set();
   private qualityIds: Set<string> = new Set();
+  private qdisplayFiles: Set<string> = new Set();
   private _allFileData: Map<vscode.Uri, FileData> = new Map();
 
   private readonly SCENE_PROPERTIES = new Set([
@@ -77,10 +78,12 @@ export class DendryValidator {
   validate(
     ast: DendryAST,
     document: vscode.TextDocument,
-    allFileData: Map<vscode.Uri, FileData>
+    allFileData: Map<vscode.Uri, FileData>,
+    qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     this._allFileData = allFileData;
+    this.qdisplayFiles = new Set(qdisplayFiles);
 
     // rebuild global IDs
     this.sceneIds.clear();
@@ -95,6 +98,9 @@ export class DendryValidator {
 
     for (const node of ast.nodes) {
       diagnostics.push(...this.validateNode(node, document));
+      if (node.interpolations && node.interpolations.length > 0) {
+        this.validateInterpolations(node.interpolations, diagnostics);
+      }
     }
 
     if (ast.metadata.rootScene) {
@@ -185,6 +191,48 @@ export class DendryValidator {
     return diagnostics;
   }
 
+  private validateInterpolations(interpolations: DendryNode['interpolations'], diagnostics: vscode.Diagnostic[]): void {
+      for (const interpolation of interpolations) {
+          // Validate variable name (no spaces)
+          if (interpolation.variable.includes(' ')) {
+              diagnostics.push(
+                  this.createDiagnostic(
+                      interpolation.range,
+                      `Variable name "${interpolation.variable}" cannot contain spaces.`,
+                      vscode.DiagnosticSeverity.Error
+                  )
+              );
+          }
+          
+          // Validate qdisplay reference
+          if (interpolation.qdisplay) {
+              if (!this.qdisplayFiles.has(interpolation.qdisplay)) {
+                  // Find the exact position of the qdisplay identifier within the full match
+                  // Pattern: [+ variable : qdisplay +]
+                  // We need to find where "qdisplay" starts within the range
+                  const fullMatch = `[+ ${interpolation.variable} : ${interpolation.qdisplay} +]`;
+                  const qdisplayOffset = fullMatch.indexOf(interpolation.qdisplay);
+                  
+                  const qdisplayStart = interpolation.range.start.character + qdisplayOffset;
+                  const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
+                  const qdisplayRange = new vscode.Range(
+                      interpolation.range.start.line, 
+                      qdisplayStart, 
+                      interpolation.range.end.line, 
+                      qdisplayEnd
+                  );
+                  
+                  diagnostics.push(
+                      this.createDiagnostic(
+                          qdisplayRange,
+                          `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
+                          vscode.DiagnosticSeverity.Error
+                      )
+                  );
+              }
+          }
+      }
+  }
 
 
   private validateNode(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
@@ -347,7 +395,7 @@ export class DendryValidator {
       while ((match = regex.exec(lineText)) !== null) {
           const conditionPrefix = match[1]; // '[?'
           const condition = match[2].trim();
-          // match[3] is text part (ignored for validation purposes)
+          const textPart = match[3]; // text after colon
           
           if (!condition) {
               const fullMatchStart = match.index;
@@ -356,19 +404,67 @@ export class DendryValidator {
               diagnostics.push(this.createDiagnostic(errRange, 'Inline conditional is missing a condition before :', vscode.DiagnosticSeverity.Error));
               continue;
           }
-
+          
           const preParsedCondition = '(' + condition.slice(2) + ')';
-
+          
           // Precise condition range: after [? if up to (but not including) first :
           const conditionStartCol = match.index + conditionPrefix.length;
           const conditionEndCol = conditionStartCol + condition.length;
           const conditionRange = new vscode.Range(lineNum, conditionStartCol, lineNum, conditionEndCol);
-
+          
           // Validate ONLY condition as Dendry logic (condition context: = -> ==)
           const conditionDiagnostics = this.validateDendryCondition(preParsedCondition, conditionRange);
           diagnostics.push(...conditionDiagnostics);
+          
+          // NEW: Check for interpolations in the text part
+          const textStartCol = match.index + conditionPrefix.length + condition.length + 1; // +1 for ':'
+          const interpolationRegex = /\[\+\s*(\w+)\s*(?::\s*(\w+))?\s*\+\]/g;
+          let interpMatch;
+          
+          while ((interpMatch = interpolationRegex.exec(textPart)) !== null) {
+              const [fullInterpMatch, variable, qdisplay] = interpMatch;
+              const interpStartCol = textStartCol + interpMatch.index;
+              const interpRange = new vscode.Range(
+                  lineNum, 
+                  interpStartCol, 
+                  lineNum, 
+                  interpStartCol + fullInterpMatch.length
+              );
+              
+              // Validate the interpolation
+              if (variable.includes(' ')) {
+                  diagnostics.push(
+                      this.createDiagnostic(
+                          interpRange,
+                          `Variable name "${variable}" cannot contain spaces.`,
+                          vscode.DiagnosticSeverity.Error
+                      )
+                  );
+              }
+              
+              if (qdisplay) {
+                  if (!this.qdisplayFiles.has(qdisplay)) {
+                      // Calculate precise qdisplay range
+                      const qdisplayOffset = fullInterpMatch.indexOf(qdisplay);
+                      const qdisplayRange = new vscode.Range(
+                          lineNum,
+                          interpStartCol + qdisplayOffset,
+                          lineNum,
+                          interpStartCol + qdisplayOffset + qdisplay.length
+                      );
+                      diagnostics.push(
+                          this.createDiagnostic(
+                              qdisplayRange,
+                              `QDisplay file "${qdisplay}.qdisplay.dry" not found.`,
+                              vscode.DiagnosticSeverity.Error
+                          )
+                      );
+                  }
+              }
+          }
       }
   }
+
 
 
   private validateQuality(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {

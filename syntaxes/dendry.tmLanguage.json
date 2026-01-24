@@ -3,6 +3,17 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
+      "name": "meta.interpolation.dendry",
+      "match": "(\\[\\+)\\s*(\\w+)\\s*(?:(:)\\s*(\\w+))?\\s*(\\+\\])",
+      "captures": {
+        "1": { "name": "punctuation.definition.interpolation.begin.dendry" },
+        "2": { "name": "variable.other.dendry" },
+        "3": { "name": "punctuation.separator.dendry" },
+        "4": { "name": "entity.name.type.qdisplay.dendry" },
+        "5": { "name": "punctuation.definition.interpolation.end.dendry" }
+      }
+    },
+    {
       "name": "meta.inline-conditional.dendry",
       "begin": "(\\[\\?)",
       "end": "(\\?\\])",
@@ -22,6 +33,9 @@
           },
           "patterns": [
             {
+              "include": "#variable-interpolation"
+            },
+            {
               "include": "#html-tags"
             },
             {
@@ -40,7 +54,12 @@
       "captures": {
         "1": { "name": "punctuation.definition.heading.dendry" },
         "2": { "name": "entity.name.section.dendry" }
-      }
+      },
+      "patterns": [
+        {
+          "include": "#variable-interpolation"
+        }
+      ]
     },
     {
       "include": "#scene-id-declaration"
@@ -77,9 +96,37 @@
     },
     {
       "include": "#qdisplay-range"
+    },
+    {
+      "include": "#variable-interpolation"
     }
   ],
   "repository": {
+    "variable-interpolation": {
+      "name": "meta.variable-interpolation.dendry",
+      "begin": "(\\[\\+)",
+      "end": "(\\+\\])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.variable.dendry" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.variable.dendry" }
+      },
+      "patterns": [
+        {
+          "name": "variable.other.dendry",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        },
+        {
+          "name": "keyword.operator.separator.dendry",
+          "match": ":"
+        },
+        {
+          "name": "entity.name.function.dendry",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
     "qdisplay-range": {
       "name": "meta.qdisplay.range.dendry",
       "begin": "\\(",
@@ -263,6 +310,9 @@
         "1": { "name": "punctuation.section.embedded.end.dendry" }
       },
       "patterns": [
+        {
+          "include": "#variable-interpolation"
+        },
         {
           "include": "source.js"
         }
