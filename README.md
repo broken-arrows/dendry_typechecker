@@ -46,7 +46,7 @@ on-arrival: {!
    Q.var = "foo"
 !}
 
-[? if visited: <img src="https://media.tenor.com/EMVZYUqX-cgAAAAC/pepe-saber.gif"/>]
+[? if visited: <img src="https://media.tenor.com/EMVZYUqX-cgAAAAC/pepe-saber.gif"/> ?]
 
 Game's over :/ - [+ var : foo +]
 
