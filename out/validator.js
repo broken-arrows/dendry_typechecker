@@ -45,6 +45,9 @@ const jsKeywords = new Set([
     'Object', 'Array', 'String', 'Number', 'Boolean', 'Date', 'JSON', 'Error',
     'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await'
 ]);
+const globalValidIdentifiers = new Array([
+    'Q', 'S', 'P', 'V', 'dendryUI', 'Image', 'data', 'localStorage'
+]);
 class DendryValidator {
     constructor() {
         this.sceneIds = new Set();
@@ -260,8 +263,8 @@ class DendryValidator {
         }
         for (const [key, value] of node.properties.entries()) {
             const r = this.findRangeForProperty(document, node.range, key);
-            if (!this.SCENE_PROPERTIES.has(key) && this.strictMode) {
-                diagnostics.push(this.createDiagnostic(r, `Unknown scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+            if (!this.SCENE_PROPERTIES.has(key)) {
+                diagnostics.push(this.createDiagnostic(r, `Unrecognized scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint));
             }
             if (key === 'max-visits' ||
                 key === 'min-choices' ||
@@ -759,7 +762,7 @@ class DendryValidator {
             // Convert Dendry shorthand to proper JavaScript
             jsCode = this.convertDendryToJavaScript(code, isActionContext, diagnostics, range);
         }
-        const allGlobals = ['Q', 'S', 'V', 'P', ...this.extraLibraries];
+        const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
         const wrappedCode = `var ${allGlobals.join(', ')};\n${jsCode}`;
         const errorLines = new Set(); // Track lines with parse errors
         let parseResult = null;
@@ -936,7 +939,7 @@ class DendryValidator {
         try {
             const config = vscode.workspace.getConfiguration('dendry');
             const extraLibraries = config.get('validation.jsLibraries', ['d3']);
-            const allGlobals = ['Q', 'S', 'V', 'P', ...extraLibraries];
+            const allGlobals = [...globalValidIdentifiers, ...extraLibraries];
             const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
             // Extended list of defined globals
             const definedVars = new Set([
@@ -1030,7 +1033,7 @@ class DendryValidator {
                             const lineOffset = loc.start.line - 3;
                             const colBase = lineOffset === 0 ? range.start.character : 0;
                             const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
-                            diagnostics.push(this.createDiagnostic(errRange, `Potentially undefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information));
+                            diagnostics.push(this.createDiagnostic(errRange, `${this.strictMode ? "U" : 'Possible u'}ndefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
                             reportedIdentifiers.add(identifier.name);
                         }
                     }
@@ -1060,7 +1063,7 @@ class DendryValidator {
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
                         if (!isPropertyName) {
-                            diagnostics.push(this.createDiagnostic(errRange, `Potentially undefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information));
+                            diagnostics.push(this.createDiagnostic(errRange, `${this.strictMode ? "U" : 'Possible u'}ndefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
                         }
                     }
                 }

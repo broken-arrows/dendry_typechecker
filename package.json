@@ -3,7 +3,7 @@
   "displayName": "DendryNexus",
   "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
