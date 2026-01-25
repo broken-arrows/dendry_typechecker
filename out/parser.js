@@ -46,7 +46,6 @@ class DendryHandParser {
         this.lines = text.split(/\r?\n/);
     }
     parse() {
-        const errors = [];
         try {
             // Phase 1: Parse metadata at the top
             this.parseMetadata();
@@ -371,12 +370,13 @@ class DendryHandParser {
 }
 // ----------------- PARSER ENTRY -----------------
 function parseText(text, fileName) {
+    // we need to add one extra line at the end to ensure the parser captures the last line properly
+    text += '\n';
     const parser = new DendryHandParser(text, fileName);
     const result = parser.parse();
     return {
         ast: result.ast,
         errors: result.errors,
-        lexErrors: [] // No lexer in hand-written parser
     };
 }
 //# sourceMappingURL=parser.js.map

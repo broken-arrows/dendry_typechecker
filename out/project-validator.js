@@ -52,18 +52,14 @@ class DendryProjectValidator {
         const localQualityIds = new Set();
         const diagnostics = [];
         try {
-            const { ast, errors, lexErrors } = (0, parser_1.parseText)(document.getText(), fileUri.fsPath);
+            const { ast, errors } = (0, parser_1.parseText)(document.getText(), fileUri.fsPath);
             const text = document.getText();
-            lexErrors.forEach((error) => {
-                const range = new vscode.Range(error.line - 1, error.column - 1, error.line - 1, error.column - 1 + error.length);
-                diagnostics.push(new vscode.Diagnostic(range, `Lexer Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
-            });
             errors.forEach((error) => {
                 const token = error.token;
                 const range = new vscode.Range(token.startLine - 1, token.startColumn - 1, token.endLine, token.endColumn);
                 diagnostics.push(new vscode.Diagnostic(range, `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
             });
-            if (lexErrors.length > 0 || errors.length > 0) {
+            if (errors.length > 0) {
                 this.fileData.delete(fileUri);
                 return diagnostics;
             }

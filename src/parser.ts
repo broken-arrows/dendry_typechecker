@@ -38,8 +38,7 @@ class DendryHandParser {
   }
 
   parse(): { ast: DendryAST; errors: any[] } {
-    const errors: any[] = [];
-
+    
     try {
       // Phase 1: Parse metadata at the top
       this.parseMetadata();
@@ -439,7 +438,9 @@ class DendryHandParser {
 export function parseText(
   text: string,
   fileName: string
-): { ast: DendryAST; errors: any[]; lexErrors: any[] } {
+): { ast: DendryAST; errors: any[]} {
+  // we need to add one extra line at the end to ensure the parser captures the last line properly
+  text += '\n';
   const parser = new DendryHandParser(text, fileName);
   const result = parser.parse();
   
@@ -447,6 +448,5 @@ export function parseText(
   return {
     ast: result.ast,
     errors: result.errors,
-    lexErrors: [] // No lexer in hand-written parser
   };
 }

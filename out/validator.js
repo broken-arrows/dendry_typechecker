@@ -723,7 +723,6 @@ class DendryValidator {
             let jsCode = stmt;
             // Handle postfix if syntax: action if condition
             const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
-            console.log('Postfix if match for statement:', stmt, postfixIfMatch);
             if (!postfixIfMatch && jsCode.endsWith(' if')) {
                 diagnostics.push(this.createDiagnostic(range, 'Unexpected end of conditional statement: "if" block cannot be empty.', vscode.DiagnosticSeverity.Error));
                 return;
@@ -766,7 +765,6 @@ class DendryValidator {
                     .replace(/\bnot\b/g, '!');
             }
             if (stmt.includes('Q.') || stmt.includes('S.') || stmt.includes('V.') || stmt.includes('P.')) {
-                console.log('Found prefix in statement:', stmt);
                 const prefix = stmt.includes('Q.') ? 'Q' :
                     stmt.includes('S.') ? 'S' :
                         stmt.includes('V.') ? 'V' : 'P';

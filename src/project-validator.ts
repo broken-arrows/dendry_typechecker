@@ -17,21 +17,16 @@ export class DendryProjectValidator {
     const diagnostics: vscode.Diagnostic[] = [];
 
     try {
-      const { ast, errors, lexErrors } = parseText(document.getText(), fileUri.fsPath);
+      const { ast, errors } = parseText(document.getText(), fileUri.fsPath);
       const text = document.getText();
       
-      lexErrors.forEach((error: any) => {
-        const range = new vscode.Range(error.line - 1, error.column - 1, error.line - 1, error.column - 1 + error.length);
-        diagnostics.push(new vscode.Diagnostic(range, `Lexer Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
-      });
-
       errors.forEach((error: any) => {
         const token = error.token;
         const range = new vscode.Range(token.startLine - 1, token.startColumn - 1, token.endLine, token.endColumn);
         diagnostics.push(new vscode.Diagnostic(range, `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
       });
 
-      if (lexErrors.length > 0 || errors.length > 0) {
+      if ( errors.length > 0) {
         this.fileData.delete(fileUri);
         return diagnostics;
       }
