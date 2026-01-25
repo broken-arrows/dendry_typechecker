@@ -57,6 +57,11 @@
           "default": true,
           "description": "Enable/disable validation"
         },
+        "dendry.validation.strict": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable strict validation mode"
+        },
         "dendry.validation.exclude": {
           "type": "array",
           "default": [

@@ -15,6 +15,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 ## Configuration
 
 - `dendry.validation.enable`: Enable/disable validation (default: `true`).
+- `dendry.validation.strict`: Enable/disable strict validation mode (default: `false`). For the time being, this only disables warnings regarding repeated scene properties.
 - `dendry.validation.exclude`: Glob patterns for files/folders to exclude from DendryNexus validation.
 - `dendry.validation.jsLibraries`: An array of strings representing additional global JavaScript variables that should be recognized during validation (default: `["d3"]`). This is useful when your project uses external JavaScript libraries that introduce global variables.
 - `dendry.debug.buildCommand`: Command to build the DendryNexus project (default: `npm run dendrynexus make-html -- --pretty`).

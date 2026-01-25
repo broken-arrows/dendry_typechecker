@@ -46,7 +46,7 @@ const jsKeywords = new Set([
     'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await'
 ]);
 class DendryValidator {
-    constructor(strictMode = false) {
+    constructor() {
         this.sceneIds = new Set();
         this.qualityIds = new Set();
         this.qdisplayFiles = new Set();
@@ -103,7 +103,9 @@ class DendryValidator {
             'min-choices',
             'max-choices'
         ]);
-        this.strictMode = strictMode;
+        const config = vscode.workspace.getConfiguration('dendry');
+        this.strictMode = config.get('validation.strict', false);
+        this.extraLibraries = config.get('validation.jsLibraries', ['d3']);
     }
     validate(ast, document, allFileData, qdisplayFiles) {
         const diagnostics = [];
@@ -258,7 +260,7 @@ class DendryValidator {
         }
         for (const [key, value] of node.properties.entries()) {
             const r = this.findRangeForProperty(document, node.range, key);
-            if (!this.SCENE_PROPERTIES.has(key)) {
+            if (!this.SCENE_PROPERTIES.has(key) && this.strictMode) {
                 diagnostics.push(this.createDiagnostic(r, `Unknown scene property: "${key}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
             }
             if (key === 'max-visits' ||
@@ -757,9 +759,7 @@ class DendryValidator {
             // Convert Dendry shorthand to proper JavaScript
             jsCode = this.convertDendryToJavaScript(code, isActionContext, diagnostics, range);
         }
-        const config = vscode.workspace.getConfiguration('dendry');
-        const extraLibraries = config.get('validation.jsLibraries', ['d3']);
-        const allGlobals = ['Q', 'S', 'V', 'P', ...extraLibraries];
+        const allGlobals = ['Q', 'S', 'V', 'P', ...this.extraLibraries];
         const wrappedCode = `var ${allGlobals.join(', ')};\n${jsCode}`;
         const errorLines = new Set(); // Track lines with parse errors
         let parseResult = null;
@@ -1030,7 +1030,7 @@ class DendryValidator {
                             const lineOffset = loc.start.line - 3;
                             const colBase = lineOffset === 0 ? range.start.character : 0;
                             const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
-                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${identifier.name}"`, vscode.DiagnosticSeverity.Error));
+                            diagnostics.push(this.createDiagnostic(errRange, `Potentially undefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information));
                             reportedIdentifiers.add(identifier.name);
                         }
                     }
@@ -1060,7 +1060,7 @@ class DendryValidator {
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
                         if (!isPropertyName) {
-                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${node.name}"`, vscode.DiagnosticSeverity.Warning));
+                            diagnostics.push(this.createDiagnostic(errRange, `Potentially undefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information));
                         }
                     }
                 }

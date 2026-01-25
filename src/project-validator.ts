@@ -3,7 +3,7 @@ import { parseText, DendryAST } from './parser';
 import { DendryValidator } from './validator';
 
 export class DendryProjectValidator {
-  private validator = new DendryValidator(false);
+  private validator = new DendryValidator();
   private fileData: Map<vscode.Uri, { ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
   private globalSceneIds: Set<string> = new Set();
   private globalQualityIds: Set<string> = new Set();

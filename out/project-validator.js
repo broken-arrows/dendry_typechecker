@@ -39,7 +39,7 @@ const parser_1 = require("./parser");
 const validator_1 = require("./validator");
 class DendryProjectValidator {
     constructor() {
-        this.validator = new validator_1.DendryValidator(false);
+        this.validator = new validator_1.DendryValidator();
         this.fileData = new Map();
         this.globalSceneIds = new Set();
         this.globalQualityIds = new Set();

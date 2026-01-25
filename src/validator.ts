@@ -20,6 +20,7 @@ const jsKeywords = new Set([
 
 export class DendryValidator {
   private strictMode: boolean;
+  private extraLibraries: string[];
   private sceneIds: Set<string> = new Set();
   private qualityIds: Set<string> = new Set();
   private qdisplayFiles: Set<string> = new Set();
@@ -80,8 +81,10 @@ export class DendryValidator {
     'max-choices'
   ]);
 
-  constructor(strictMode: boolean = false) {
-    this.strictMode = strictMode;
+  constructor() {
+    const config = vscode.workspace.getConfiguration('dendry');
+    this.strictMode = config.get<boolean>('validation.strict', false);
+    this.extraLibraries = config.get<string[]>('validation.jsLibraries', ['d3']);
   }
 
   validate(
@@ -362,7 +365,7 @@ export class DendryValidator {
     for (const [key, value] of node.properties.entries()) {
       const r = this.findRangeForProperty(document, node.range, key);
 
-      if (!this.SCENE_PROPERTIES.has(key)) {
+      if (!this.SCENE_PROPERTIES.has(key) && this.strictMode) {
         diagnostics.push(
           this.createDiagnostic(
             r,
@@ -1020,10 +1023,8 @@ export class DendryValidator {
           // Convert Dendry shorthand to proper JavaScript
           jsCode = this.convertDendryToJavaScript(code, isActionContext, diagnostics, range);
       }
-      
-      const config = vscode.workspace.getConfiguration('dendry');
-      const extraLibraries = config.get<string[]>('validation.jsLibraries', ['d3']);
-      const allGlobals = ['Q', 'S', 'V', 'P', ...extraLibraries];
+
+      const allGlobals = ['Q', 'S', 'V', 'P', ...this.extraLibraries];
       
       const wrappedCode = `var ${allGlobals.join(', ')};\n${jsCode}`;
       const errorLines = new Set<number>(); // Track lines with parse errors
@@ -1402,8 +1403,8 @@ export class DendryValidator {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier: "${identifier.name}"`,
-                                vscode.DiagnosticSeverity.Error
+                                `Potentially undefined identifier: "${identifier.name}"`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information
                             )
                         );
                         reportedIdentifiers.add(identifier.name);
@@ -1447,8 +1448,8 @@ export class DendryValidator {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier: "${node.name}"`,
-                                vscode.DiagnosticSeverity.Warning
+                                `Potentially undefined identifier: "${node.name}"`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information
                             )
                         );
                     }
