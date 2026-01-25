@@ -709,7 +709,19 @@ class DendryValidator {
             const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
             if (postfixIfMatch) {
                 const action = postfixIfMatch[1].trim();
-                const condition = postfixIfMatch[2].trim();
+                let condition = postfixIfMatch[2].trim();
+                const postElseMatch = condition.match(/^(.+?)\s+else\s+(.+)$/);
+                let convertedPostElse;
+                if (postElseMatch) {
+                    condition = postElseMatch[1].trim();
+                    const elseAction = postElseMatch[2].trim();
+                    if (elseAction) {
+                        convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
+                    }
+                    else {
+                        diagnostics.push(this.createDiagnostic(range, 'Unexpected end of conditional statement: "else" block cannot be empty.', vscode.DiagnosticSeverity.Error));
+                    }
+                }
                 // Convert condition comparators only
                 const convertedCondition = this.convertComparators(condition);
                 // Convert logical operators in condition
@@ -718,6 +730,9 @@ class DendryValidator {
                     .replace(/\bor\b/g, '||')
                     .replace(/\bnot\b/g, '!');
                 jsCode = `if (${convertedConditionWithLogic}) { ${action} }`;
+                if (convertedPostElse) {
+                    jsCode += ` else { ${convertedPostElse} }`;
+                }
             }
             else if (!isActionContext) {
                 // Only convert = to == if we're in condition context (not action)
@@ -1033,7 +1048,7 @@ class DendryValidator {
                             const lineOffset = loc.start.line - 3;
                             const colBase = lineOffset === 0 ? range.start.character : 0;
                             const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
-                            diagnostics.push(this.createDiagnostic(errRange, `${this.strictMode ? "U" : 'Possible u'}ndefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
                             reportedIdentifiers.add(identifier.name);
                         }
                     }
@@ -1063,7 +1078,7 @@ class DendryValidator {
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
                         if (!isPropertyName) {
-                            diagnostics.push(this.createDiagnostic(errRange, `${this.strictMode ? "U" : 'Possible u'}ndefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
                         }
                     }
                 }

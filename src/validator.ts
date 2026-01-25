@@ -952,7 +952,25 @@ export class DendryValidator {
       const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
       if (postfixIfMatch) {
         const action = postfixIfMatch[1].trim();
-        const condition = postfixIfMatch[2].trim();
+        let condition = postfixIfMatch[2].trim();
+
+        const postElseMatch = condition.match(/^(.+?)\s+else\s+(.+)$/);
+        let convertedPostElse;
+        if (postElseMatch) {
+          condition = postElseMatch[1].trim();
+          const elseAction = postElseMatch[2].trim();
+          if (elseAction) {
+            convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
+          } else {
+            diagnostics.push(
+              this.createDiagnostic(
+                range,
+                'Unexpected end of conditional statement: "else" block cannot be empty.',
+                vscode.DiagnosticSeverity.Error
+              )
+            );
+          }
+        }
         
         // Convert condition comparators only
         const convertedCondition = this.convertComparators(condition);
@@ -964,6 +982,9 @@ export class DendryValidator {
           .replace(/\bnot\b/g, '!');
         
         jsCode = `if (${convertedConditionWithLogic}) { ${action} }`;
+        if (convertedPostElse) {
+          jsCode += ` else { ${convertedPostElse} }`;
+        }
       } else if (!isActionContext) {
         // Only convert = to == if we're in condition context (not action)
         jsCode = this.convertComparators(jsCode);
