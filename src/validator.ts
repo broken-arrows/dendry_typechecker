@@ -1485,16 +1485,16 @@ export class DendryValidator {
                           diagnostics.push(
                               this.createDiagnostic(
                                   errRange,
-                                  `Undefined identifier or variable: "${identifier.name}". Did you mean "${suggestion.keyword}"?`,
-                                  this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                                  `Possible undefined identifier or variable: "${identifier.name}". Did you mean "${suggestion.keyword}"?`,
+                                  this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
                               )
                           );
                       } else {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier or variable: "${identifier.name}"`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                                `Possible undefined identifier or variable: "${identifier.name}"`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
                             )
                         );
                       }
@@ -1542,17 +1542,18 @@ export class DendryValidator {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier or variable: "${node.name}". Did you mean "${suggestion.keyword}"?`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                                `Possible undefined identifier or variable: "${node.name}". Did you mean "${suggestion.keyword}"?`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
                             )
                         );
                       } else {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier or variable: "${node.name}"`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
-                            )
+                                `Possible undefined identifier or variable: "${node.name}"`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
+                            ),
+
                         );
                       }
                   }
