@@ -43,7 +43,10 @@ const jsKeywords = new Set([
     'function', 'var', 'let', 'const', 'new', 'this', 'typeof', 'instanceof',
     'Math', 'console', 'parseInt', 'parseFloat', 'isNaN', 'isFinite',
     'Object', 'Array', 'String', 'Number', 'Boolean', 'Date', 'JSON', 'Error',
-    'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await'
+    'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await',
+    'class', 'extends', 'static', 'import', 'export', 'yield', 'delete', 'void',
+    'super', 'with', 'debugger', 'enum', 'implements',
+    'interface', 'package', 'private', 'protected', 'public'
 ]);
 const globalValidIdentifiers = new Array([
     'Q', 'S', 'P', 'V', 'dendryUI', 'Image', 'data', 'localStorage'
@@ -596,7 +599,17 @@ class DendryValidator {
             if (ifIndex !== -1) {
                 // Format: "scene_id if condition"
                 const sceneId = trimmed.substring(0, ifIndex).trim();
-                const condition = trimmed.substring(ifIndex + 4).trim();
+                let condition = trimmed.substring(ifIndex + 4).trim();
+                if (condition.endsWith(' else')) {
+                    diagnostics.push(this.createDiagnostic(range, 'Malformed "else" statement. Did you mean to include a statement after "else"?', vscode.DiagnosticSeverity.Error));
+                }
+                else if (condition.includes(' else ')) {
+                    condition = condition.split(' else ')[0].trim();
+                    const elseGoTo = trimmed.split(' else ')[1].trim();
+                    if (elseGoTo) {
+                        this.validateGoTo(elseGoTo, range, diagnostics);
+                    }
+                }
                 if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !== 'backScene') {
                     this.validateSceneReference(sceneId, range, diagnostics);
                 }
@@ -611,7 +624,10 @@ class DendryValidator {
                 // 2. An assignment/action: "variable = value"
                 // Check if it looks like a scene reference (no operators)
                 const hasOperators = /[=+\-*/<>]/.test(trimmed);
-                if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !== 'backScene') {
+                if (trimmed.endsWith(' if')) {
+                    diagnostics.push(this.createDiagnostic(range, 'Malformed "if" statement. Did you mean to include a condition after "if"?', vscode.DiagnosticSeverity.Error));
+                }
+                else if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !== 'backScene') {
                     // Treat as scene reference
                     this.validateSceneReference(trimmed, range, diagnostics);
                 }
@@ -707,20 +723,24 @@ class DendryValidator {
             let jsCode = stmt;
             // Handle postfix if syntax: action if condition
             const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
+            console.log('Postfix if match for statement:', stmt, postfixIfMatch);
+            if (!postfixIfMatch && jsCode.endsWith(' if')) {
+                diagnostics.push(this.createDiagnostic(range, 'Unexpected end of conditional statement: "if" block cannot be empty.', vscode.DiagnosticSeverity.Error));
+                return;
+            }
             if (postfixIfMatch) {
                 const action = postfixIfMatch[1].trim();
                 let condition = postfixIfMatch[2].trim();
                 const postElseMatch = condition.match(/^(.+?)\s+else\s+(.+)$/);
                 let convertedPostElse;
+                if (!postElseMatch && condition.endsWith(' else')) {
+                    diagnostics.push(this.createDiagnostic(range, 'Unexpected end of conditional statement: "else" block cannot be empty.', vscode.DiagnosticSeverity.Error));
+                    return;
+                }
                 if (postElseMatch) {
                     condition = postElseMatch[1].trim();
                     const elseAction = postElseMatch[2].trim();
-                    if (elseAction) {
-                        convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
-                    }
-                    else {
-                        diagnostics.push(this.createDiagnostic(range, 'Unexpected end of conditional statement: "else" block cannot be empty.', vscode.DiagnosticSeverity.Error));
-                    }
+                    convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
                 }
                 // Convert condition comparators only
                 const convertedCondition = this.convertComparators(condition);
@@ -768,6 +788,12 @@ class DendryValidator {
         result = result.replace(/^=([^=])/g, '==$1');
         return result;
     }
+    correctRangeForJSBlock(originalRange, codeLineNumber, errColumn) {
+        const actualLine = originalRange.start.line + codeLineNumber - 1;
+        const colBase = (codeLineNumber === 0) ? originalRange.start.character : 0;
+        const actualCol = colBase + errColumn;
+        return new vscode.Range(actualLine, actualCol, actualLine, actualCol + 1);
+    }
     validateJavaScript(code, range, isActionContext = false) {
         const diagnostics = [];
         // Check if this is a full JS block or inline Dendry syntax
@@ -799,10 +825,7 @@ class DendryValidator {
                         diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
                     }
                     else {
-                        const actualLine = range.start.line + codeLineNumber - 1;
-                        const colBase = (codeLineNumber === 0) ? range.start.character : 0;
-                        const actualCol = colBase + errColumn;
-                        const errRange = new vscode.Range(actualLine, actualCol, actualLine, actualCol + 1);
+                        const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
                         diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
                     }
                 }
@@ -810,17 +833,14 @@ class DendryValidator {
         }
         catch (error) {
             const errLineNumber = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
-            const errColumn = typeof error?.column === 'number' ? error.column : 0;
-            const codeLineNumber = errLineNumber - 1;
+            const errColumn = typeof error?.column === 'number' ? error.column - 1 : 0;
+            const codeLineNumber = errLineNumber - 2;
             if (!isJsBlock) {
                 diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
             }
             else {
-                errorLines.add(codeLineNumber - 1);
-                const actualLine = range.start.line + codeLineNumber - 1;
-                const colBase = (codeLineNumber === 0) ? range.start.character : 0;
-                const actualCol = colBase + errColumn;
-                const errRange = new vscode.Range(actualLine, actualCol, actualLine, actualCol + 1);
+                errorLines.add(codeLineNumber);
+                const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
                 diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
             }
         }
@@ -864,11 +884,11 @@ class DendryValidator {
                 const suggestion = this.findClosestKeyword(word, jsKeywordsAsArray);
                 if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
                     // Find the position of this word in the line
-                    const wordIndex = line.indexOf(word);
+                    const wordIndex = line.search(new RegExp(`\\b${word}\\b`));
                     if (wordIndex !== -1) {
                         const startCol = wordIndex;
                         const endCol = startCol + word.length;
-                        const errRange = new vscode.Range(lineNum, startCol, lineNum, endCol);
+                        const errRange = new vscode.Range(lineNum - 1, startCol, lineNum - 1, endCol);
                         diagnostics.push(this.createDiagnostic(errRange, `Unknown identifier "${word}". Did you mean "${suggestion.keyword}"?`, vscode.DiagnosticSeverity.Warning));
                     }
                 }
@@ -952,9 +972,7 @@ class DendryValidator {
     }
     checkUndefinedIdentifiers(code, range, diagnostics) {
         try {
-            const config = vscode.workspace.getConfiguration('dendry');
-            const extraLibraries = config.get('validation.jsLibraries', ['d3']);
-            const allGlobals = [...globalValidIdentifiers, ...extraLibraries];
+            const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
             const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
             // Extended list of defined globals
             const definedVars = new Set([
@@ -984,10 +1002,32 @@ class DendryValidator {
                 // Function parameters (both regular functions and arrow functions)
                 if ((node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression') && node.params) {
                     for (const param of node.params) {
+                        // Handle simple identifiers
                         if (param.type === 'Identifier' && param.name) {
                             declaredInCode.add(param.name);
                         }
-                        // Handle destructuring parameters
+                        // Handle parameters with default values (e.g., var = 0)
+                        if (param.type === 'AssignmentPattern' && param.left) {
+                            if (param.left.type === 'Identifier' && param.left.name) {
+                                declaredInCode.add(param.left.name);
+                            }
+                            // Handle destructuring with defaults
+                            if (param.left.type === 'ObjectPattern' && param.left.properties) {
+                                for (const prop of param.left.properties) {
+                                    if (prop.value?.type === 'Identifier' && prop.value.name) {
+                                        declaredInCode.add(prop.value.name);
+                                    }
+                                }
+                            }
+                            if (param.left.type === 'ArrayPattern' && param.left.elements) {
+                                for (const elem of param.left.elements) {
+                                    if (elem?.type === 'Identifier' && elem.name) {
+                                        declaredInCode.add(elem.name);
+                                    }
+                                }
+                            }
+                        }
+                        // Handle destructuring parameters (without defaults)
                         if (param.type === 'ObjectPattern' && param.properties) {
                             for (const prop of param.properties) {
                                 if (prop.value?.type === 'Identifier' && prop.value.name) {
@@ -1048,7 +1088,13 @@ class DendryValidator {
                             const lineOffset = loc.start.line - 3;
                             const colBase = lineOffset === 0 ? range.start.character : 0;
                             const errRange = new vscode.Range(range.start.line + lineOffset, colBase + loc.start.column, range.start.line + lineOffset, (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column);
-                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            const suggestion = this.findClosestKeyword(identifier.name, Array.from(definedVars).flat());
+                            if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
+                                diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier or variable: "${identifier.name}". Did you mean "${suggestion.keyword}"?`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            }
+                            else {
+                                diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier or variable: "${identifier.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            }
                             reportedIdentifiers.add(identifier.name);
                         }
                     }
@@ -1078,7 +1124,13 @@ class DendryValidator {
                         const isPropertyName = parent && ((parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
                             (parent.type === 'Property' && parent.key === node && !parent.computed));
                         if (!isPropertyName) {
-                            diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            const suggestion = this.findClosestKeyword(node.name, Array.from(definedVars).flat());
+                            if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
+                                diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier or variable: "${node.name}". Did you mean "${suggestion.keyword}"?`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            }
+                            else {
+                                diagnostics.push(this.createDiagnostic(errRange, `Undefined identifier or variable: "${node.name}"`, this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning));
+                            }
                         }
                     }
                 }

@@ -9,13 +9,16 @@ type FileData = {
 };
 
 const jsKeywords = new Set([
-    'true', 'false', 'null', 'undefined',
-    'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
-    'break', 'continue', 'return', 'throw', 'try', 'catch', 'finally',
-    'function', 'var', 'let', 'const', 'new', 'this', 'typeof', 'instanceof',
-    'Math', 'console', 'parseInt', 'parseFloat', 'isNaN', 'isFinite',
-    'Object', 'Array', 'String', 'Number', 'Boolean', 'Date', 'JSON', 'Error',
-    'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await'
+  'true', 'false', 'null', 'undefined',
+  'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
+  'break', 'continue', 'return', 'throw', 'try', 'catch', 'finally',
+  'function', 'var', 'let', 'const', 'new', 'this', 'typeof', 'instanceof',
+  'Math', 'console', 'parseInt', 'parseFloat', 'isNaN', 'isFinite',
+  'Object', 'Array', 'String', 'Number', 'Boolean', 'Date', 'JSON', 'Error',
+  'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await',  
+  'class', 'extends', 'static', 'import', 'export', 'yield', 'delete', 'void',
+  'super', 'with', 'debugger', 'enum', 'implements',
+  'interface', 'package', 'private', 'protected', 'public'
 ]);
 
 const globalValidIdentifiers = new Array([
@@ -807,13 +810,29 @@ export class DendryValidator {
           const ifIndex = trimmed.indexOf(' if ');
           
           if (ifIndex !== -1) {
-              // Format: "scene_id if condition"
-              const sceneId = trimmed.substring(0, ifIndex).trim();
-              const condition = trimmed.substring(ifIndex + 4).trim();
-              
-              if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !=='backScene') {
-                  this.validateSceneReference(sceneId, range, diagnostics);
+            // Format: "scene_id if condition"
+            const sceneId = trimmed.substring(0, ifIndex).trim();
+            let condition = trimmed.substring(ifIndex + 4).trim();
+            
+            if (condition.endsWith(' else')) {
+              diagnostics.push(
+                  this.createDiagnostic(
+                      range,
+                      'Malformed "else" statement. Did you mean to include a statement after "else"?',
+                      vscode.DiagnosticSeverity.Error
+                  )
+              ); 
+            } else if (condition.includes(' else ')) {
+              condition = condition.split(' else ')[0].trim();
+              const elseGoTo = trimmed.split(' else ')[1].trim();
+              if (elseGoTo) {
+                this.validateGoTo(elseGoTo, range, diagnostics);
               }
+            }           
+
+            if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !=='backScene') {
+                this.validateSceneReference(sceneId, range, diagnostics);
+            }
               
             if (condition) {
                 const conditionDiagnostics = this.validateDendryCondition(condition, range);
@@ -825,15 +844,22 @@ export class DendryValidator {
               // 2. An assignment/action: "variable = value"
               // Check if it looks like a scene reference (no operators)
               const hasOperators = /[=+\-*/<>]/.test(trimmed);
-              
-              if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !=='backScene') {
+              if (trimmed.endsWith(' if')) {
+                diagnostics.push(
+                      this.createDiagnostic(
+                          range,
+                          'Malformed "if" statement. Did you mean to include a condition after "if"?',
+                          vscode.DiagnosticSeverity.Error
+                      )
+                  );
+              } else if (!hasOperators && trimmed !== 'jumpScene' && trimmed !== "backSpecialScene" && trimmed !=='backScene') {
                   // Treat as scene reference
                   this.validateSceneReference(trimmed, range, diagnostics);
               } else if (hasOperators) {
                   // It's an action/assignment - validate as Dendry logic
                   const actionDiagnostics = this.validateDendryAction(trimmed, range);
                   diagnostics.push(...actionDiagnostics);
-              }
+              } 
           }
       }
   }
@@ -950,26 +976,39 @@ export class DendryValidator {
       
       // Handle postfix if syntax: action if condition
       const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
+
+      if (!postfixIfMatch && jsCode.endsWith(' if')) {
+          diagnostics.push(
+            this.createDiagnostic(
+              range,
+              'Unexpected end of conditional statement: "if" block cannot be empty.',
+              vscode.DiagnosticSeverity.Error
+            )
+          );
+          return;
+      }
+
       if (postfixIfMatch) {
         const action = postfixIfMatch[1].trim();
         let condition = postfixIfMatch[2].trim();
 
         const postElseMatch = condition.match(/^(.+?)\s+else\s+(.+)$/);
         let convertedPostElse;
-        if (postElseMatch) {
-          condition = postElseMatch[1].trim();
-          const elseAction = postElseMatch[2].trim();
-          if (elseAction) {
-            convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
-          } else {
-            diagnostics.push(
+        if (!postElseMatch && condition.endsWith(' else')) {
+          diagnostics.push(
               this.createDiagnostic(
                 range,
                 'Unexpected end of conditional statement: "else" block cannot be empty.',
                 vscode.DiagnosticSeverity.Error
               )
             );
-          }
+            return;
+        }
+
+        if (postElseMatch) {
+          condition = postElseMatch[1].trim();
+          const elseAction = postElseMatch[2].trim();
+          convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
         }
         
         // Convert condition comparators only
@@ -988,7 +1027,7 @@ export class DendryValidator {
       } else if (!isActionContext) {
         // Only convert = to == if we're in condition context (not action)
         jsCode = this.convertComparators(jsCode);
-      }
+      } 
       
       // Convert logical operators (if not already done for postfix if)
       if (!postfixIfMatch) {
@@ -999,7 +1038,6 @@ export class DendryValidator {
       }
 
       if (stmt.includes('Q.') || stmt.includes('S.') || stmt.includes('V.') || stmt.includes('P.')) {
-        console.log('Found prefix in statement:', stmt);
         const prefix = stmt.includes('Q.') ? 'Q' :
                       stmt.includes('S.') ? 'S' :
                       stmt.includes('V.') ? 'V' : 'P';
@@ -1036,6 +1074,17 @@ export class DendryValidator {
     return result;
   }
 
+  private correctRangeForJSBlock(originalRange: vscode.Range, codeLineNumber: number, errColumn: number): vscode.Range {
+    const actualLine = originalRange.start.line + codeLineNumber - 1;
+    const colBase = (codeLineNumber === 0) ? originalRange.start.character : 0;
+    const actualCol = colBase + errColumn;
+    return new vscode.Range(
+        actualLine,
+        actualCol,
+        actualLine,
+        actualCol + 1
+    );
+  }
 
   private validateJavaScript(code: string, range: vscode.Range, isActionContext: boolean = false): vscode.Diagnostic[] {
       const diagnostics: vscode.Diagnostic[] = [];
@@ -1083,15 +1132,7 @@ export class DendryValidator {
                           )
                       );
                   } else {
-                      const actualLine = range.start.line + codeLineNumber - 1;
-                      const colBase = (codeLineNumber === 0) ? range.start.character : 0;
-                      const actualCol = colBase + errColumn;
-                      const errRange = new vscode.Range(
-                          actualLine,
-                          actualCol,
-                          actualLine,
-                          actualCol + 1
-                      );
+                      const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
                       diagnostics.push(
                           this.createDiagnostic(
                               errRange,
@@ -1105,11 +1146,10 @@ export class DendryValidator {
       } catch (error: any) {
   
           const errLineNumber: number = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
-          const errColumn: number = typeof error?.column === 'number' ? error.column : 0;
-          const codeLineNumber = errLineNumber - 1;
+          const errColumn: number = typeof error?.column === 'number' ? error.column - 1 : 0;
+          const codeLineNumber = errLineNumber - 2;
                   
           if (!isJsBlock) {
-  
               diagnostics.push(
                   this.createDiagnostic(
                       range,
@@ -1118,16 +1158,8 @@ export class DendryValidator {
                   )
               );
           } else {
-              errorLines.add(codeLineNumber - 1);
-              const actualLine = range.start.line + codeLineNumber - 1;
-              const colBase = (codeLineNumber === 0) ? range.start.character : 0;
-              const actualCol = colBase + errColumn;
-              const errRange = new vscode.Range(
-                  actualLine,
-                  actualCol,
-                  actualLine,
-                  actualCol + 1
-              );
+              errorLines.add(codeLineNumber);
+              const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
               diagnostics.push(
                   this.createDiagnostic(
                       errRange,
@@ -1192,11 +1224,11 @@ export class DendryValidator {
               
               if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
                   // Find the position of this word in the line
-                  const wordIndex = line.indexOf(word);
+                  const wordIndex = line.search(new RegExp(`\\b${word}\\b`));
                   if (wordIndex !== -1) {
                       const startCol = wordIndex;
                       const endCol = startCol + word.length;
-                      const errRange = new vscode.Range(lineNum, startCol, lineNum, endCol);
+                      const errRange = new vscode.Range(lineNum - 1, startCol, lineNum - 1, endCol);
                       
                       diagnostics.push(
                           this.createDiagnostic(
@@ -1313,193 +1345,239 @@ export class DendryValidator {
   }
 
   private checkUndefinedIdentifiers(code: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-            try {
-          const config = vscode.workspace.getConfiguration('dendry');
-          const extraLibraries = config.get<string[]>('validation.jsLibraries', ['d3']);
-          const allGlobals = [...globalValidIdentifiers, ...extraLibraries];
+    try {
+        const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
 
-          const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
-          
-          // Extended list of defined globals
-          const definedVars = new Set([
-              ...allGlobals,
-              'console', 'Math', 'Date', 'JSON', 
-              'parseInt', 'parseFloat', 'isNaN', 'isFinite', 
-              'undefined', 'null', 'true', 'false',
-              'Object', 'Array', 'String', 'Number', 'Boolean',
-              'eval', 'setTimeout', 'setInterval', 'clearTimeout', 'clearInterval',
-              'Error', 'TypeError', 'ReferenceError', 'SyntaxError',
-              'Infinity', 'NaN', 'window', 'document', 'alert'
-          ]);
-          
-          const declaredInCode = new Set<string>();
-          const reportedIdentifiers = new Set<string>();
-          
-          // Collect all declarations including function parameters
-          const collectDeclarations = (node: any) => {
-              if (!node || typeof node !== 'object') return;
-              
-              // Variable declarations
-              if (node.type === 'VariableDeclarator' && node.id?.name) {
-                  declaredInCode.add(node.id.name);
-              }
-              
-              // Function declarations
-              if (node.type === 'FunctionDeclaration' && node.id?.name) {
-                  declaredInCode.add(node.id.name);
-              }
-              
-              // Function parameters (both regular functions and arrow functions)
-              if ((node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression') && node.params) {
-                  for (const param of node.params) {
-                      if (param.type === 'Identifier' && param.name) {
-                          declaredInCode.add(param.name);
-                      }
-                      // Handle destructuring parameters
-                      if (param.type === 'ObjectPattern' && param.properties) {
-                          for (const prop of param.properties) {
-                              if (prop.value?.type === 'Identifier' && prop.value.name) {
-                                  declaredInCode.add(prop.value.name);
-                              }
-                          }
-                      }
-                      if (param.type === 'ArrayPattern' && param.elements) {
-                          for (const elem of param.elements) {
-                              if (elem?.type === 'Identifier' && elem.name) {
-                                  declaredInCode.add(elem.name);
-                              }
-                          }
-                      }
-                  }
-              }
-              
-              // For-in and for-of loop variables
-              if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
-                  if (node.left?.type === 'VariableDeclaration') {
-                      for (const decl of node.left.declarations) {
-                          if (decl.id?.type === 'Identifier' && decl.id.name) {
-                              declaredInCode.add(decl.id.name);
-                          }
-                      }
-                  } else if (node.left?.type === 'Identifier' && node.left.name) {
-                      declaredInCode.add(node.left.name);
-                  }
-              }
-              
-              // Catch clause parameters
-              if (node.type === 'CatchClause' && node.param?.type === 'Identifier' && node.param.name) {
-                  declaredInCode.add(node.param.name);
-              }
-              
-              // Recursively walk the tree
-              for (const key in node) {
-                  if (key === 'loc' || key === 'range') continue;
-                  const child = node[key];
-                  if (Array.isArray(child)) {
-                      child.forEach(collectDeclarations);
-                  } else if (child && typeof child === 'object') {
-                      collectDeclarations(child);
-                  }
-              }
-          };
-          
-                  collectDeclarations(ast);
-        declaredInCode.forEach(v => definedVars.add(v));
+        const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
         
-        const checkIdentifiers = (node: any, parent: any = null) => {
+        // Extended list of defined globals
+        const definedVars = new Set([
+            ...allGlobals,
+            'console', 'Math', 'Date', 'JSON', 
+            'parseInt', 'parseFloat', 'isNaN', 'isFinite', 
+            'undefined', 'null', 'true', 'false',
+            'Object', 'Array', 'String', 'Number', 'Boolean',
+            'eval', 'setTimeout', 'setInterval', 'clearTimeout', 'clearInterval',
+            'Error', 'TypeError', 'ReferenceError', 'SyntaxError',
+            'Infinity', 'NaN', 'window', 'document', 'alert'
+        ]);
+        
+        const declaredInCode = new Set<string>();
+        const reportedIdentifiers = new Set<string>();
+        
+        // Collect all declarations including function parameters
+        const collectDeclarations = (node: any) => {
             if (!node || typeof node !== 'object') return;
             
-            // Check for ExpressionStatement with just an identifier (like "asfasf;")
-            if (node.type === 'ExpressionStatement' && node.expression?.type === 'Identifier') {
-                const identifier = node.expression;
-                if (identifier.name && !definedVars.has(identifier.name)) {
-                    const loc = identifier.loc;
-                    if (loc) {
-                        const lineOffset = loc.start.line - 3;
-                        const colBase = lineOffset === 0 ? range.start.character : 0;
-                        
-                        const errRange = new vscode.Range(
-                            range.start.line + lineOffset,
-                            colBase + loc.start.column,
-                            range.start.line + lineOffset,
-                            (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column
-                        );
-                        
-                        diagnostics.push(
-                            this.createDiagnostic(
-                                errRange,
-                                `Undefined identifier: "${identifier.name}"`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
-                            )
-                        );
-                        reportedIdentifiers.add(identifier.name);
+            // Variable declarations
+            if (node.type === 'VariableDeclarator' && node.id?.name) {
+                declaredInCode.add(node.id.name);
+            }
+            
+            // Function declarations
+            if (node.type === 'FunctionDeclaration' && node.id?.name) {
+                declaredInCode.add(node.id.name);
+            }
+            
+            // Function parameters (both regular functions and arrow functions)
+            if ((node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression') && node.params) {
+              for (const param of node.params) {
+                // Handle simple identifiers
+                if (param.type === 'Identifier' && param.name) {
+                  declaredInCode.add(param.name);
+                }
+                
+                // Handle parameters with default values (e.g., var = 0)
+                if (param.type === 'AssignmentPattern' && param.left) {
+                  if (param.left.type === 'Identifier' && param.left.name) {
+                    declaredInCode.add(param.left.name);
+                  }
+                  // Handle destructuring with defaults
+                  if (param.left.type === 'ObjectPattern' && param.left.properties) {
+                    for (const prop of param.left.properties) {
+                      if (prop.value?.type === 'Identifier' && prop.value.name) {
+                        declaredInCode.add(prop.value.name);
+                      }
                     }
+                  }
+                  if (param.left.type === 'ArrayPattern' && param.left.elements) {
+                    for (const elem of param.left.elements) {
+                      if (elem?.type === 'Identifier' && elem.name) {
+                        declaredInCode.add(elem.name);
+                      }
+                    }
+                  }
+                }
+                
+                // Handle destructuring parameters (without defaults)
+                if (param.type === 'ObjectPattern' && param.properties) {
+                  for (const prop of param.properties) {
+                    if (prop.value?.type === 'Identifier' && prop.value.name) {
+                      declaredInCode.add(prop.value.name);
+                    }
+                  }
+                }
+                if (param.type === 'ArrayPattern' && param.elements) {
+                  for (const elem of param.elements) {
+                    if (elem?.type === 'Identifier' && elem.name) {
+                      declaredInCode.add(elem.name);
+                    }
+                  }
+                }
+              }
+            }
+            
+            // For-in and for-of loop variables
+            if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
+                if (node.left?.type === 'VariableDeclaration') {
+                    for (const decl of node.left.declarations) {
+                        if (decl.id?.type === 'Identifier' && decl.id.name) {
+                            declaredInCode.add(decl.id.name);
+                        }
+                    }
+                } else if (node.left?.type === 'Identifier' && node.left.name) {
+                    declaredInCode.add(node.left.name);
                 }
             }
             
-            if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
-                if (reportedIdentifiers.has(node.name)) {
-                    // Skip to children
-                    for (const key in node) {
-                      if (key === 'loc' || key === 'range') continue;
-                      const child = node[key];
-                      if (Array.isArray(child)) {
-                        child.forEach(c => checkIdentifiers(c, node));
-                      } else if (child && typeof child === 'object') {
-                        checkIdentifiers(child, node);
-                      }
-                    }
-                    return;
+            // Catch clause parameters
+            if (node.type === 'CatchClause' && node.param?.type === 'Identifier' && node.param.name) {
+                declaredInCode.add(node.param.name);
+            }
+            
+            // Recursively walk the tree
+            for (const key in node) {
+                if (key === 'loc' || key === 'range') continue;
+                const child = node[key];
+                if (Array.isArray(child)) {
+                    child.forEach(collectDeclarations);
+                } else if (child && typeof child === 'object') {
+                    collectDeclarations(child);
                 }
-                const loc = node.loc;
-                if (loc) {
-                    const lineOffset = loc.start.line - 3;
-                    const colBase = lineOffset === 0 ? range.start.character : 0;
-                    
-                    const errRange = new vscode.Range(
-                      range.start.line + lineOffset,
-                      colBase + loc.start.column,
-                      range.start.line + lineOffset,
-                      colBase + loc.end.column
-                    );
-                    
-                    // Check if this is actually a reference (not a property name)
-                    const isPropertyName = parent && (
-                        (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
-                        (parent.type === 'Property' && parent.key === node && !parent.computed)
-                    );
-                    
-                    if (!isPropertyName) {
+            }
+        };
+        
+      collectDeclarations(ast);
+      declaredInCode.forEach(v => definedVars.add(v));
+      
+      const checkIdentifiers = (node: any, parent: any = null) => {
+          if (!node || typeof node !== 'object') return;
+          
+          // Check for ExpressionStatement with just an identifier (like "asfasf;")
+          if (node.type === 'ExpressionStatement' && node.expression?.type === 'Identifier') {
+              const identifier = node.expression;
+              if (identifier.name && !definedVars.has(identifier.name)) {
+                  const loc = identifier.loc;
+                  if (loc) {
+                      const lineOffset = loc.start.line - 3;
+                      const colBase = lineOffset === 0 ? range.start.character : 0;
+                      
+                      const errRange = new vscode.Range(
+                          range.start.line + lineOffset,
+                          colBase + loc.start.column,
+                          range.start.line + lineOffset,
+                          (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column
+                      );
+
+                      const suggestion = this.findClosestKeyword(identifier.name, Array.from(definedVars).flat());
+                      
+                      if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
+                          diagnostics.push(
+                              this.createDiagnostic(
+                                  errRange,
+                                  `Undefined identifier or variable: "${identifier.name}". Did you mean "${suggestion.keyword}"?`,
+                                  this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                              )
+                          );
+                      } else {
                         diagnostics.push(
                             this.createDiagnostic(
                                 errRange,
-                                `Undefined identifier: "${node.name}"`,
+                                `Undefined identifier or variable: "${identifier.name}"`,
                                 this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
                             )
                         );
-                    }
-                }
-              }
-              
-              // Recursively check children
-              for (const key in node) {
-                  if (key === 'loc' || key === 'range') continue;
-                  const child = node[key];
-                  if (Array.isArray(child)) {
-                      child.forEach(c => checkIdentifiers(c, node));
-                  } else if (child && typeof child === 'object') {
-                      checkIdentifiers(child, node);
+                      }
+                      reportedIdentifiers.add(identifier.name);
                   }
               }
-          };
-  
-          checkIdentifiers(ast);
-  
-      } catch (error) {
+          }
+          
+          if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
+              if (reportedIdentifiers.has(node.name)) {
+                  // Skip to children
+                  for (const key in node) {
+                    if (key === 'loc' || key === 'range') continue;
+                    const child = node[key];
+                    if (Array.isArray(child)) {
+                      child.forEach(c => checkIdentifiers(c, node));
+                    } else if (child && typeof child === 'object') {
+                      checkIdentifiers(child, node);
+                    }
+                  }
+                  return;
+              }
+              const loc = node.loc;
+              if (loc) {
+                  const lineOffset = loc.start.line - 3;
+                  const colBase = lineOffset === 0 ? range.start.character : 0;
+                  
+                  const errRange = new vscode.Range(
+                    range.start.line + lineOffset,
+                    colBase + loc.start.column,
+                    range.start.line + lineOffset,
+                    colBase + loc.end.column
+                  );
+                  
+                  // Check if this is actually a reference (not a property name)
+                  const isPropertyName = parent && (
+                      (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
+                      (parent.type === 'Property' && parent.key === node && !parent.computed)
+                  );
+                  
+                  if (!isPropertyName) {
+                      const suggestion = this.findClosestKeyword(node.name, Array.from(definedVars).flat());
+                      
+                      if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
+                        diagnostics.push(
+                            this.createDiagnostic(
+                                errRange,
+                                `Undefined identifier or variable: "${node.name}". Did you mean "${suggestion.keyword}"?`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                            )
+                        );
+                      } else {
+                        diagnostics.push(
+                            this.createDiagnostic(
+                                errRange,
+                                `Undefined identifier or variable: "${node.name}"`,
+                                this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
+                            )
+                        );
+                      }
+                  }
+              }
+            }
+            
+            // Recursively check children
+            for (const key in node) {
+                if (key === 'loc' || key === 'range') continue;
+                const child = node[key];
+                if (Array.isArray(child)) {
+                    child.forEach(c => checkIdentifiers(c, node));
+                } else if (child && typeof child === 'object') {
+                    checkIdentifiers(child, node);
+                }
+            }
+        };
 
-          // Parsing already failed, errors already reported
-        return;
-      }
+        checkIdentifiers(ast);
+
+    } catch (error) {
+
+        // Parsing already failed, errors already reported
+      return;
+    }
   }
 
 
