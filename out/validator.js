@@ -49,7 +49,7 @@ const jsKeywords = new Set([
     'interface', 'package', 'private', 'protected', 'public'
 ]);
 const globalValidIdentifiers = new Array([
-    'Q', 'S', 'P', 'V', 'dendryUI', 'Image', 'data', 'localStorage'
+    'Q', 'S', 'P', 'V', 'dendryUI', 'Image', 'data', 'localStorage', 'parliament'
 ]);
 class DendryValidator {
     constructor() {
@@ -255,7 +255,7 @@ class DendryValidator {
             const match = line.match(/^([\w-]+):/);
             if (match) {
                 const propKey = match[1];
-                if (propertyLines.has(propKey)) {
+                if (propertyLines.has(propKey) && this.SCENE_PROPERTIES.has(propKey)) {
                     const duplicateRange = new vscode.Range(currentLine + i, 0, currentLine + i, nodeLines[i].length);
                     diagnostics.push(this.createDiagnostic(duplicateRange, `Duplicate property: "${propKey}" (first defined on line ${propertyLines.get(propKey) + 1})`, vscode.DiagnosticSeverity.Warning));
                 }
@@ -457,11 +457,11 @@ class DendryValidator {
         for (let i = 0; i < firstSceneLine; i++) {
             const trimmed = lines[i].trim();
             const match = trimmed.match(/^([\w-]+):/);
-            if (match && !trimmed.startsWith('@')) {
+            if (match && !trimmed.startsWith('@') && this.SCENE_PROPERTIES.has(match[1])) {
                 const propKey = match[1];
                 if (seenProperties.has(propKey)) {
                     const duplicateRange = new vscode.Range(i, 0, i, lines[i].length);
-                    diagnostics.push(this.createDiagnostic(duplicateRange, `Duplicate metadata property: "${propKey}" (first defined on line ${seenProperties.get(propKey) + 1})`, vscode.DiagnosticSeverity.Warning));
+                    diagnostics.push(this.createDiagnostic(duplicateRange, `Duplicate property: "${propKey}" (first defined on line ${seenProperties.get(propKey) + 1})`, vscode.DiagnosticSeverity.Warning));
                 }
                 else {
                     seenProperties.set(propKey, i);
