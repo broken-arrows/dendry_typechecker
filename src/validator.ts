@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as esprima from 'esprima';
+import * as acorn from 'acorn';
 import { DendryAST, DendryNode } from './parser';
 
 type FileData = {
@@ -1107,53 +1107,22 @@ export class DendryValidator {
       let parseSucceeded = false;
       
       try {
-  
-          parseResult = esprima.parseScript(wrappedCode, { loc: true, tolerant: true }) as any;
+          parseResult = acorn.parse(wrappedCode, {
+              ecmaVersion: 2022,
+              sourceType: 'script',
+              locations: true,
+          }) as any;
           parseSucceeded = true;
-          
-          // Collect lines that have parse errors
-          if (parseResult.errors && parseResult.errors.length > 0) {
-              for (const error of parseResult.errors) {
-                  const errLineNumber: number = error.lineNumber || 1;
-                  const errColumn: number = error.column || 0;
-                  const codeLineNumber = errLineNumber - 1;
-                  
-                  // Track this line as having errors
-                  if (isJsBlock) {
-                      errorLines.add(codeLineNumber - 1); // Adjust for wrapped code
-                  }
-                  
-                  if (!isJsBlock) {
-                      diagnostics.push(
-                          this.createDiagnostic(
-                              range,
-                              `Dendry logic Error: ${error.description || error.message}`,
-                              vscode.DiagnosticSeverity.Error
-                          )
-                      );
-                  } else {
-                      const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
-                      diagnostics.push(
-                          this.createDiagnostic(
-                              errRange,
-                              `JavaScript Error: ${error.description || error.message}`,
-                              vscode.DiagnosticSeverity.Error
-                          )
-                      );
-                  }
-              }
-          }
       } catch (error: any) {
-  
-          const errLineNumber: number = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
-          const errColumn: number = typeof error?.column === 'number' ? error.column - 1 : 0;
+          const errLineNumber: number = error?.loc?.line ?? 1;
+          const errColumn: number = error?.loc?.column ?? 0;
           const codeLineNumber = errLineNumber - 2;
-                  
+
           if (!isJsBlock) {
               diagnostics.push(
                   this.createDiagnostic(
                       range,
-                      `Dendry logic Error: ${error.description || error.message}`,
+                      `Dendry logic Error: ${error.message}`,
                       vscode.DiagnosticSeverity.Error
                   )
               );
@@ -1163,7 +1132,7 @@ export class DendryValidator {
               diagnostics.push(
                   this.createDiagnostic(
                       errRange,
-                      `JavaScript Error: ${error.description || error.message}`,
+                      `JavaScript Error: ${error.message}`,
                       vscode.DiagnosticSeverity.Error
                   )
               );
@@ -1348,7 +1317,11 @@ export class DendryValidator {
     try {
         const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
 
-        const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
+        const ast = acorn.parse(`var ${allGlobals.join(', ')};\n${code}`, {
+            ecmaVersion: 2022,
+            sourceType: 'script',
+            locations: true,
+        }) as any;
         
         // Extended list of defined globals
         const definedVars = new Set([

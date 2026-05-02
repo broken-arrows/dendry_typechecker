@@ -85,6 +85,12 @@ The extension will:
 
 4. Press F5 in VSCode to launch an extension development host with the extension running.
 
+5. For the packaged extension, use:
+
+   ```bash
+   npx vsce package
+   ```
+
 ## Extension Structure
 
 ```

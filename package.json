@@ -3,7 +3,7 @@
   "displayName": "DendryNexus",
   "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
@@ -142,14 +142,11 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
-    "@types/esprima": "^4.0.2",
-    "@types/esprima-walk": "^0.1.2",
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.80.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "esprima": "^4.0.1",
-    "esprima-walk": "^0.1.0"
+    "acorn": "^8.16.0"
   }
 }

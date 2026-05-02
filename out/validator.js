@@ -35,7 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DendryValidator = void 0;
 const vscode = __importStar(require("vscode"));
-const esprima = __importStar(require("esprima"));
+const acorn = __importStar(require("acorn"));
 const jsKeywords = new Set([
     'true', 'false', 'null', 'undefined',
     'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
@@ -807,39 +807,24 @@ class DendryValidator {
         let parseResult = null;
         let parseSucceeded = false;
         try {
-            parseResult = esprima.parseScript(wrappedCode, { loc: true, tolerant: true });
+            parseResult = acorn.parse(wrappedCode, {
+                ecmaVersion: 2022,
+                sourceType: 'script',
+                locations: true,
+            });
             parseSucceeded = true;
-            // Collect lines that have parse errors
-            if (parseResult.errors && parseResult.errors.length > 0) {
-                for (const error of parseResult.errors) {
-                    const errLineNumber = error.lineNumber || 1;
-                    const errColumn = error.column || 0;
-                    const codeLineNumber = errLineNumber - 1;
-                    // Track this line as having errors
-                    if (isJsBlock) {
-                        errorLines.add(codeLineNumber - 1); // Adjust for wrapped code
-                    }
-                    if (!isJsBlock) {
-                        diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
-                    }
-                    else {
-                        const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
-                        diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
-                    }
-                }
-            }
         }
         catch (error) {
-            const errLineNumber = typeof error?.lineNumber === 'number' ? error.lineNumber : 1;
-            const errColumn = typeof error?.column === 'number' ? error.column - 1 : 0;
+            const errLineNumber = error?.loc?.line ?? 1;
+            const errColumn = error?.loc?.column ?? 0;
             const codeLineNumber = errLineNumber - 2;
             if (!isJsBlock) {
-                diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
+                diagnostics.push(this.createDiagnostic(range, `Dendry logic Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
             }
             else {
                 errorLines.add(codeLineNumber);
                 const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
-                diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.description || error.message}`, vscode.DiagnosticSeverity.Error));
+                diagnostics.push(this.createDiagnostic(errRange, `JavaScript Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
             }
         }
         // Run typo checks ONLY on lines that had parse errors
@@ -971,7 +956,11 @@ class DendryValidator {
     checkUndefinedIdentifiers(code, range, diagnostics) {
         try {
             const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
-            const ast = esprima.parseScript(`var ${allGlobals.join(', ')};\n${code}`, { loc: true, tolerant: true });
+            const ast = acorn.parse(`var ${allGlobals.join(', ')};\n${code}`, {
+                ecmaVersion: 2022,
+                sourceType: 'script',
+                locations: true,
+            });
             // Extended list of defined globals
             const definedVars = new Set([
                 ...allGlobals,

@@ -2,3 +2,6 @@ node_modules
 .vscode/
 logs.txt
 test.scene.dry
+.claude/
+CLAUDE.md
+docs/
