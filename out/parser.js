@@ -90,9 +90,9 @@ class DendryHandParser {
                 continue;
             }
             if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
-                const { key, value } = this.parsePropertyLine(line, this.currentLine);
+                const { key, value, endLine } = this.parsePropertyLine(line, this.currentLine);
                 this.metadata[key] = value;
-                this.currentLine++;
+                this.currentLine = endLine + 1;
             }
             else {
                 // Not metadata anymore
@@ -140,9 +140,9 @@ class DendryHandParser {
                 continue;
             }
             if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
-                const { key, value } = this.parsePropertyLine(line, this.currentLine);
+                const { key, value, endLine } = this.parsePropertyLine(line, this.currentLine);
                 properties.set(key, value);
-                this.currentLine++;
+                this.currentLine = endLine + 1;
             }
             else {
                 break;
@@ -312,45 +312,58 @@ class DendryHandParser {
         }
         return interpolations;
     }
+    // Reads a property line, gobbling continuation lines and tracking
+    // magic-block state. Mirrors the upstream dry.js parser: a property
+    // value extends across follow-on lines that are either indented (when
+    // out of magic) or anything-goes (when in magic, until a line whose
+    // last `!}` closes magic). Multiple magic blocks per value are
+    // allowed.
+    //
+    // Backward-compat: if the entire collected value is a single
+    // `{! ... !}` block (no surrounding text), the braces are stripped
+    // and the inside is returned. This preserves the prior behavior for
+    // the common case `view-if: {! foo() !}`. Values that mix Dendry
+    // shorthand with `{! ... !}` blocks are returned with braces intact;
+    // the validator will chunk-split them in step 3.
     parsePropertyLine(line, lineNum) {
         const colonIndex = line.indexOf(':');
         if (colonIndex === -1) {
             return { key: '', value: '', endLine: lineNum };
         }
         const key = line.substring(0, colonIndex).trim();
-        let valueStart = line.substring(colonIndex + 1).trim();
-        // Check for JS block
-        if (valueStart.startsWith('{!')) {
-            const { value, endLine } = this.parseJsBlock(valueStart, lineNum);
-            return { key, value, endLine };
-        }
-        return { key, value: valueStart, endLine: lineNum };
-    }
-    parseJsBlock(firstLine, startLine) {
-        let jsCode = '';
-        let currentLineNum = startLine;
-        // Check if it closes on the same line
-        const sameLineMatch = firstLine.match(/\{!(.*?)!\}/s);
-        if (sameLineMatch) {
-            return { value: sameLineMatch[1], endLine: startLine };
-        }
-        // Multi-line JS block
-        jsCode = firstLine.substring(2); // Remove {!
-        currentLineNum++;
-        while (currentLineNum < this.lines.length) {
-            const line = this.lines[currentLineNum];
-            const closeIndex = line.indexOf('!}');
-            if (closeIndex !== -1) {
-                jsCode += '\n' + line.substring(0, closeIndex);
-                this.currentLine = currentLineNum;
-                return { value: jsCode, endLine: currentLineNum };
+        const firstValuePart = line.substring(colonIndex + 1);
+        let inMagic = endsInMagic(false, firstValuePart);
+        const parts = [inMagic ? firstValuePart + '\n' : firstValuePart];
+        let lastConsumed = lineNum;
+        for (let j = lineNum + 1; j < this.lines.length; j++) {
+            let thisLine = this.lines[j];
+            if (!inMagic) {
+                // Out of magic: only consume if the line is indented.
+                if (!isIndentedContinuation(thisLine))
+                    break;
             }
-            jsCode += '\n' + line;
-            currentLineNum++;
+            const startedInMagic = inMagic;
+            inMagic = endsInMagic(inMagic, thisLine);
+            lastConsumed = j;
+            if (!startedInMagic) {
+                // Joining out-of-magic continuation: strip surrounding
+                // whitespace and prefix with a single space.
+                thisLine = ' ' + thisLine.trim();
+            }
+            else {
+                // In magic: preserve content but trim trailing whitespace.
+                thisLine = thisLine.replace(/\s*$/, '');
+            }
+            if (inMagic)
+                thisLine = thisLine + '\n';
+            parts.push(thisLine);
         }
-        // Unclosed JS block
-        this.currentLine = currentLineNum;
-        return { value: jsCode, endLine: currentLineNum };
+        let value = parts.join('').trim();
+        // Backward-compat: unwrap a single, complete magic block.
+        const pureBlock = value.match(/^\{!([\s\S]*)!\}$/);
+        if (pureBlock)
+            value = pureBlock[1];
+        return { key, value, endLine: lastConsumed };
     }
     isSceneMarker(line) {
         return /^@\w*/.test(line.trim());
@@ -367,6 +380,25 @@ class DendryHandParser {
     isComment(line) {
         return /^#(?![a-zA-Z_])/.test(line.trim());
     }
+}
+// ----------------- MAGIC-BLOCK STATE HELPERS -----------------
+// True when a line *ends* inside a `{! ... !}` magic block, given the
+// state when the line started. Mirrors `dry.js:108 endsInMagic`.
+function endsInMagic(startedInMagic, line) {
+    const lastStart = line.lastIndexOf('{!');
+    const lastEnd = line.lastIndexOf('!}');
+    if (lastEnd > lastStart)
+        return false;
+    if (lastStart > lastEnd)
+        return true;
+    // Both -1: state unchanged.
+    return startedInMagic;
+}
+// True when a line is an indented continuation (whitespace followed by
+// non-whitespace). Blank lines and lines starting at column 0
+// terminate a property value.
+function isIndentedContinuation(line) {
+    return /^\s+\S/.test(line);
 }
 // ----------------- PARSER ENTRY -----------------
 function parseText(text, fileName) {

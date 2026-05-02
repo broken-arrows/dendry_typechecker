@@ -1,29 +1,14 @@
 import * as vscode from 'vscode';
-import * as acorn from 'acorn';
 import { DendryAST, DendryNode } from './parser';
+import { checkScript, Finding, FindingSeverity } from './js-check';
+import { convertCondition, convertAction, ConversionResult } from './dendry-logic/shorthand';
+import { splitActionChunks } from './dendry-logic/chunks';
 
 type FileData = {
   ast: DendryAST;
   localSceneIds: Set<string>;
   localQualityIds: Set<string>;
 };
-
-const jsKeywords = new Set([
-  'true', 'false', 'null', 'undefined',
-  'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
-  'break', 'continue', 'return', 'throw', 'try', 'catch', 'finally',
-  'function', 'var', 'let', 'const', 'new', 'this', 'typeof', 'instanceof',
-  'Math', 'console', 'parseInt', 'parseFloat', 'isNaN', 'isFinite',
-  'Object', 'Array', 'String', 'Number', 'Boolean', 'Date', 'JSON', 'Error',
-  'true', 'false', 'null', 'undefined', 'in', 'of', 'async', 'await',  
-  'class', 'extends', 'static', 'import', 'export', 'yield', 'delete', 'void',
-  'super', 'with', 'debugger', 'enum', 'implements',
-  'interface', 'package', 'private', 'protected', 'public'
-]);
-
-const globalValidIdentifiers = new Array([
-  'Q', 'S', 'P', 'V', 'dendryUI', 'Image', 'data', 'localStorage', 'parliament'
-]);
 
 export class DendryValidator {
   private strictMode: boolean;
@@ -203,7 +188,7 @@ export class DendryValidator {
                 )
             );
         }
-        
+
         previousEnd = end;
     }
 
@@ -212,7 +197,7 @@ export class DendryValidator {
 
   private validateInterpolations(interpolations: DendryNode['interpolations'], diagnostics: vscode.Diagnostic[]): void {
     const validIdentifierRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-    
+
     for (const interpolation of interpolations) {
       // Validate variable name format
       if (!validIdentifierRegex.test(interpolation.variable)) {
@@ -240,7 +225,7 @@ export class DendryValidator {
           // Use the fullText to find the exact position of the qdisplay identifier
           const fullText = interpolation.fullText || '';
           const qdisplayIndex = fullText.lastIndexOf(interpolation.qdisplay);
-          
+
           if (qdisplayIndex !== -1) {
             const qdisplayStart = interpolation.range.start.character + qdisplayIndex;
             const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
@@ -338,7 +323,7 @@ export class DendryValidator {
         insideJsBlock = false;
         continue; // Skip the closing line
       }
-      
+
       // Skip duplicate checking inside JS blocks
       if (insideJsBlock) {
         continue;
@@ -408,9 +393,9 @@ export class DendryValidator {
       }
 
       if (key === 'view-if' || key === 'choose-if' || key === 'check-quality') {
-          diagnostics.push(...this.validateDendryCondition(value ?? '', r));
+          diagnostics.push(...this.validatePredicateValue(String(value ?? ''), r));
       } else if (key.startsWith('on-')) {
-          diagnostics.push(...this.validateDendryAction(value ?? '', r));
+          diagnostics.push(...this.validateActionValue(String(value ?? ''), r));
       }
 
       if (key === 'go-to' || key === 'set-jump' || key === 'call' || key === 'check-success-go-to' || key === 'check-failure-go-to') {
@@ -427,7 +412,7 @@ export class DendryValidator {
       // Get all content from the scene (between properties and next scene/end)
       const startLine = node.range.start.line;
       const endLine = node.range.end.line;
-      
+
     for (let i = startLine; i < endLine; i++) {
         const lineText = document.lineAt(i).text;
         if (lineText.trim().startsWith('#')) {
@@ -442,11 +427,11 @@ export class DendryValidator {
       // Brackets are REQUIRED
       const regex = /(\[\?\s*)([^:]+?)\s*:\s*([^?]*)\?\]/gi;
       let match;
-      
+
       while ((match = regex.exec(lineText)) !== null) {
           const conditionPrefix = match[1]; // '[?'
           const condition = match[2].trim();
-          
+
           if (!condition) {
               const fullMatchStart = match.index;
               const fullMatchEnd = regex.lastIndex;
@@ -454,14 +439,14 @@ export class DendryValidator {
               diagnostics.push(this.createDiagnostic(errRange, 'Inline conditional is missing a condition before :', vscode.DiagnosticSeverity.Error));
               continue;
           }
-          
+
           const preParsedCondition = '(' + condition.slice(2) + ')';
-          
+
           // Precise condition range: after [? if up to (but not including) first :
           const conditionStartCol = match.index + conditionPrefix.length;
           const conditionEndCol = conditionStartCol + condition.length;
           const conditionRange = new vscode.Range(lineNum, conditionStartCol, lineNum, conditionEndCol);
-          
+
           // Validate ONLY condition as Dendry logic (condition context: = -> ==)
           const conditionDiagnostics = this.validateDendryCondition(preParsedCondition, conditionRange);
           diagnostics.push(...conditionDiagnostics);
@@ -539,9 +524,9 @@ export class DendryValidator {
       }
 
       if (key === 'view-if' || key === 'choose-if') {
-          diagnostics.push(...this.validateDendryCondition(value ?? '', r));
+          diagnostics.push(...this.validatePredicateValue(String(value ?? ''), r));
       } else if (key.startsWith('on-')) {
-          diagnostics.push(...this.validateDendryAction(value ?? '', r));
+          diagnostics.push(...this.validateActionValue(String(value ?? ''), r));
       }
 
       if (key === 'go-to') {
@@ -597,7 +582,7 @@ export class DendryValidator {
     const match = cleaned.match(/@([\w-]+(?:\.[\w-]+)?)/);
     if (match) {
       const sceneRef = match[1].trim();
-      
+
       // Compute precise range for sceneRef on this line
       const fullLineText = document.lineAt(node.range.start.line).text;
       const atIndex = fullLineText.indexOf('@');
@@ -673,18 +658,18 @@ export class DendryValidator {
       }
 
       if (lineIndex === -1) continue;
-      
+
       const line = lines[lineIndex];
       const colonIndex = line.indexOf(':');
       const valueText = line.substring(colonIndex + 1).trim();
-      
+
       // Calculate proper range for JS blocks
       let range: vscode.Range;
-      
+
       if (valueText.startsWith('{!')) {
         // Multi-line JS block - calculate the actual JS code range
         const afterOpen = valueText.substring(2); // Remove {!
-        
+
         if (afterOpen.trim().length > 0 && !afterOpen.includes('!}')) {
           // Code starts on same line as {!
           const startCol = colonIndex + 1 + valueText.indexOf('{!') + 2;
@@ -698,7 +683,7 @@ export class DendryValidator {
           // Multi-line block with code starting on next line
           let startLine = lineIndex + 1;
           let startCol = 0;
-          
+
           // Find the closing !}
           let endLine = startLine;
           for (let i = startLine; i < firstSceneLine; i++) {
@@ -709,7 +694,7 @@ export class DendryValidator {
               break;
             }
           }
-          
+
           // If we didn't find closing, use until end of metadata
           if (!range!) {
             range = new vscode.Range(startLine, startCol, firstSceneLine - 1, lines[firstSceneLine - 1].length);
@@ -735,9 +720,9 @@ export class DendryValidator {
 
       // Validate JavaScript properties
       if (key === 'view-if' || key === 'choose-if') {
-        diagnostics.push(...this.validateDendryCondition(value ?? '', range));
+        diagnostics.push(...this.validatePredicateValue(String(value ?? ''), range));
       } else if (key.startsWith('on-')) {
-        diagnostics.push(...this.validateDendryAction(value ?? '', range));
+        diagnostics.push(...this.validateActionValue(String(value ?? ''), range));
       }
 
       // Validate go-to
@@ -753,7 +738,7 @@ export class DendryValidator {
   private validateTag(tagName: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
     // Check if any scene in the project has this tag
     let tagFound = false;
-    
+
     for (const [uri, fileData] of this._allFileData) {
         // Check tags in metadata (top-level scene properties)
         if (fileData.ast.metadata.tags) {
@@ -761,13 +746,13 @@ export class DendryValidator {
                 .split(/[,\s]+/)
                 .map(t => t.trim())
                 .filter(t => t.length > 0);
-            
+
             if (metadataTags.includes(tagName)) {
                 tagFound = true;
                 break;
             }
         }
-        
+
         // Check tags in explicit scene declarations
         for (const node of fileData.ast.nodes) {
             if (node.type === 'scene') {
@@ -777,7 +762,7 @@ export class DendryValidator {
                         .split(/[,\s]+/)
                         .map(t => t.trim())
                         .filter(t => t.length > 0);
-                    
+
                     if (tagList.includes(tagName)) {
                         tagFound = true;
                         break;
@@ -787,7 +772,7 @@ export class DendryValidator {
         }
         if (tagFound) break;
     }
-    
+
     if (!tagFound) {
         diagnostics.push(
             this.createDiagnostic(
@@ -802,18 +787,18 @@ export class DendryValidator {
 
   private validateGoTo(value: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]) {
       const statements = value.split(';');
-      
+
       for (const st of statements) {
           const trimmed = st.trim();
           if (!trimmed) continue;
-          
+
           const ifIndex = trimmed.indexOf(' if ');
-          
+
           if (ifIndex !== -1) {
             // Format: "scene_id if condition"
             const sceneId = trimmed.substring(0, ifIndex).trim();
             let condition = trimmed.substring(ifIndex + 4).trim();
-            
+
             if (condition.endsWith(' else')) {
               diagnostics.push(
                   this.createDiagnostic(
@@ -821,19 +806,19 @@ export class DendryValidator {
                       'Malformed "else" statement. Did you mean to include a statement after "else"?',
                       vscode.DiagnosticSeverity.Error
                   )
-              ); 
+              );
             } else if (condition.includes(' else ')) {
               condition = condition.split(' else ')[0].trim();
               const elseGoTo = trimmed.split(' else ')[1].trim();
               if (elseGoTo) {
                 this.validateGoTo(elseGoTo, range, diagnostics);
               }
-            }           
+            }
 
             if (sceneId && sceneId !== 'jumpScene' && sceneId !== "backSpecialScene" && sceneId !=='backScene') {
                 this.validateSceneReference(sceneId, range, diagnostics);
             }
-              
+
             if (condition) {
                 const conditionDiagnostics = this.validateDendryCondition(condition, range);
                 diagnostics.push(...conditionDiagnostics);
@@ -859,7 +844,7 @@ export class DendryValidator {
                   // It's an action/assignment - validate as Dendry logic
                   const actionDiagnostics = this.validateDendryAction(trimmed, range);
                   diagnostics.push(...actionDiagnostics);
-              } 
+              }
           }
       }
   }
@@ -936,8 +921,7 @@ export class DendryValidator {
         const startCol = nodeRange.start.character + valueStartIndex + leftTrim;
         const endCol = startCol + valueText.trim().length;
         return new vscode.Range(line, startCol, line, endCol);
-}
-
+    }
   }
 
   private validateNumber(value: any, range: vscode.Range, propertyName: string, diagnostics: vscode.Diagnostic[]) {
@@ -967,620 +951,199 @@ export class DendryValidator {
     }
   }
 
-  private convertDendryToJavaScript(dendryCode: string, isActionContext: boolean = false, diagnostics: vscode.Diagnostic[] = [], range: vscode.Range): string {
-    // Split by semicolons to handle each statement separately
-    const statements = dendryCode.split(';').map(s => s.trim()).filter(s => s);
-    
-    const convertedStatements = statements.map(stmt => {
-      let jsCode = stmt;
-      
-      // Handle postfix if syntax: action if condition
-      const postfixIfMatch = jsCode.match(/^(.+?)\s+if\s+(.+)$/);
+  // ---------- JavaScript / Dendry-shorthand validation ----------
+  //
+  // Top-level entry points (matched to property kind):
+  //  - validatePredicateValue: `view-if`, `choose-if`, `check-quality`.
+  //    Mixing logic + magic is rejected per upstream `makeCompile`.
+  //  - validateActionValue:    `on-arrival`, `on-departure`, `on-display`,
+  //    and any other `on-*`. Mixed values are chunk-split per upstream
+  //    `validateActions`; alternating chunks dispatch to magic (JS
+  //    block) or logic (Dendry shorthand) validation.
+  //  - validateDendryCondition / validateDendryAction: legacy single-
+  //    chunk dispatch, still used from within go-to validation and
+  //    inline-conditional checking.
 
-      if (!postfixIfMatch && jsCode.endsWith(' if')) {
-          diagnostics.push(
-            this.createDiagnostic(
-              range,
-              'Unexpected end of conditional statement: "if" block cannot be empty.',
-              vscode.DiagnosticSeverity.Error
-            )
-          );
-          return;
-      }
-
-      if (postfixIfMatch) {
-        const action = postfixIfMatch[1].trim();
-        let condition = postfixIfMatch[2].trim();
-
-        const postElseMatch = condition.match(/^(.+?)\s+else\s+(.+)$/);
-        let convertedPostElse;
-        if (!postElseMatch && condition.endsWith(' else')) {
-          diagnostics.push(
-              this.createDiagnostic(
-                range,
-                'Unexpected end of conditional statement: "else" block cannot be empty.',
-                vscode.DiagnosticSeverity.Error
-              )
-            );
-            return;
-        }
-
-        if (postElseMatch) {
-          condition = postElseMatch[1].trim();
-          const elseAction = postElseMatch[2].trim();
-          convertedPostElse = this.convertDendryToJavaScript(elseAction, isActionContext, diagnostics, range);
-        }
-        
-        // Convert condition comparators only
-        const convertedCondition = this.convertComparators(condition);
-        
-        // Convert logical operators in condition
-        const convertedConditionWithLogic = convertedCondition
-          .replace(/\band\b/g, '&&')
-          .replace(/\bor\b/g, '||')
-          .replace(/\bnot\b/g, '!');
-        
-        jsCode = `if (${convertedConditionWithLogic}) { ${action} }`;
-        if (convertedPostElse) {
-          jsCode += ` else { ${convertedPostElse} }`;
-        }
-      } else if (!isActionContext) {
-        // Only convert = to == if we're in condition context (not action)
-        jsCode = this.convertComparators(jsCode);
-      } 
-      
-      // Convert logical operators (if not already done for postfix if)
-      if (!postfixIfMatch) {
-        jsCode = jsCode
-          .replace(/\band\b/g, '&&')
-          .replace(/\bor\b/g, '||')
-          .replace(/\bnot\b/g, '!');
-      }
-
-      if (stmt.includes('Q.') || stmt.includes('S.') || stmt.includes('V.') || stmt.includes('P.')) {
-        const prefix = stmt.includes('Q.') ? 'Q' :
-                      stmt.includes('S.') ? 'S' :
-                      stmt.includes('V.') ? 'V' : 'P';
-        const identifier = stmt.split(`${prefix}.`)[1].split(/[\s;(){}]/)[0];
-        const warningRange = new vscode.Range(
-          range.start.line,
-          range.start.character + dendryCode.indexOf(stmt),
-          range.start.line,
-          range.start.character + dendryCode.indexOf(stmt) + stmt.length
-        );
-        diagnostics.push(
-          this.createDiagnostic(
-            warningRange,
-            `Potentially invalid use of prefix "${prefix}". Are you sure you are not referring to "${identifier}"?`,
-            vscode.DiagnosticSeverity.Warning
-          )
-        );
-      };
-      
-      return jsCode;
-    });
-    
-    // Join statements back together
-    let jsCode = convertedStatements.join('; ');
-    
-    return jsCode;
+  private validatePredicateValue(value: string, range: vscode.Range): vscode.Diagnostic[] {
+    // The parser unwraps pure `{! ... !}` blocks; if the value still
+    // contains `{!` or `!}`, it must have surrounding text — which
+    // upstream rejects.
+    if (containsMagicMarker(value)) {
+      return [
+        this.createDiagnostic(
+          range,
+          'Magic in a predicate must have no other content surrounding it. Wrap the entire value in `{! !}` or use Dendry logic exclusively.',
+          vscode.DiagnosticSeverity.Error
+        ),
+      ];
+    }
+    return this.runJsValidation(value, range, /* isAction */ false);
   }
 
-  private convertComparators(code: string): string {
-    // Replace = with == but not if it's already ==, !=, <=, >=, or ===
-    let result = code.replace(/([^=!<>])=([^=])/g, '$1==$2');
-    // Handle edge case at start of string
-    result = result.replace(/^=([^=])/g, '==$1');
-    return result;
-  }
+  private validateActionValue(value: string, range: vscode.Range): vscode.Diagnostic[] {
+    if (!containsMagicMarker(value)) {
+      return this.runJsValidation(value, range, /* isAction */ true);
+    }
 
-  private correctRangeForJSBlock(originalRange: vscode.Range, codeLineNumber: number, errColumn: number): vscode.Range {
-    const actualLine = originalRange.start.line + codeLineNumber - 1;
-    const colBase = (codeLineNumber === 0) ? originalRange.start.character : 0;
-    const actualCol = colBase + errColumn;
-    return new vscode.Range(
-        actualLine,
-        actualCol,
-        actualLine,
-        actualCol + 1
-    );
-  }
-
-  private validateJavaScript(code: string, range: vscode.Range, isActionContext: boolean = false): vscode.Diagnostic[] {
-      const diagnostics: vscode.Diagnostic[] = [];
-      
-      // Check if this is a full JS block or inline Dendry syntax
-      const isJsBlock = range.start.line !== range.end.line || code.includes('\n');
-      let jsCode = code;
-      
-      if (!isJsBlock) {
-          // Convert Dendry shorthand to proper JavaScript
-          jsCode = this.convertDendryToJavaScript(code, isActionContext, diagnostics, range);
+    // Mixed: alternate logic + magic chunks.
+    const diagnostics: vscode.Diagnostic[] = [];
+    const chunks = splitActionChunks(value);
+    for (const chunk of chunks) {
+      const chunkAnchor = this.chunkAnchor(value, chunk.offset, range);
+      if (chunk.kind === 'magic') {
+        diagnostics.push(...this.validateAsJsBlock(chunk.source, chunkAnchor));
+      } else {
+        diagnostics.push(...this.validateAsShorthand(chunk.source, chunkAnchor, /* isAction */ true));
       }
-
-      const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
-      
-      const wrappedCode = `var ${allGlobals.join(', ')};\n${jsCode}`;
-      const errorLines = new Set<number>(); // Track lines with parse errors
-      
-      let parseResult: any = null;
-      let parseSucceeded = false;
-      
-      try {
-          parseResult = acorn.parse(wrappedCode, {
-              ecmaVersion: 2022,
-              sourceType: 'script',
-              locations: true,
-          }) as any;
-          parseSucceeded = true;
-      } catch (error: any) {
-          const errLineNumber: number = error?.loc?.line ?? 1;
-          const errColumn: number = error?.loc?.column ?? 0;
-          const codeLineNumber = errLineNumber - 2;
-
-          if (!isJsBlock) {
-              diagnostics.push(
-                  this.createDiagnostic(
-                      range,
-                      `Dendry logic Error: ${error.message}`,
-                      vscode.DiagnosticSeverity.Error
-                  )
-              );
-          } else {
-              errorLines.add(codeLineNumber);
-              const errRange = this.correctRangeForJSBlock(range, codeLineNumber, errColumn);
-              diagnostics.push(
-                  this.createDiagnostic(
-                      errRange,
-                      `JavaScript Error: ${error.message}`,
-                      vscode.DiagnosticSeverity.Error
-                  )
-              );
-          }
-      }
-      
-      // Run typo checks ONLY on lines that had parse errors
-      if (errorLines.size > 0) {
-          this.checkTyposOnErrorLines(jsCode, range, diagnostics, errorLines);
-      }
-      
-      // Run additional checks if parsing succeeded
-      if (parseResult && parseSucceeded) {
-          this.checkJavaScriptAst(parseResult, jsCode, range, diagnostics);
-          
-          if (isJsBlock) {
-      
-              this.checkUndefinedIdentifiers(jsCode, range, diagnostics);
-          }
-      }
-      
-            return diagnostics;
+    }
+    return diagnostics;
   }
 
   private validateDendryCondition(code: string, range: vscode.Range): vscode.Diagnostic[] {
-    return this.validateJavaScript(code, range, false); // = -> ==
+    return this.runJsValidation(code, range, /* isAction */ false);
   }
 
   private validateDendryAction(code: string, range: vscode.Range): vscode.Diagnostic[] {
-      return this.validateJavaScript(code, range, true);  // = stays assignment
+    return this.runJsValidation(code, range, /* isAction */ true);
   }
 
-  private checkTyposOnErrorLines(code: string, range: vscode.Range, diagnostics: vscode.Diagnostic[], errorLines: Set<number>): void {      
-      const lines = code.split('\n');
-      
-      for (let i = 0; i < lines.length; i++) {
-          // ONLY check lines that had parse errors
-          if (!errorLines.has(i)) {
-              continue;
-          }
-          
-          const line = lines[i];
-          const lineNum = range.start.line + i;
-          
-          // Find all potential identifiers/keywords in the line
-          const words = line.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
-          
-          const jsKeywordsAsArray = Array.from(jsKeywords);
-
-          for (const word of words) {
-              // Skip if it's actually a valid keyword
-              if (jsKeywordsAsArray.includes(word)) {
-                  continue;
-              }
-              
-              // Check if this word is close to any keyword
-              const suggestion = this.findClosestKeyword(word, jsKeywordsAsArray);
-              
-              if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
-                  // Find the position of this word in the line
-                  const wordIndex = line.search(new RegExp(`\\b${word}\\b`));
-                  if (wordIndex !== -1) {
-                      const startCol = wordIndex;
-                      const endCol = startCol + word.length;
-                      const errRange = new vscode.Range(lineNum - 1, startCol, lineNum - 1, endCol);
-                      
-                      diagnostics.push(
-                          this.createDiagnostic(
-                              errRange,
-                              `Unknown identifier "${word}". Did you mean "${suggestion.keyword}"?`,
-                              vscode.DiagnosticSeverity.Warning
-                          )
-                      );
-                  }
-              }
-          }
-      }
+  // Single-chunk validation: pick path based on source shape (the
+  // multi-line / has-newline heuristic).
+  private runJsValidation(code: string, range: vscode.Range, isAction: boolean): vscode.Diagnostic[] {
+    const isJsBlock = range.start.line !== range.end.line || code.includes('\n');
+    if (isJsBlock) return this.validateAsJsBlock(code, range);
+    return this.validateAsShorthand(code, range, isAction);
   }
 
-  private findClosestKeyword(word: string, keywords: string[]): { keyword: string; distance: number } | null {
-      let minDistance = Infinity;
-      let closestKeyword = '';
-      
-      for (const keyword of keywords) {
-          const distance = this.levenshteinDistance(word.toLowerCase(), keyword.toLowerCase());
-          if (distance < minDistance) {
-              minDistance = distance;
-              closestKeyword = keyword;
-          }
-      }
-      
-      // Only suggest if the distance is reasonable (not too far)
-      if (minDistance <= Math.max(2, Math.floor(word.length / 3))) {
-          return { keyword: closestKeyword, distance: minDistance };
-      }
-      
-      return null;
+  private validateAsJsBlock(code: string, anchor: vscode.Range): vscode.Diagnostic[] {
+    const findings = checkScript(code, {
+      extraGlobals: this.extraJsGlobals(),
+      checkUndefined: true,
+      undefinedSeverity: this.strictMode ? 'warning' : 'hint',
+    });
+    return findings.map(f => this.findingToDiagnostic(f, anchor));
   }
 
-  private levenshteinDistance(a: string, b: string): number {
-      const an = a.length;
-      const bn = b.length;
-      
-      if (an === 0) return bn;
-      if (bn === 0) return an;
-      
-      const matrix: number[][] = Array(bn + 1);
-      
-      for (let i = 0; i <= bn; i++) {
-          matrix[i] = Array(an + 1);
-          matrix[i][0] = i;
-      }
-      
-      for (let j = 0; j <= an; j++) {
-          matrix[0][j] = j;
-      }
-      
-      for (let i = 1; i <= bn; i++) {
-          for (let j = 1; j <= an; j++) {
-              if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                  matrix[i][j] = matrix[i - 1][j - 1];
-              } else {
-                  matrix[i][j] = Math.min(
-                      matrix[i - 1][j - 1], // substitution
-                      matrix[i][j - 1],     // insertion
-                      matrix[i - 1][j]      // deletion
-                  ) + 1;
-              }
-          }
-      }
-      
-      return matrix[bn][an];
-  }
+  private validateAsShorthand(code: string, anchor: vscode.Range, isAction: boolean): vscode.Diagnostic[] {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const conversion = isAction ? convertAction(code) : convertCondition(code);
 
-
-
-
-  private checkJavaScriptAst(ast: any, code: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-    const walk = (node: any) => {
-      if (!node || typeof node !== 'object') return;
-
-      // Check for assignment in if condition (common mistake)
-      if (node.type === 'IfStatement' && node.test?.type === 'AssignmentExpression') {
-        const loc = node.test.loc;
-        if (loc) {
-          const lineOffset = loc.start.line - 3;
-          const colBase = lineOffset === 0 ? range.start.character : 0;
-          const errRange = new vscode.Range(
-              range.start.line + lineOffset,
-              colBase + loc.start.column,
-              range.start.line + (loc.end.line - 3),
-              (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column
-          );
-
-
-          diagnostics.push(
-            this.createDiagnostic(
-              errRange,
-              `Possible mistake: assignment (=) in condition, did you mean comparison (==)?`,
-              vscode.DiagnosticSeverity.Warning
-            )
-          );
-        }
-      }
-
-      // Recursively walk the AST
-      for (const key in node) {
-        if (key === 'loc' || key === 'range') continue;
-        const child = node[key];
-        if (Array.isArray(child)) {
-          child.forEach(walk);
-        } else if (child && typeof child === 'object') {
-          walk(child);
-        }
-      }
-    };
-
-    walk(ast);
-  }
-
-  private checkUndefinedIdentifiers(code: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-    try {
-        const allGlobals = [...globalValidIdentifiers, ...this.extraLibraries];
-
-        const ast = acorn.parse(`var ${allGlobals.join(', ')};\n${code}`, {
-            ecmaVersion: 2022,
-            sourceType: 'script',
-            locations: true,
-        }) as any;
-        
-        // Extended list of defined globals
-        const definedVars = new Set([
-            ...allGlobals,
-            'console', 'Math', 'Date', 'JSON', 
-            'parseInt', 'parseFloat', 'isNaN', 'isFinite', 
-            'undefined', 'null', 'true', 'false',
-            'Object', 'Array', 'String', 'Number', 'Boolean',
-            'eval', 'setTimeout', 'setInterval', 'clearTimeout', 'clearInterval',
-            'Error', 'TypeError', 'ReferenceError', 'SyntaxError',
-            'Infinity', 'NaN', 'window', 'document', 'alert'
-        ]);
-        
-        const declaredInCode = new Set<string>();
-        const reportedIdentifiers = new Set<string>();
-        
-        // Collect all declarations including function parameters
-        const collectDeclarations = (node: any) => {
-            if (!node || typeof node !== 'object') return;
-            
-            // Variable declarations
-            if (node.type === 'VariableDeclarator' && node.id?.name) {
-                declaredInCode.add(node.id.name);
-            }
-            
-            // Function declarations
-            if (node.type === 'FunctionDeclaration' && node.id?.name) {
-                declaredInCode.add(node.id.name);
-            }
-            
-            // Function parameters (both regular functions and arrow functions)
-            if ((node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression') && node.params) {
-              for (const param of node.params) {
-                // Handle simple identifiers
-                if (param.type === 'Identifier' && param.name) {
-                  declaredInCode.add(param.name);
-                }
-                
-                // Handle parameters with default values (e.g., var = 0)
-                if (param.type === 'AssignmentPattern' && param.left) {
-                  if (param.left.type === 'Identifier' && param.left.name) {
-                    declaredInCode.add(param.left.name);
-                  }
-                  // Handle destructuring with defaults
-                  if (param.left.type === 'ObjectPattern' && param.left.properties) {
-                    for (const prop of param.left.properties) {
-                      if (prop.value?.type === 'Identifier' && prop.value.name) {
-                        declaredInCode.add(prop.value.name);
-                      }
-                    }
-                  }
-                  if (param.left.type === 'ArrayPattern' && param.left.elements) {
-                    for (const elem of param.left.elements) {
-                      if (elem?.type === 'Identifier' && elem.name) {
-                        declaredInCode.add(elem.name);
-                      }
-                    }
-                  }
-                }
-                
-                // Handle destructuring parameters (without defaults)
-                if (param.type === 'ObjectPattern' && param.properties) {
-                  for (const prop of param.properties) {
-                    if (prop.value?.type === 'Identifier' && prop.value.name) {
-                      declaredInCode.add(prop.value.name);
-                    }
-                  }
-                }
-                if (param.type === 'ArrayPattern' && param.elements) {
-                  for (const elem of param.elements) {
-                    if (elem?.type === 'Identifier' && elem.name) {
-                      declaredInCode.add(elem.name);
-                    }
-                  }
-                }
-              }
-            }
-            
-            // For-in and for-of loop variables
-            if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
-                if (node.left?.type === 'VariableDeclaration') {
-                    for (const decl of node.left.declarations) {
-                        if (decl.id?.type === 'Identifier' && decl.id.name) {
-                            declaredInCode.add(decl.id.name);
-                        }
-                    }
-                } else if (node.left?.type === 'Identifier' && node.left.name) {
-                    declaredInCode.add(node.left.name);
-                }
-            }
-            
-            // Catch clause parameters
-            if (node.type === 'CatchClause' && node.param?.type === 'Identifier' && node.param.name) {
-                declaredInCode.add(node.param.name);
-            }
-            
-            // Recursively walk the tree
-            for (const key in node) {
-                if (key === 'loc' || key === 'range') continue;
-                const child = node[key];
-                if (Array.isArray(child)) {
-                    child.forEach(collectDeclarations);
-                } else if (child && typeof child === 'object') {
-                    collectDeclarations(child);
-                }
-            }
-        };
-        
-      collectDeclarations(ast);
-      declaredInCode.forEach(v => definedVars.add(v));
-      
-      const checkIdentifiers = (node: any, parent: any = null) => {
-          if (!node || typeof node !== 'object') return;
-          
-          // Check for ExpressionStatement with just an identifier (like "asfasf;")
-          if (node.type === 'ExpressionStatement' && node.expression?.type === 'Identifier') {
-              const identifier = node.expression;
-              if (identifier.name && !definedVars.has(identifier.name)) {
-                  const loc = identifier.loc;
-                  if (loc) {
-                      const lineOffset = loc.start.line - 3;
-                      const colBase = lineOffset === 0 ? range.start.character : 0;
-                      
-                      const errRange = new vscode.Range(
-                          range.start.line + lineOffset,
-                          colBase + loc.start.column,
-                          range.start.line + lineOffset,
-                          (loc.end.line - 3 === 0 ? range.start.character : 0) + loc.end.column
-                      );
-
-                      const suggestion = this.findClosestKeyword(identifier.name, Array.from(definedVars).flat());
-                      
-                      if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
-                          diagnostics.push(
-                              this.createDiagnostic(
-                                  errRange,
-                                  `Possible undefined identifier or variable: "${identifier.name}". Did you mean "${suggestion.keyword}"?`,
-                                  this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
-                              )
-                          );
-                      } else {
-                        diagnostics.push(
-                            this.createDiagnostic(
-                                errRange,
-                                `Possible undefined identifier or variable: "${identifier.name}"`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
-                            )
-                        );
-                      }
-                      reportedIdentifiers.add(identifier.name);
-                  }
-              }
-          }
-          
-          if (node.type === 'Identifier' && node.name && !definedVars.has(node.name)) {
-              if (reportedIdentifiers.has(node.name)) {
-                  // Skip to children
-                  for (const key in node) {
-                    if (key === 'loc' || key === 'range') continue;
-                    const child = node[key];
-                    if (Array.isArray(child)) {
-                      child.forEach(c => checkIdentifiers(c, node));
-                    } else if (child && typeof child === 'object') {
-                      checkIdentifiers(child, node);
-                    }
-                  }
-                  return;
-              }
-              const loc = node.loc;
-              if (loc) {
-                  const lineOffset = loc.start.line - 3;
-                  const colBase = lineOffset === 0 ? range.start.character : 0;
-                  
-                  const errRange = new vscode.Range(
-                    range.start.line + lineOffset,
-                    colBase + loc.start.column,
-                    range.start.line + lineOffset,
-                    colBase + loc.end.column
-                  );
-                  
-                  // Check if this is actually a reference (not a property name)
-                  const isPropertyName = parent && (
-                      (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) ||
-                      (parent.type === 'Property' && parent.key === node && !parent.computed)
-                  );
-                  
-                  if (!isPropertyName) {
-                      const suggestion = this.findClosestKeyword(node.name, Array.from(definedVars).flat());
-                      
-                      if (suggestion && suggestion.distance <= 2 && suggestion.distance > 0) {
-                        diagnostics.push(
-                            this.createDiagnostic(
-                                errRange,
-                                `Possible undefined identifier or variable: "${node.name}". Did you mean "${suggestion.keyword}"?`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
-                            )
-                        );
-                      } else {
-                        diagnostics.push(
-                            this.createDiagnostic(
-                                errRange,
-                                `Possible undefined identifier or variable: "${node.name}"`,
-                                this.strictMode ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint
-                            ),
-
-                        );
-                      }
-                  }
-              }
-            }
-            
-            // Recursively check children
-            for (const key in node) {
-                if (key === 'loc' || key === 'range') continue;
-                const child = node[key];
-                if (Array.isArray(child)) {
-                    child.forEach(c => checkIdentifiers(c, node));
-                } else if (child && typeof child === 'object') {
-                    checkIdentifiers(child, node);
-                }
-            }
-        };
-
-        checkIdentifiers(ast);
-
-    } catch (error) {
-
-        // Parsing already failed, errors already reported
-      return;
+    for (const err of conversion.errors) {
+      diagnostics.push(this.createDiagnostic(anchor, err.message, vscode.DiagnosticSeverity.Error));
     }
+
+    for (const warn of conversion.prefixWarnings) {
+      const warnRange = this.offsetToRange(anchor, code, warn.offset, warn.length);
+      diagnostics.push(
+        this.createDiagnostic(
+          warnRange,
+          `Potentially invalid use of prefix "${warn.prefix}". Are you sure you are not referring to "${warn.identifier}"?`,
+          vscode.DiagnosticSeverity.Warning
+        )
+      );
+    }
+
+    const findings = checkScript(conversion.jsSource, {
+      extraGlobals: this.extraJsGlobals(),
+      checkUndefined: false,
+    });
+    for (const f of findings) {
+      // Position-mapping through the shorthand conversion is unreliable,
+      // so report the whole property range — matches prior behavior.
+      if (f.kind === 'parse-error') {
+        diagnostics.push(
+          this.createDiagnostic(
+            anchor,
+            `Dendry logic Error: ${stripJsErrorPrefix(f.message)}`,
+            vscode.DiagnosticSeverity.Error
+          )
+        );
+      } else if (f.kind === 'assignment-in-condition') {
+        diagnostics.push(
+          this.createDiagnostic(anchor, f.message, this.severityFor(f.severity))
+        );
+      }
+      // typos/undefined are skipped in shorthand mode (matches prior behavior)
+    }
+
+    return diagnostics;
+  }
+
+  // For chunked actions: compute a single-point anchor at the chunk's
+  // start position within the document.
+  private chunkAnchor(value: string, chunkOffset: number, propertyAnchor: vscode.Range): vscode.Range {
+    const before = value.substring(0, chunkOffset);
+    const lineDelta = (before.match(/\n/g) ?? []).length;
+    const lastNewline = before.lastIndexOf('\n');
+    const colInLine = lastNewline === -1 ? chunkOffset : chunkOffset - lastNewline - 1;
+    const startLine = propertyAnchor.start.line + lineDelta;
+    const startCol = lineDelta === 0
+      ? propertyAnchor.start.character + colInLine
+      : colInLine;
+    return new vscode.Range(startLine, startCol, startLine, startCol);
+  }
+
+  private extraJsGlobals(): Iterable<string> {
+    return [
+      ...this.extraLibraries,
+      ...this.qualityIds,
+      ...this.sceneIds,
+    ];
+  }
+
+  private findingToDiagnostic(f: Finding, anchor: vscode.Range): vscode.Diagnostic {
+    const startLine = anchor.start.line + f.startLine;
+    const endLine = anchor.start.line + f.endLine;
+    const startCol = f.startLine === 0 ? anchor.start.character + f.startColumn : f.startColumn;
+    const endCol = f.endLine === 0 ? anchor.start.character + f.endColumn : f.endColumn;
+    const range = new vscode.Range(startLine, startCol, endLine, endCol);
+    return this.createDiagnostic(range, f.message, this.severityFor(f.severity));
+  }
+
+  private severityFor(s: FindingSeverity): vscode.DiagnosticSeverity {
+    switch (s) {
+      case 'error': return vscode.DiagnosticSeverity.Error;
+      case 'warning': return vscode.DiagnosticSeverity.Warning;
+      case 'hint': return vscode.DiagnosticSeverity.Hint;
+    }
+  }
+
+  // Convert a (offset, length) inside `source` into a vscode.Range,
+  // anchored at `anchor` (which corresponds to source position 0).
+  // Assumes `source` is single-line — used only in the shorthand path.
+  private offsetToRange(anchor: vscode.Range, source: string, offset: number, length: number): vscode.Range {
+    const before = source.substring(0, offset);
+    const lineBreaks = before.split('\n');
+    const lineDelta = lineBreaks.length - 1;
+    const colInLine = lineBreaks[lineBreaks.length - 1].length;
+    const startLine = anchor.start.line + lineDelta;
+    const startCol = lineDelta === 0 ? anchor.start.character + colInLine : colInLine;
+    return new vscode.Range(startLine, startCol, startLine, startCol + length);
   }
 
 
   private validateSceneReference(sceneId: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-    // if (sceneId.includes('{') || sceneId.includes('}')) {
-    //   return; // this should not happen?
-    // }
-    
     if (sceneId === 'jumpScene' || sceneId === 'backSpecialScene' || sceneId === 'backScene') {
       return; // Valid reference, no error
     }
-    
+
     // Check for qualified scene reference (filename.sceneid)
     if (sceneId.includes('.')) {
       const parts = sceneId.split('.');
       if (parts.length === 2) {
         const [fileName, localSceneId] = parts;
-        
+
         // Find the file with this name
         let fileFound = false;
         let sceneFound = false;
-        
+
         for (const [uri, fileData] of this._allFileData) {
           // Extract filename without .scene.dry extension
           // Handle both forward and backward slashes
           const pathParts = uri.fsPath.split(/[/\\]/);
           const fullFileName = pathParts.pop();
           const uriFileName = fullFileName?.replace(/\.scene\.dry$/, '');
-          
+
           if (uriFileName === fileName) {
             fileFound = true;
             // Check if the scene exists in that file
@@ -1591,7 +1154,7 @@ export class DendryValidator {
           }
         }
 
-        
+
         if (!fileFound) {
           diagnostics.push(this.createDiagnostic(
             range,
@@ -1630,4 +1193,18 @@ export class DendryValidator {
     d.source = 'dendry';
     return d;
   }
+}
+
+// "JavaScript Error: <msg>" comes back from js-check; strip the prefix
+// so we can re-prefix as "Dendry logic Error: <msg>" in shorthand mode.
+function stripJsErrorPrefix(msg: string): string {
+  return msg.replace(/^JavaScript Error:\s*/, '');
+}
+
+// True if the value still contains a magic marker. The parser
+// unwraps pure `{! ... !}` blocks, so the only way a value reaches
+// the validator with `{!` or `!}` in it is if there's surrounding
+// content — i.e. mixed shorthand + magic.
+function containsMagicMarker(value: string): boolean {
+  return value.includes('{!') || value.includes('!}');
 }

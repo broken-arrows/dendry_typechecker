@@ -102,7 +102,7 @@ dendry-typechecker/
 │   └── dendry.tmLanguage.json        # Syntax highlighting
 └── src/
     ├── extension.ts                  # Extension entry point
-    ├── parser.ts                     # Esprima-based parser for JavaScript
+    ├── parser.ts                     # Acorn-based parser for JavaScript
     ├── project-validator.ts          # Orchestrates project-wide validation
     └── validator.ts                  # Contains the specific validation rules
 ```
