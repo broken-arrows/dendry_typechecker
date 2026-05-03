@@ -883,7 +883,10 @@ export class DendryValidator {
         startLine = propertyAbsLine;
         startCol = nodeRange.start.character + valueStartIndex + openRel + 2;
       } else {
-        startLine = propertyAbsLine + 1;
+        // Anchor on the `{!` line itself: the parser leaves a leading `\n`
+        // in the unwrapped value so source line 0 is empty, which makes
+        // anchor.start.line + sourceLine map correctly to document lines.
+        startLine = propertyAbsLine;
         startCol = 0;
       }
 

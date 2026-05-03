@@ -77,7 +77,7 @@ The extension will:
    npm install
    ```
 
-3. Compile TypeScript:
+3. Compile TypeScript (required — `out/` is not tracked in git):
 
    ```bash
    npm run compile

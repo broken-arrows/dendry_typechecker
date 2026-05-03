@@ -1,4 +1,5 @@
 node_modules
+out/
 .vscode/
 logs.txt
 test.scene.dry
