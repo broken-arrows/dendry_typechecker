@@ -680,13 +680,17 @@ export class DendryValidator {
           const endCol = colonIndex + 1 + valueText.indexOf('!}');
           range = new vscode.Range(lineIndex, startCol, lineIndex, endCol);
         } else {
-          // Multi-line block with code starting on next line
-          let startLine = lineIndex + 1;
-          let startCol = 0;
+          // Multi-line block with code starting on next line.
+          // Anchor on the `{!` line itself: the parser leaves a leading
+          // `\n` in the unwrapped value so source line 0 maps to the
+          // (empty) tail of the `{!` line and source line N maps to the
+          // Nth content line below — matches findRangeForProperty.
+          const startLine = lineIndex;
+          const startCol = 0;
 
           // Find the closing !}
-          let endLine = startLine;
-          for (let i = startLine; i < firstSceneLine; i++) {
+          let endLine = startLine + 1;
+          for (let i = endLine; i < firstSceneLine; i++) {
             if (lines[i].includes('!}')) {
               endLine = i;
               const endCol = lines[i].indexOf('!}');
@@ -1100,6 +1104,13 @@ export class DendryValidator {
     const startCol = f.startLine === 0 ? anchor.start.character + f.startColumn : f.startColumn;
     const endCol = f.endLine === 0 ? anchor.start.character + f.endColumn : f.endColumn;
     const range = new vscode.Range(startLine, startCol, endLine, endCol);
+    // TEMP DEBUG: remove after diagnosing line-position mismatch
+    console.log(
+      `[dendry-debug] finding(${f.kind}): src=(${f.startLine},${f.startColumn})-(${f.endLine},${f.endColumn})` +
+      ` anchor=(${anchor.start.line},${anchor.start.character})` +
+      ` -> doc=(${startLine},${startCol})-(${endLine},${endCol})` +
+      ` msg="${f.message}"`
+    );
     return this.createDiagnostic(range, f.message, this.severityFor(f.severity));
   }
 
