@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check-types
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build bundles
+        run: npm run package
+
+      - name: Verify web bundle has no Node-only code
+        run: |
+          if grep -E "child_process|runDendryDebug" dist/web/extension.js; then
+            echo "::error::Web bundle leaked Node-only code (child_process / debug-adapter)."
+            exit 1
+          fi
+          echo "Web bundle is clean."

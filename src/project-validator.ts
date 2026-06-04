@@ -4,11 +4,27 @@ import { DendryValidator } from './validator';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
-  private fileData: Map<vscode.Uri, { ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
+  private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
   private globalSceneIds: Set<string> = new Set();
   private globalQualityIds: Set<string> = new Set();
   private isValidating: boolean = false;
   private lastResults: Map<vscode.Uri, vscode.Diagnostic[]> | null = null;
+
+  /**
+   * Canonical cache key for a file URI. Virtual filesystem providers (notably
+   * github.dev's `vscode-vfs://github/...`) can hand us *different*
+   * `Uri.toString()` representations for the *same* file depending on whether it
+   * came from `findFiles` or from an editor document event — differing only in
+   * query/fragment or authority casing while sharing the same `.path`. Keying
+   * the cache by the raw `Uri` object (reference identity) let those diverging
+   * representations coexist as two entries, which made a file flag itself as a
+   * duplicate filename. Collapsing to `scheme://authority/path` (lowercased
+   * authority, no query/fragment) gives one entry per logical file. On desktop
+   * (`file://`) this is a no-op since those URIs are already normalized.
+   */
+  private keyFor(uri: vscode.Uri): string {
+    return `${uri.scheme}://${uri.authority.toLowerCase()}${uri.path}`;
+  }
 
   private async _parseAndExtractLocalIds(document: vscode.TextDocument): Promise<vscode.Diagnostic[]> {
     const fileUri = document.uri;
@@ -27,7 +43,7 @@ export class DendryProjectValidator {
       });
 
       if ( errors.length > 0) {
-        this.fileData.delete(fileUri);
+        this.fileData.delete(this.keyFor(fileUri));
         return diagnostics;
       }
 
@@ -190,13 +206,13 @@ export class DendryProjectValidator {
           }
       }
 
-      this.fileData.set(fileUri, { ast, localSceneIds, localQualityIds });
+      this.fileData.set(this.keyFor(fileUri), { uri: fileUri, ast, localSceneIds, localQualityIds });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       const range = new vscode.Range(0, 0, 0, 1);
       const diagnostic = new vscode.Diagnostic(range, `Error parsing file: ${message}`, vscode.DiagnosticSeverity.Error);
       diagnostics.push(diagnostic);
-      this.fileData.delete(fileUri);
+      this.fileData.delete(this.keyFor(fileUri));
     }
 
     return diagnostics;
@@ -212,10 +228,10 @@ export class DendryProjectValidator {
       const finalDiagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map();
 
       // 1. Remove deleted files from cache
-      const currentWorkspaceFilePaths = new Set(workspaceFiles.map(uri => uri.toString()));
-      for (const cachedUri of this.fileData.keys()) {
-        if (!currentWorkspaceFilePaths.has(cachedUri.toString())) {
-          this.fileData.delete(cachedUri);
+      const currentWorkspaceFileKeys = new Set(workspaceFiles.map(uri => this.keyFor(uri)));
+      for (const cachedKey of this.fileData.keys()) {
+        if (!currentWorkspaceFileKeys.has(cachedKey)) {
+          this.fileData.delete(cachedKey);
         }
       }
 
@@ -224,7 +240,7 @@ export class DendryProjectValidator {
       if (changedFileUri) {
         filesToParse.push(changedFileUri);
       } else {
-        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(uri));
+        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)));
       }
 
       for (const fileUri of filesToParse) {
@@ -285,15 +301,20 @@ export class DendryProjectValidator {
       };
 
       // Check for duplicate filenames (e.g., two files both named "myScene.scene.dry")
-      for (const [fileUri, data] of this.fileData) {
+      for (const data of this.fileData.values()) {
+        const fileUri = data.uri;
         // Extract filename without .scene.dry extension
         const pathParts = fileUri.path.split(/[/\\]/);
         const fullFileName = pathParts.pop();
         const fileName = fullFileName?.replace('.scene.dry', '');
-        
+
         if (fileName && fileName !== fullFileName) { // Only check .scene.dry files
           const existingUri = fileNameToUri.get(fileName);
-          if (existingUri && existingUri.toString() !== fileUri.toString()) {
+          // Compare by `.path` (logical file identity), not `.toString()`: a file
+          // is only a genuine duplicate of another if they live at different
+          // paths. Guarding on `.path` makes a file flagging itself impossible
+          // even if two divergent URI representations of it ever slip through.
+          if (existingUri && existingUri.path !== fileUri.path) {
             // Duplicate filename found
             let currentDiags = finalDiagnostics.get(fileUri) || [];
             currentDiags.push(new vscode.Diagnostic(
@@ -318,10 +339,11 @@ export class DendryProjectValidator {
       }
 
       // Check for duplicate quality IDs across files (qualities must be unique globally)
-      for (const [fileUri, data] of this.fileData) {
+      for (const data of this.fileData.values()) {
+        const fileUri = data.uri;
         for (const id of data.localQualityIds) {
           const existingUri = globalQualityIdToUri.get(id);
-          if (existingUri && existingUri.toString() !== fileUri.toString()) {
+          if (existingUri && existingUri.path !== fileUri.path) {
             // Add diagnostic to existing file
             let existingDiags = finalDiagnostics.get(existingUri) || [];
             const existingRange = await createSceneDeclarationRange(existingUri, id);
@@ -360,7 +382,8 @@ export class DendryProjectValidator {
       });
 
       // 5. Validate all files in cache against updated global IDs
-      for (const [fileUri, data] of this.fileData) {
+      for (const data of this.fileData.values()) {
+          const fileUri = data.uri;
           // ONLY skip if there were PARSING errors (not just any diagnostics)
           // We need to run full validation even if there are other types of errors
           const existingDiags = finalDiagnostics.get(fileUri) || [];

@@ -7,6 +7,9 @@ dist/**/*.map
 esbuild.js
 installer.py
 tsconfig.json
+vitest.config.ts
+.npmrc
+.github/**
 .gitignore
 example.scene.dry
 logs.txt

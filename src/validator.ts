@@ -5,6 +5,7 @@ import { convertCondition, convertAction, ConversionResult } from './dendry-logi
 import { splitActionChunks } from './dendry-logic/chunks';
 
 type FileData = {
+  uri: vscode.Uri;
   ast: DendryAST;
   localSceneIds: Set<string>;
   localQualityIds: Set<string>;
@@ -16,7 +17,7 @@ export class DendryValidator {
   private sceneIds: Set<string> = new Set();
   private qualityIds: Set<string> = new Set();
   private qdisplayFiles: Set<string> = new Set();
-  private _allFileData: Map<vscode.Uri, FileData> = new Map();
+  private _allFileData: Map<string, FileData> = new Map();
 
   private readonly SCENE_PROPERTIES = new Set([
     'id',
@@ -82,7 +83,7 @@ export class DendryValidator {
   validate(
     ast: DendryAST,
     document: vscode.TextDocument,
-    allFileData: Map<vscode.Uri, FileData>,
+    allFileData: Map<string, FileData>,
     qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
@@ -743,7 +744,7 @@ export class DendryValidator {
     // Check if any scene in the project has this tag
     let tagFound = false;
 
-    for (const [uri, fileData] of this._allFileData) {
+    for (const fileData of this._allFileData.values()) {
         // Check tags in metadata (top-level scene properties)
         if (fileData.ast.metadata.tags) {
             const metadataTags = String(fileData.ast.metadata.tags)
@@ -1151,10 +1152,10 @@ export class DendryValidator {
         let fileFound = false;
         let sceneFound = false;
 
-        for (const [uri, fileData] of this._allFileData) {
+        for (const fileData of this._allFileData.values()) {
           // Extract filename without .scene.dry extension
           // Handle both forward and backward slashes
-          const pathParts = uri.path.split(/[/\\]/);
+          const pathParts = fileData.uri.path.split(/[/\\]/);
           const fullFileName = pathParts.pop();
           const uriFileName = fullFileName?.replace(/\.scene\.dry$/, '');
 
