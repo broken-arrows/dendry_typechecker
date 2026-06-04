@@ -1,5 +1,7 @@
 node_modules
 out/
+dist/
+.vscode-test-web/
 .vscode/
 logs.txt
 test.scene.dry

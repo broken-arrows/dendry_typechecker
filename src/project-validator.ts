@@ -17,7 +17,7 @@ export class DendryProjectValidator {
     const diagnostics: vscode.Diagnostic[] = [];
 
     try {
-      const { ast, errors } = parseText(document.getText(), fileUri.fsPath);
+      const { ast, errors } = parseText(document.getText(), fileUri.path);
       const text = document.getText();
       
       errors.forEach((error: any) => {
@@ -87,7 +87,7 @@ export class DendryProjectValidator {
 
       
       // Extract scene ID from filename (e.g., "scene_id.scene.dry" -> "scene_id")
-      const fileName = fileUri.fsPath.split(/[/\\]/).pop() || '';
+      const fileName = fileUri.path.split(/[/\\]/).pop() || '';
       const fileBasedSceneId = fileName.replace(/\.scene\.dry$/, '');
       
       // Add the filename-based scene ID if valid
@@ -240,7 +240,7 @@ export class DendryProjectValidator {
           }
         }
 
-        if (fileUri.fsPath.endsWith('.qdisplay.dry')) {
+        if (fileUri.path.endsWith('.qdisplay.dry')) {
             const qdisplayDiags = this.validator.validateQDisplayFile(document);
             if (qdisplayDiags.length > 0) {
                 finalDiagnostics.set(fileUri, qdisplayDiags);
@@ -287,7 +287,7 @@ export class DendryProjectValidator {
       // Check for duplicate filenames (e.g., two files both named "myScene.scene.dry")
       for (const [fileUri, data] of this.fileData) {
         // Extract filename without .scene.dry extension
-        const pathParts = fileUri.fsPath.split(/[/\\]/);
+        const pathParts = fileUri.path.split(/[/\\]/);
         const fullFileName = pathParts.pop();
         const fileName = fullFileName?.replace('.scene.dry', '');
         
@@ -298,7 +298,7 @@ export class DendryProjectValidator {
             let currentDiags = finalDiagnostics.get(fileUri) || [];
             currentDiags.push(new vscode.Diagnostic(
               new vscode.Range(0, 0, 0, 0),
-              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${existingUri.fsPath}`,
+              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${existingUri.path}`,
               vscode.DiagnosticSeverity.Error
             ));
             finalDiagnostics.set(fileUri, currentDiags);
@@ -307,7 +307,7 @@ export class DendryProjectValidator {
             let existingDiags = finalDiagnostics.get(existingUri) || [];
             existingDiags.push(new vscode.Diagnostic(
               new vscode.Range(0, 0, 0, 0),
-              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${fileUri.fsPath}`,
+              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${fileUri.path}`,
               vscode.DiagnosticSeverity.Error
             ));
             finalDiagnostics.set(existingUri, existingDiags);
@@ -328,7 +328,7 @@ export class DendryProjectValidator {
             if (existingRange) {
                 existingDiags.push(new vscode.Diagnostic(
                 existingRange,
-                `Duplicate quality ID "${id}" also found in ${fileUri.fsPath.split(/[/\\]/).pop()}`,
+                `Duplicate quality ID "${id}" also found in ${fileUri.path.split(/[/\\]/).pop()}`,
                 vscode.DiagnosticSeverity.Error
               ));
               finalDiagnostics.set(existingUri, existingDiags);
@@ -340,7 +340,7 @@ export class DendryProjectValidator {
             if (currentRange) {
               currentDiags.push(new vscode.Diagnostic(
                 currentRange,
-                `Duplicate quality ID "${id}" also found in ${existingUri.fsPath.split(/[/\\]/).pop()}`,
+                `Duplicate quality ID "${id}" also found in ${existingUri.path.split(/[/\\]/).pop()}`,
                 vscode.DiagnosticSeverity.Error
               ));
               finalDiagnostics.set(fileUri, currentDiags);
@@ -378,8 +378,8 @@ export class DendryProjectValidator {
           }
           
           const qdisplayFiles = workspaceFiles
-            .filter(file => file.fsPath.endsWith('.qdisplay.dry'))
-            .map(file => file.fsPath.split(/[/\\]/).pop()?.replace('.qdisplay.dry', '') || '');
+            .filter(file => file.path.endsWith('.qdisplay.dry'))
+            .map(file => file.path.split(/[/\\]/).pop()?.replace('.qdisplay.dry', '') || '');
 
           let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
           let useRaw = false;
@@ -417,7 +417,7 @@ export class DendryProjectValidator {
           }
 
           try {
-              if (fileUri.fsPath.endsWith('.qdisplay.dry')) {
+              if (fileUri.path.endsWith('.qdisplay.dry')) {
                   const qdisplayDiags = this.validator.validateQDisplayFile(document);
                   if (qdisplayDiags.length > 0) {
                       const existingDiagnostics = finalDiagnostics.get(fileUri) || [];

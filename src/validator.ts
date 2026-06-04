@@ -1154,7 +1154,7 @@ export class DendryValidator {
         for (const [uri, fileData] of this._allFileData) {
           // Extract filename without .scene.dry extension
           // Handle both forward and backward slashes
-          const pathParts = uri.fsPath.split(/[/\\]/);
+          const pathParts = uri.path.split(/[/\\]/);
           const fullFileName = pathParts.pop();
           const uriFileName = fullFileName?.replace(/\.scene\.dry$/, '');
 

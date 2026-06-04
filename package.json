@@ -3,7 +3,7 @@
   "displayName": "DendryNexus",
   "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
@@ -16,7 +16,8 @@
     "Programming Languages",
     "Linters"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/desktop/extension.js",
+  "browser": "./dist/web/extension.js",
   "activationEvents": [
     "onLanguage:dendry",
     "workspaceContains:**/*.scene.dry",
@@ -140,13 +141,18 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "vscode:prepublish": "npm run check-types && npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "check-types": "tsc --noEmit",
+    "open-in-web": "vscode-test-web --quality=stable --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.80.0",
+    "@vscode/test-web": "^0.0.80",
+    "esbuild": "^0.28.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {

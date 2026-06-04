@@ -1,8 +1,24 @@
 .vscode/**
 .vscode-test/**
+.vscode-test-web/**
+node_modules/**
 src/**
+dist/**/*.map
+esbuild.js
 installer.py
 tsconfig.json
 .gitignore
 example.scene.dry
 logs.txt
+out/**
+
+# Dev-only docs and the bundled upstream engine reference — never needed at runtime
+docs/**
+
+# Private / local tooling files — must not be published
+CLAUDE.md
+.claude/**
+
+# Misc
+package-lock.json
+**/.DS_Store

@@ -1,107 +1,16 @@
 import * as vscode from 'vscode';
-import { DendryProjectValidator } from './project-validator';
+import { activateCore, deactivateCore } from './activate-core';
 import { DendryDebugConfigurationProvider, runDendryDebug } from './debug-adapter';
 
-let diagnosticCollection: vscode.DiagnosticCollection;
-let projectValidator: DendryProjectValidator;
-let lastDiagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map();
-let isValidating = false;
-let openSuppressCount = 0;
-
-// Debounce function
-function debounce<F extends (...args: any[]) => any>(func: F, delay: number): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
-    let timeout: NodeJS.Timeout | undefined;
-    return function(this: ThisParameterType<F>, ...args: Parameters<F>) {
-        const context = this;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), delay);
-    };
-}
-
-const outputChannel = vscode.window.createOutputChannel('Dendry');
-outputChannel.appendLine('Dendry activated');
-
+/**
+ * Desktop (Node.js host) entry point. Wires up the shared validation core and
+ * then registers the desktop-only F5 build-and-launch feature, which depends on
+ * `child_process` (via `debug-adapter.ts`) and therefore cannot run on the web.
+ */
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Dendry type checker is now active');
-    outputChannel.appendLine('Dendry type checker is now active');
+    activateCore(context);
 
-    diagnosticCollection = vscode.languages.createDiagnosticCollection('dendry');
-    context.subscriptions.push(diagnosticCollection);
-
-    projectValidator = new DendryProjectValidator();
-
-    const debouncedValidateProject = debounce(validateProject, 500);
-
-    // Initial validation (delayed for workspace ready)
-    if (vscode.workspace.workspaceFolders?.length) {
-        outputChannel.appendLine(`Workspace ready: ${vscode.workspace.workspaceFolders.length} folders`);
-        setTimeout(() => {
-            outputChannel.appendLine('--- Initial full validation ---');
-            debouncedValidateProject();
-        }, 1000);
-    } else {
-        outputChannel.appendLine('No workspace - waiting...');
-    }
-
-    // Existing triggers
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(event => {
-            if (event.document.languageId === 'dendry') {
-                outputChannel.appendLine(`Change: ${event.document.uri.fsPath}`);
-                debouncedValidateProject(event.document.uri);
-            }
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidSaveTextDocument(document => {
-            if (document.languageId === 'dendry') {
-                outputChannel.appendLine(`Save: ${document.uri.fsPath}`);
-                debouncedValidateProject(document.uri);
-            }
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidDeleteFiles(event => {
-            if (event.files.some(file => file.path.endsWith('.scene.dry') || file.path.endsWith('.qdisplay.dry'))) {
-                outputChannel.appendLine('Delete detected');
-                debouncedValidateProject();
-            }
-        })
-    );
-
-    // Open trigger
-    context.subscriptions.push(
-        vscode.workspace.onDidOpenTextDocument(document => {
-            if (openSuppressCount > 0) {
-                outputChannel.appendLine(`Open suppressed: ${document.uri.fsPath}. Count at ${openSuppressCount}.`);
-                return;
-            }
-            if (document.languageId === 'dendry') {
-                outputChannel.appendLine(`Open: ${document.uri.fsPath}`);
-                debouncedValidateProject(document.uri);
-            }
-        })
-    );
-
-    // Workspace folder changes (add/remove folders)
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeWorkspaceFolders(() => {
-            outputChannel.appendLine('Workspace folders changed');
-            debouncedValidateProject();
-        })
-    );
-
-    // Clear on close (existing)
-    context.subscriptions.push(
-        vscode.workspace.onDidCloseTextDocument(document => {
-            diagnosticCollection.delete(document.uri);
-            lastDiagnostics.delete(document.uri);
-        })
-    );
-
-    // Register debug configuration provider
+    // Register debug configuration provider (F5 support)
     const debugConfigProvider = new DendryDebugConfigurationProvider();
     context.subscriptions.push(
         vscode.debug.registerDebugConfigurationProvider('dendry', debugConfigProvider)
@@ -110,133 +19,32 @@ export function activate(context: vscode.ExtensionContext) {
     // Register command to build and launch
     context.subscriptions.push(
         vscode.commands.registerCommand('dendry.debug', async () => {
-        const config = vscode.workspace.getConfiguration('dendry.debug');
-        const buildCommand = config.get<string>('buildCommand', 'npm run dendrynexus make-html -- --pretty');
-        const outputPath = config.get<string>('outputPath', 'out/html/index.html');
+            const config = vscode.workspace.getConfiguration('dendry.debug');
+            const buildCommand = config.get<string>('buildCommand', 'npm run dendrynexus make-html -- --pretty');
+            const outputPath = config.get<string>('outputPath', 'out/html/index.html');
 
-        await runDendryDebug({ buildCommand, outputPath });
+            await runDendryDebug({ buildCommand, outputPath });
         })
     );
 
     // Handle F5 debug launches
     context.subscriptions.push(
         vscode.debug.onDidStartDebugSession(async (session) => {
-        if (session.type === 'dendry') {
-            // Stop the debug session immediately since we don't need a real debugger
-            vscode.debug.stopDebugging(session);
-            
-            // Run our build and launch
-            await runDendryDebug({
-            buildCommand: session.configuration.buildCommand,
-            outputPath: session.configuration.outputPath
-            });
-        }
+            if (session.type === 'dendry') {
+                // Stop the debug session immediately since we don't need a real debugger
+                vscode.debug.stopDebugging(session);
+
+                // Run our build and launch
+                await runDendryDebug({
+                    buildCommand: session.configuration.buildCommand,
+                    outputPath: session.configuration.outputPath
+                });
+            }
         })
     );
 }
 
 
-async function validateProject(changedFileUri?: vscode.Uri) {
-    outputChannel.appendLine(`validateProject(${changedFileUri?.fsPath || 'full'})`);
-    if (isValidating) {
-        outputChannel.appendLine('Skipped: already validating');
-        return;
-    }
-
-    const config = vscode.workspace.getConfiguration('dendry');
-    if (!config.get('validation.enable', true)) {
-        outputChannel.appendLine('Skipped: validation disabled');
-        return;
-    }
-
-    isValidating = true;
-    openSuppressCount++;
-    try {
-        // Get exclude patterns from configuration
-        const excludePatterns = config.get<string[]>('validation.exclude', [
-            '**/node_modules/**',
-            '**/.git/**',
-            '**/dist/**',
-            '**/build/**',
-            '**/out/**'
-        ]);
-
-        // Build exclude pattern string
-        const excludePattern = excludePatterns.length > 1 
-            ? `{${excludePatterns.join(',')}}` 
-            : excludePatterns[0] || undefined;
-
-        const sceneFilesPromise = vscode.workspace.findFiles(
-            '**/*.scene.dry',
-            excludePattern
-        );
-        const qdisplayFilesPromise = vscode.workspace.findFiles(
-            '**/*.qdisplay.dry',
-            excludePattern
-        );
-
-        const [sceneFiles, qdisplayFiles] = await Promise.all([sceneFilesPromise, qdisplayFilesPromise]);
-        const dendryFiles = [...sceneFiles, ...qdisplayFiles];
-        
-        outputChannel.appendLine(`Found ${dendryFiles.length} Dendry files (${sceneFiles.length} scenes, ${qdisplayFiles.length} qdisplays)`);
-
-        const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
-
-        // Stable key: sort diags by position + msg/severity (ignores order)
-        function stableDiagKey(diags: vscode.Diagnostic[]): string {
-            return JSON.stringify(
-                diags.map(d => ({
-                    start: d.range.start.line * 10000 + d.range.start.character,
-                    end: d.range.end.line * 10000 + d.range.end.character,
-                    msg: d.message,
-                    sev: d.severity
-                })).sort((a, b) =>
-                    a.start - b.start ||
-                    a.end - b.end ||
-                    a.msg.localeCompare(b.msg) ||
-                    (a.sev || 0) - (b.sev || 0)
-                )
-            );
-        }
-
-        const urisWithNewDiagnostics = new Set<vscode.Uri>();
-        currentDiagnostics.forEach((newDiags, uri) => {
-            urisWithNewDiagnostics.add(uri);
-            const oldDiags = lastDiagnostics.get(uri) || [];
-            if (stableDiagKey(newDiags) !== stableDiagKey(oldDiags)) {
-                diagnosticCollection.set(uri, newDiags);
-                lastDiagnostics.set(uri, newDiags);
-                outputChannel.appendLine(`Updated: ${uri.fsPath} (${newDiags.length} diags)`);
-            }
-        });
-
-        // Clear missing/deleted
-        const urisToDelete: vscode.Uri[] = [];
-        lastDiagnostics.forEach((diags, uri) => {
-            if (!urisWithNewDiagnostics.has(uri)) {
-                urisToDelete.push(uri);
-            }
-        });
-        urisToDelete.forEach(uri => {
-            diagnosticCollection.delete(uri);
-            lastDiagnostics.delete(uri);
-            outputChannel.appendLine(`Cleared: ${uri.fsPath}`);
-        });
-
-        outputChannel.appendLine(`Updated ${urisWithNewDiagnostics.size} / cleared ${urisToDelete.length}`);
-    } catch (error) {
-        outputChannel.appendLine(`ERROR: ${error}`);
-        vscode.window.showErrorMessage(`Dendry validation failed: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-        isValidating = false;
-        openSuppressCount--;
-        if (openSuppressCount < 0) openSuppressCount = 0;
-    }
-}
-
-
 export function deactivate() {
-    if (diagnosticCollection) {
-        diagnosticCollection.dispose();
-    }
+    deactivateCore();
 }
