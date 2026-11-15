@@ -20,6 +20,7 @@
   "browser": "./dist/web/extension.js",
   "activationEvents": [
     "onLanguage:dendry",
+    "onDebugResolve:dendry",
     "workspaceContains:**/*.scene.dry",
     "workspaceContains:**/*.quality.dry",
     "workspaceContains:**/info.dry",
@@ -102,21 +103,33 @@
           "description": "A list of global JavaScript libraries to assume are available during validation."
         },
         "dendry.debug.buildCommand": {
+          "scope": "resource",
           "type": "string",
-          "default": "npm run dendrynexus make-html -- --pretty",
-          "description": "Command to build the Dendry project"
+          "default": "dendrynexus make-html --pretty",
+          "description": "Shell command to build the Dendry project. Project and workspace node_modules/.bin directories are added to PATH."
         },
         "dendry.debug.outputPath": {
+          "scope": "resource",
           "type": "string",
           "default": "out/html/index.html",
-          "description": "Relative path to the built HTML file from workspace root"
+          "description": "HTML output path, absolute or relative to the build folder"
         }
       }
     },
     "debuggers": [
       {
         "type": "dendry",
-        "label": "Dendry Debug",
+        "label": "Dendry: Build and Launch",
+        "languages": ["dendry"],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "buildCommand": { "type": "string", "minLength": 1, "description": "Shell build command; defaults to this project's dendry.debug.buildCommand setting." },
+              "outputPath": { "type": "string", "minLength": 1, "description": "HTML output path, absolute or relative to the build folder." },
+              "cwd": { "type": "string", "minLength": 1, "description": "Build folder, absolute or relative to the launch workspace folder. Defaults to the nearest project with source/info.dry." }
+            }
+          }
+        },
         "configurationSnippets": [
           {
             "label": "Dendry: Launch",
@@ -124,17 +137,10 @@
             "body": {
               "type": "dendry",
               "request": "launch",
-              "name": "Launch Dendry",
-              "buildCommand": "${config:dendry.debug.buildCommand}",
-              "outputPath": "${config:dendry.debug.outputPath}"
+              "name": "Build and Launch Dendry"
             }
           }
         ]
-      }
-    ],
-    "breakpoints": [
-      {
-        "language": "dendry"
       }
     ],
     "commands": [
@@ -147,7 +153,7 @@
       {
         "command": "dendry.debug",
         "key": "f5",
-        "when": "editorLangId == dendry"
+        "when": "editorLangId == dendry && !inDebugMode"
       }
     ]
   },

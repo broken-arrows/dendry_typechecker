@@ -31,8 +31,8 @@ jobs:
 
       - name: Verify web bundle has no Node-only code
         run: |
-          if grep -E "child_process|runDendryDebug" dist/web/extension.js; then
-            echo "::error::Web bundle leaked Node-only code (child_process / debug-adapter)."
+          if grep -E "child_process|runDendryDebug|dendrynexus(\\.cmd)? make-html --pretty" dist/web/extension.js; then
+            echo "::error::Web bundle leaked desktop build code."
             exit 1
           fi
           echo "Web bundle is clean."

@@ -14,9 +14,9 @@ no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
 The corpus contains 1924 independently recorded compiler cases. Together with
-parser and project regressions, the suite has 2150 checks. The unit suite has
+parser, project and build/launch regressions, the suite has 2201 checks. The unit suite has
 226 checks, including 144 TextMate highlighting checks. These totals describe
-the highlighting repair on 2026-11-15; they are not
+the desktop build/launch repair on 2026-11-15; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -48,6 +48,7 @@ npm run test:compat -- src/compatibility/qdisplay.compat.ts
 npm run test:compat -- src/compatibility/rich-content.compat.ts
 npm run test:compat -- src/compatibility/validation-queue.compat.ts
 npm run test:compat -- src/compatibility/editor-lifecycle.compat.ts
+npm run test:compat -- src/compatibility/build-launch.compat.ts
 npm test -- src/qdisplay.test.ts
 npm test -- src/highlighting.test.ts
 ```
@@ -64,6 +65,14 @@ inventory/value contexts, normalized spelling, references, option fields,
 shorthand, QDisplay separators, comments, rich content, escaping and embedded
 language boundaries. Small guest grammars check JS/HTML dispatch; complete VS Code
 guest grammars, theme appearance and a running editor host are not exercised.
+
+The 51 desktop build/launch checks exercise the real launcher, inline adapter,
+configuration provider and desktop/web registration. A separate API boundary host
+supplies files, save results, task executions/events and DAP event delivery.
+Coverage includes folder/source-root selection, scoped settings, quoted commands,
+PATH setup, saves, exit codes, stale/missing output, cancellation/startup races,
+duplicate builds, resource disposal and protocol responses. These checks do not
+start native task terminals, run an upstream HTML build or open a real browser.
 
 Engine API/member types and real VS Code host/provider execution
 remain outside the established coverage. Activation and event logic are exercised

@@ -25,8 +25,26 @@ This extension is published as both a desktop and a **web** extension from a sin
 - `dendry.validation.strict`: Raise undefined JavaScript identifier findings from hints to warnings (default: `false`).
 - `dendry.validation.exclude`: Glob patterns for files/folders to exclude from DendryNexus validation.
 - `dendry.validation.jsLibraries`: An array of strings representing additional global JavaScript variables that should be recognized during validation (default: `["d3"]`). This is useful when your project uses external JavaScript libraries that introduce global variables.
-- `dendry.debug.buildCommand`: Command to build the DendryNexus project (default: `npm run dendrynexus make-html -- --pretty`).
-- `dendry.debug.outputPath`: Relative path to the built HTML file from workspace root (default: `out/html/index.html`).
+- `dendry.debug.buildCommand`: Shell command to build the DendryNexus project (default: `dendrynexus make-html --pretty`).
+- `dendry.debug.outputPath`: HTML path, absolute or relative to the build folder (default: `out/html/index.html`).
+
+## Build and launch on desktop
+
+For build-and-launch using F5, you need DendryNexus installed in your project or make its CLI available on PATH. The extension
+adds the project and workspace `node_modules/.bin` directories to the build task's PATH. The default uses the npm `.cmd` shim on Windows.
+
+F5 uses the active document's workspace folder, or asks for a folder when several are open and none is active. Within that folder it finds the nearest project with `source/info.dry`; opening the `source` folder itself also works. Custom layouts can use the workspace root or an explicit `cwd` in `.vscode/launch.json`:
+
+```json
+{
+  "type": "dendry",
+  "request": "launch",
+  "name": "Build and Launch Dendry",
+  "cwd": "${workspaceFolder}/my-game"
+}
+```
+
+Note that `cwd` is optional. Launch configurations can also override `buildCommand` and `outputPath`; otherwise the selected project's settings apply. Custom commands run unchanged, including their quoting, using `%ComSpec%` (falling back to `cmd.exe`) on Windows and `/bin/sh` on Linux/macOS.
 
 ## Example
 

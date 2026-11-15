@@ -1,108 +1,146 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { spawn } from 'child_process';
+import { BuildCancelled, BuildConfiguration, DendryBuildLauncher } from './build-launch';
 
 export class DendryDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-  resolveDebugConfiguration(
-    folder: vscode.WorkspaceFolder | undefined,
-    config: vscode.DebugConfiguration,
-    token?: vscode.CancellationToken
-  ): vscode.ProviderResult<vscode.DebugConfiguration> {
-    
-    // If launch.json is missing or empty
-    if (!config.type && !config.request && !config.name) {
-      const editor = vscode.window.activeTextEditor;
-      if (editor && editor.document.languageId === 'dendry') {
-        config.type = 'dendry';
-        config.name = 'Launch Dendry';
-        config.request = 'launch';
-      }
-    }
+  provideDebugConfigurations(): vscode.DebugConfiguration[] {
+    return [{ type: 'dendry', request: 'launch', name: 'Build and Launch Dendry' }];
+  }
 
-    if (!config.buildCommand) {
-      const settings = vscode.workspace.getConfiguration('dendry.debug');
-      config.buildCommand = settings.get('buildCommand', 'npm run dendrynexus make-html -- --pretty');
+  resolveDebugConfiguration(_folder: vscode.WorkspaceFolder | undefined,
+    config: vscode.DebugConfiguration): vscode.DebugConfiguration | null {
+    if (config.request && config.request !== 'launch') {
+      void vscode.window.showErrorMessage('Dendry supports build-and-launch configurations only.');
+      return null;
     }
-
-    if (!config.outputPath) {
-      const settings = vscode.workspace.getConfiguration('dendry.debug');
-      config.outputPath = settings.get('outputPath', 'out/html/index.html');
-    }
-
-    return config;
+    // Leave settings absent here: the launcher reads them for the selected project.
+    return { ...config, type: 'dendry', request: 'launch', name: config.name || 'Build and Launch Dendry' };
   }
 }
 
-export async function runDendryDebug(config?: { buildCommand?: string; outputPath?: string }): Promise<void> {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-  if (!workspaceFolder) {
-    vscode.window.showErrorMessage('No workspace folder open');
-    return;
+interface ProtocolMessage extends vscode.DebugProtocolMessage {
+  seq: number;
+  type: string;
+  [key: string]: unknown;
+}
+interface Request extends ProtocolMessage {
+  type: 'request';
+  command: string;
+  arguments?: BuildConfiguration;
+}
+
+/** A launch-only DAP adapter. No game runtime, threads or breakpoint support. */
+export class DendryLaunchAdapter implements vscode.DebugAdapter {
+  private readonly messages = new vscode.EventEmitter<ProtocolMessage>();
+  readonly onDidSendMessage = this.messages.event;
+  private readonly cancellation = new vscode.CancellationTokenSource();
+  private seq = 1;
+  private ended = false;
+  private disposed = false;
+  private launched = false;
+  private pendingLaunch?: Request;
+
+  constructor(private readonly launcher: DendryBuildLauncher, private readonly folder?: vscode.WorkspaceFolder) {}
+
+  handleMessage(message: vscode.DebugProtocolMessage): void {
+    if ((message as ProtocolMessage).type !== 'request' || this.disposed) return;
+    const request = message as Request;
+    // VS Code also sends disconnect after a normal terminated event.
+    if (request.command === 'disconnect' || request.command === 'terminate') {
+      if (this.pendingLaunch) {
+        this.respond(this.pendingLaunch, false, undefined, 'Dendry build cancelled.');
+        this.pendingLaunch = undefined;
+      }
+      this.cancellation.cancel();
+      this.respond(request, true);
+      this.end();
+      return;
+    }
+    if (this.ended) { this.respond(request, false, undefined, 'The build-and-launch session has ended.'); return; }
+    switch (request.command) {
+      case 'initialize':
+        this.respond(request, true, { supportsConfigurationDoneRequest: false, supportsTerminateRequest: true });
+        this.emit({ type: 'event', event: 'initialized' });
+        break;
+      case 'launch':
+        if (this.launched) { this.respond(request, false, undefined, 'A launch is already in progress.'); break; }
+        this.launched = true;
+        this.pendingLaunch = request;
+        void this.launch(request);
+        break;
+      case 'setExceptionBreakpoints':
+      case 'configurationDone':
+        this.respond(request, true);
+        break;
+      case 'threads':
+        this.respond(request, true, { threads: [] });
+        break;
+      default:
+        this.respond(request, false, undefined, 'Dendry Build and Launch does not support runtime debugging or breakpoints.');
+    }
   }
 
-  const settings = vscode.workspace.getConfiguration('dendry.debug');
-  const buildCommand = config?.buildCommand || settings.get('buildCommand', 'npm run dendrynexus make-html -- --pretty');
-  const outputPath = config?.outputPath || settings.get('outputPath', 'out/html/index.html');
+  private async launch(request: Request): Promise<void> {
+    try {
+      await this.launcher.run(request.arguments, this.folder, this.cancellation.token);
+      if (!this.ended) this.respond(request, true);
+    } catch (error) {
+      if (!this.ended) this.respond(request, false, undefined, error instanceof Error ? error.message : String(error));
+    } finally { this.pendingLaunch = undefined; this.end(); }
+  }
 
-  // Show output channel
-  const outputChannel = vscode.window.createOutputChannel('Dendry Build');
-  outputChannel.show();
-  outputChannel.appendLine(`Building Dendry project...`);
-  outputChannel.appendLine(`Command: ${buildCommand}`);
-  outputChannel.appendLine(`Working directory: ${workspaceFolder.uri.fsPath}`);
-  outputChannel.appendLine('');
-
-  try {
-    await runBuildCommand(buildCommand, workspaceFolder.uri.fsPath, outputChannel);
-    
-    // Build successful, open the HTML file
-    const htmlPath = path.join(workspaceFolder.uri.fsPath, outputPath);
-    const uri = vscode.Uri.file(htmlPath);
-    
-    outputChannel.appendLine('');
-    outputChannel.appendLine(`Build successful! Opening ${htmlPath}`);
-    
-    // Open in default browser
-    await vscode.env.openExternal(uri);
-    
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    outputChannel.appendLine('');
-    outputChannel.appendLine(`Build failed: ${errorMessage}`);
-    vscode.window.showErrorMessage(`Dendry build failed: ${errorMessage}`);
+  private respond(request: Request, success: boolean, body?: unknown, message?: string): void {
+    this.emit({ type: 'response', request_seq: request.seq, command: request.command, success, body, message });
+  }
+  private emit(message: Record<string, unknown>): void {
+    this.messages.fire({ ...message, seq: this.seq++ } as ProtocolMessage);
+  }
+  private end(): void {
+    if (!this.ended) {
+      this.ended = true;
+      this.emit({ type: 'event', event: 'terminated' });
+    }
+  }
+  dispose(): void {
+    this.disposed = true;
+    this.ended = true;
+    this.pendingLaunch = undefined;
+    this.cancellation.cancel();
+    this.cancellation.dispose();
+    this.messages.dispose();
   }
 }
 
-function runBuildCommand(command: string, cwd: string, outputChannel: vscode.OutputChannel): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // Parse command into executable and args
-    const parts = command.split(' ');
-    const executable = parts[0];
-    const args = parts.slice(1);
-
-    const process = spawn(executable, args, {
-      cwd,
-      shell: true
-    });
-
-    process.stdout.on('data', (data) => {
-      outputChannel.append(data.toString().replace(/\x1b\[[0-9;]*m/g, ''));
-    });
-
-    process.stderr.on('data', (data) => {
-      outputChannel.append(data.toString().replace(/\x1b\[[0-9;]*m/g, ''));
-    });
-
-    process.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Build process exited with code ${code}`));
+export function registerDesktopBuild(context: vscode.ExtensionContext): vscode.Disposable {
+  const launcher = new DendryBuildLauncher();
+  const adapters = new Set<DendryLaunchAdapter>();
+  const lifecycle = {
+    dispose: () => {
+      for (const adapter of adapters) adapter.dispose();
+      adapters.clear();
+      launcher.dispose();
+    },
+  };
+  context.subscriptions.push(
+    lifecycle,
+    vscode.debug.registerDebugConfigurationProvider('dendry', new DendryDebugConfigurationProvider()),
+    vscode.debug.registerDebugAdapterDescriptorFactory('dendry', {
+      createDebugAdapterDescriptor(session) {
+        const adapter = new DendryLaunchAdapter(launcher, session.workspaceFolder);
+        adapters.add(adapter);
+        adapter.onDidSendMessage(message => {
+          if (message.type === 'event' && message.event === 'terminated') adapters.delete(adapter);
+        });
+        return new vscode.DebugAdapterInlineImplementation(adapter);
+      },
+    }),
+    vscode.commands.registerCommand('dendry.debug', async () => {
+      try { await launcher.run(); }
+      catch (error) {
+        if (!(error instanceof BuildCancelled)) {
+          await vscode.window.showErrorMessage(`Dendry build failed: ${error instanceof Error ? error.message : String(error)}`);
+        }
       }
-    });
-
-    process.on('error', (error) => {
-      reject(error);
-    });
-  });
+    }),
+  );
+  return lifecycle;
 }
