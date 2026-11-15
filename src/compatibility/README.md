@@ -13,14 +13,18 @@ The compatibility suite is an offline CI gate. It uses ordinary assertions;
 no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
-The corpus contains 1368 independently recorded compiler cases. Together with
-parser and project regressions, the suite has 1510 checks. The helper suite has
-82 checks. These totals describe the QDisplay repair on 2026-11-15; they are not
+The corpus contains 1924 independently recorded compiler cases. Together with
+parser and project regressions, the suite has 2096 checks. The helper suite has
+82 checks. These totals describe the rich-content repair on 2026-11-15; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
 scene references, target titles, numeric/boolean coercion, executable property
-JavaScript, shorthand grammar/visit dependencies and QDisplay structure.
+JavaScript, shorthand grammar/visit dependencies, QDisplay structure and shared
+rich-content traversal. The 556 rich-content compiler cases cover expressions,
+magic predicates/inserts, nesting, escaping, hidden/emphasis/paragraph structure,
+unfinished delimiters, all text locations and linked/unlinked visits. Thirty new
+public parser/project regressions check positions and incremental transitions.
 QDisplay cases cover ranges, comments, continuations, filenames, reserved IDs
 and built-in references; project regressions check retained/cleared diagnostics
 and duplicate-ID warnings. Source positions, configuration and incremental edits
@@ -32,6 +36,7 @@ Focused commands:
 npm run test:compat -- --testNamePattern=shorthand-
 npm run test:compat -- src/compatibility/javascript.compat.ts
 npm run test:compat -- src/compatibility/qdisplay.compat.ts
+npm run test:compat -- src/compatibility/rich-content.compat.ts
 npm test -- src/qdisplay.test.ts
 ```
 
@@ -41,8 +46,10 @@ missing-display diagnostics and duplicate-display warnings are authoring policy.
 Built-in formatters need no file. Overlap and source order are legal QDisplay
 semantics, with the first inclusive matching range selected at runtime.
 
-Full rich-content extraction/output traversal, engine API/member types and real
-VS Code activation/events/highlighting remain outside the established coverage.
+Engine API/member types and real VS Code activation/events/highlighting remain
+outside the established coverage. Ordinary content magic is opaque HTML; content
+JavaScript is checked only in inserts and predicates. QDisplay traversal checks
+the output actually captured by upstream, including its continuation quirks.
 The preserved audit findings and dated developer diary record earlier red
 baselines; they do not describe the current implementation status.
 

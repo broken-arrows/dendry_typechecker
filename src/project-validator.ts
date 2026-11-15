@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import { parseText, DendryAST, DendryNode } from './parser';
 import { BUILTIN_SCENE_IDS } from './scene-ids';
 import { DendryValidator } from './validator';
-import { qdisplayIdFromPath } from './qdisplay';
+import { qdisplayIdFromPath, parseQDisplay } from './qdisplay';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
   private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; }> = new Map();
   private parseDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
-  private qdisplayDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
+  private qdisplayData = new Map<string, { uri: vscode.Uri; parsed: ReturnType<typeof parseQDisplay> }>();
   private isValidating: boolean = false;
   private lastResults: Map<vscode.Uri, vscode.Diagnostic[]> | null = null;
 
@@ -74,8 +74,8 @@ export class DendryProjectValidator {
       for (const key of this.parseDiagnostics.keys()) {
         if (!currentWorkspaceFileKeys.has(key)) this.parseDiagnostics.delete(key);
       }
-      for (const key of this.qdisplayDiagnostics.keys()) {
-        if (!currentWorkspaceFileKeys.has(key)) this.qdisplayDiagnostics.delete(key);
+      for (const key of this.qdisplayData.keys()) {
+        if (!currentWorkspaceFileKeys.has(key)) this.qdisplayData.delete(key);
       }
 
       // 2. Parse/re-parse changed file or new files
@@ -83,7 +83,7 @@ export class DendryProjectValidator {
       if (changedFileUri) {
         filesToParse.push(changedFileUri);
       } else {
-        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)) && !this.qdisplayDiagnostics.has(this.keyFor(uri)));
+        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)) && !this.qdisplayData.has(this.keyFor(uri)));
       }
 
       for (const fileUri of filesToParse) {
@@ -100,7 +100,7 @@ export class DendryProjectValidator {
         }
 
         if (fileUri.path.endsWith('.qdisplay.dry')) {
-          this.qdisplayDiagnostics.set(this.keyFor(fileUri), { uri: fileUri, diagnostics: this.validator.validateQDisplayFile(document) });
+          this.qdisplayData.set(this.keyFor(fileUri), { uri: fileUri, parsed: parseQDisplay(document.getText(), document.uri.path) });
         } else {
             const parsingDiags = await this._parseAndExtractLocalIds(document);
             if (parsingDiags.length > 0) {
@@ -112,9 +112,7 @@ export class DendryProjectValidator {
       for (const { uri, diagnostics } of this.parseDiagnostics.values()) {
         finalDiagnostics.set(uri, [...diagnostics]);
       }
-      for (const { uri, diagnostics } of this.qdisplayDiagnostics.values()) {
-        if (diagnostics.length) finalDiagnostics.set(uri, [...diagnostics]);
-      }
+
       const displays = new Map<string, vscode.Uri[]>();
       for (const uri of workspaceFiles) {
         const id = qdisplayIdFromPath(uri.path);
@@ -134,6 +132,11 @@ export class DendryProjectValidator {
         }
       }
       const qdisplayFiles = [...displays.keys()];
+      // Cache parsing, but recheck references against the current project each pass.
+      for (const { uri, parsed } of this.qdisplayData.values()) {
+        const diagnostics = this.validator.validateQDisplay(parsed, this.fileData, qdisplayFiles);
+        if (diagnostics.length) finalDiagnostics.set(uri, [...(finalDiagnostics.get(uri) || []), ...diagnostics]);
+      }
 
       // 3. Recheck declarations on every pass, including cached files. Absolute
       // IDs can collide between a dotted filename and a section in another file.

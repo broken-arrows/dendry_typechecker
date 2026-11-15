@@ -3,6 +3,11 @@
 export interface SourcePosition { line: number; character: number }
 
 export class ControlSource {
+  static join(sources: readonly ControlSource[]): ControlSource {
+    return new ControlSource(sources.map(source => source.text).join(''),
+      sources.flatMap(source => source.positions), sources[0]?.position(0) || { line: 0, character: 0 });
+  }
+
   static literal(text: string, line: number, character = 0): ControlSource {
     const positions: SourcePosition[] = [];
     const fallback = { line, character };

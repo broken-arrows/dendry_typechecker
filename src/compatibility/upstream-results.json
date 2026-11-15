@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "066c44fd5dcacabf96667e250525423538ef29dc2d55cbfbe08ad5fecd66273b",
+    "corpusSha256": "361d2e3b5eb442952e696a5c09175b31e2cc228b60be93f65e7b70ae94c8499b",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -12080,6 +12080,4422 @@
         "root"
       ],
       "qualityIds": []
+    },
+    "rich-content-body-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-3": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-5": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-body-6": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-7": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-body-8": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-body-9": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-body-10": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-body-11": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-12": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-13": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-body-14": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-15": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-16": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-body-17": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-body-18": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-19": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-20": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-21": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-body-22": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-body-23": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-body-24": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-25": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-26": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-body-27": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-28": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-29": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-30": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-31": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-body-32": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-body-33": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-34": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-35": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-36": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-37": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-38": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-body-39": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-body-40": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-body-41": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-body-42": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-43": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-44": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-45": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-body-46": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-47": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-48": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"missing\" in \"root\"."
+    },
+    "rich-content-body-49": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-body-50": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-body-51": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-body-52": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-53": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-54": {
+      "ok": false,
+      "error": "Stack should be empty, except for content."
+    },
+    "rich-content-body-55": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-56": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-body-57": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-body-58": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-body-59": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-body-60": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-section-61": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-62": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-63": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-64": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-65": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-66": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-section-67": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-68": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-section-69": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-section-70": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-section-71": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-section-72": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-73": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-74": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-section-75": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-76": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-77": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-section-78": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-section-79": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-80": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-81": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-82": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-section-83": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-section-84": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-section-85": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-86": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-87": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-section-88": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-89": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-90": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-91": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-92": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-section-93": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-section-94": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-95": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-96": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-97": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-98": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-99": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-section-100": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-section-101": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-section-102": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-section-103": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-104": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-105": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-106": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-section-107": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-108": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-109": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"missing\" in \"root.part\"."
+    },
+    "rich-content-section-110": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-section-111": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-section-112": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-section-113": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-114": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-115": {
+      "ok": false,
+      "error": "Stack should be empty, except for content."
+    },
+    "rich-content-section-116": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-117": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-section-118": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-section-119": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-section-120": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-section-121": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-title-122": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-123": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-124": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-125": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-126": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-127": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-title-128": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-129": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-title-130": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-title-131": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-title-132": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-title-133": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-134": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-135": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-title-136": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-137": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-138": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-title-139": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-title-140": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-141": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-142": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-143": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-title-144": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-title-145": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-title-146": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-147": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-148": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-title-149": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-150": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-151": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-152": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-153": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-154": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-155": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-156": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-157": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-158": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-159": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-160": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-161": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-162": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-163": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-title-164": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-165": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-166": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-167": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-title-168": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-169": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-170": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-171": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-title-172": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-title-173": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-174": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-175": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-176": {
+      "ok": false,
+      "error": "Non-paragraph content should be wrapped in a paragraph."
+    },
+    "rich-content-title-177": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-178": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-title-179": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-title-180": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-title-181": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-title-182": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-183": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-184": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-185": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-186": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-187": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-188": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-189": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-190": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-191": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-choice-192": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-choice-193": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-choice-194": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-195": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-196": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-choice-197": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-198": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-199": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-choice-200": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-choice-201": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-202": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-203": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-204": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-choice-205": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-choice-206": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-choice-207": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-208": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-209": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-choice-210": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-211": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-212": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-213": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-214": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-215": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-216": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-217": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-218": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-219": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-220": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-221": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-222": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-223": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-224": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-choice-225": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-226": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-227": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-228": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-choice-229": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-230": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-231": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-232": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-choice-233": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-choice-234": {
+      "ok": false,
+      "error": "root.scene.dry line 6: Found content after an options block."
+    },
+    "rich-content-choice-235": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-236": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Invalid property or option definition."
+    },
+    "rich-content-choice-237": {
+      "ok": false,
+      "error": "root.scene.dry line 6: Found content after an options block."
+    },
+    "rich-content-choice-238": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-239": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-choice-240": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-241": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-242": {
+      "ok": false,
+      "error": "root.scene.dry line 6: Found content after an options block."
+    },
+    "rich-content-choice-243": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-property-244": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-245": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-246": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-247": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-248": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-249": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-property-250": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-251": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-choice-property-252": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-choice-property-253": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-choice-property-254": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-choice-property-255": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-256": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-257": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-choice-property-258": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-259": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-260": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-choice-property-261": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-choice-property-262": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-263": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-264": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-265": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-choice-property-266": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-choice-property-267": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-choice-property-268": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-269": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-270": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-choice-property-271": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-272": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-273": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-274": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-275": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-property-276": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-property-277": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-278": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-279": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-280": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-281": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-282": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-property-283": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-property-284": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-choice-property-285": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-choice-property-286": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-287": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-288": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-289": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-choice-property-290": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-291": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-292": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-293": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-choice-property-294": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-choice-property-295": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-choice-property-296": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-297": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-298": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-choice-property-299": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-300": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-choice-property-301": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-choice-property-302": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-choice-property-303": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-choice-property-304": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-unavailable-subtitle-305": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-306": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-307": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-308": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-309": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-310": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-unavailable-subtitle-311": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-312": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-unavailable-subtitle-313": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-unavailable-subtitle-314": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-unavailable-subtitle-315": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-unavailable-subtitle-316": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-317": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-318": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-unavailable-subtitle-319": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-320": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-321": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-unavailable-subtitle-322": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-unavailable-subtitle-323": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-324": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-325": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-326": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-unavailable-subtitle-327": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-unavailable-subtitle-328": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-unavailable-subtitle-329": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-330": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-331": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-unavailable-subtitle-332": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-333": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-334": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-335": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-336": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-unavailable-subtitle-337": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-unavailable-subtitle-338": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-339": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-340": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-341": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-342": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-343": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-unavailable-subtitle-344": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-unavailable-subtitle-345": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-unavailable-subtitle-346": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-unavailable-subtitle-347": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-348": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-349": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-350": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-unavailable-subtitle-351": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-352": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-353": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-354": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-unavailable-subtitle-355": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-unavailable-subtitle-356": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-unavailable-subtitle-357": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-358": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-359": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-unavailable-subtitle-360": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-361": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-unavailable-subtitle-362": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-unavailable-subtitle-363": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-unavailable-subtitle-364": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "rich-content-unavailable-subtitle-365": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-subtitle-366": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-367": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-368": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-369": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-370": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-371": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-subtitle-372": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-373": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-subtitle-374": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-subtitle-375": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-subtitle-376": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-subtitle-377": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-378": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-379": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-subtitle-380": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-381": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-382": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-subtitle-383": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-subtitle-384": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-385": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-386": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-387": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-subtitle-388": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-subtitle-389": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-subtitle-390": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-391": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-392": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-subtitle-393": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-394": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-395": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-396": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-397": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-398": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-399": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-400": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-401": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-402": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-403": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-404": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-405": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-406": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-407": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-subtitle-408": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-409": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-410": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-411": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-subtitle-412": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-413": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-414": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-415": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-subtitle-416": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-subtitle-417": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-418": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-419": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-420": {
+      "ok": false,
+      "error": "Non-paragraph content should be wrapped in a paragraph."
+    },
+    "rich-content-subtitle-421": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-422": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-subtitle-423": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-subtitle-424": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-subtitle-425": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-subtitle-426": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-quality-427": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-428": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-429": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-430": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-431": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-432": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-quality-433": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-434": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-quality-435": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-quality-436": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-quality-437": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-quality-438": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-439": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-440": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-quality-441": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-442": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-443": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-quality-444": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-quality-445": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-446": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-447": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-448": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-quality-449": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-quality-450": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-quality-451": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-452": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-453": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-quality-454": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-455": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-456": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-457": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-458": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-quality-459": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-quality-460": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-461": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-462": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-463": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-464": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-465": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-quality-466": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-quality-467": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-quality-468": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-quality-469": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-470": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-471": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-472": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-quality-473": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-474": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-475": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-476": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-quality-477": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-quality-478": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-quality-479": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-480": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-481": {
+      "ok": false,
+      "error": "Stack should be empty, except for content."
+    },
+    "rich-content-quality-482": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-483": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-quality-484": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-quality-485": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-quality-486": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-quality-487": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-qdisplay-488": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-489": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-490": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-491": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-492": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-493": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-qdisplay-494": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-495": {
+      "ok": false,
+      "error": "\"cardinal extra\" is not a valid qdisplay name."
+    },
+    "rich-content-qdisplay-496": {
+      "ok": false,
+      "error": "_bad: Unrecognized content at position 0."
+    },
+    "rich-content-qdisplay-497": {
+      "ok": false,
+      "error": "No valid way to parse this content: Q.score"
+    },
+    "rich-content-qdisplay-498": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
+    },
+    "rich-content-qdisplay-499": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-500": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-501": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-qdisplay-502": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-503": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-504": {
+      "ok": false,
+      "error": "Can't begin a new insert in the middle of an insert. [+ [+ score +] +]"
+    },
+    "rich-content-qdisplay-505": {
+      "ok": false,
+      "error": "Can't nest a hidden block in an insert. [+ [score] +]"
+    },
+    "rich-content-qdisplay-506": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-507": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-508": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-509": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'type')"
+    },
+    "rich-content-qdisplay-510": {
+      "ok": false,
+      "error": "No valid way to parse this content:  "
+    },
+    "rich-content-qdisplay-511": {
+      "ok": false,
+      "error": "No valid way to parse this content: score > "
+    },
+    "rich-content-qdisplay-512": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-513": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-514": {
+      "ok": false,
+      "error": "Unexpected token ';'"
+    },
+    "rich-content-qdisplay-515": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-516": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-517": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-518": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-519": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-qdisplay-520": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-qdisplay-521": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-522": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-523": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-524": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-525": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-526": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-qdisplay-527": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-qdisplay-528": {
+      "ok": false,
+      "error": "Can't end a hidden block that hasn't been started."
+    },
+    "rich-content-qdisplay-529": {
+      "ok": false,
+      "error": "Can't begin a new hidden block in the middle of a hidden block. [hidden [nested]]"
+    },
+    "rich-content-qdisplay-530": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-531": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-532": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-533": {
+      "ok": false,
+      "error": "No valid way to parse this content: score < "
+    },
+    "rich-content-qdisplay-534": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-535": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-536": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-537": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\""
+    },
+    "rich-content-qdisplay-538": {
+      "ok": false,
+      "error": "No valid way to parse this content: \"@missing\" = \"x\" "
+    },
+    "rich-content-qdisplay-539": {
+      "ok": false,
+      "error": "Unknown range declaration: \n  more text ?]"
+    },
+    "rich-content-qdisplay-540": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-541": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-542": {
+      "ok": false,
+      "error": "Unknown range declaration: \n  return +;***\n  *3[?]?]{!"
+    },
+    "rich-content-qdisplay-543": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-544": {
+      "ok": false,
+      "error": "\"a: Unrecognized content at position 0."
+    },
+    "rich-content-qdisplay-545": {
+      "ok": false,
+      "error": "Insert content doesn't look like logic or magic."
+    },
+    "rich-content-qdisplay-546": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-qdisplay-547": {
+      "ok": false,
+      "error": "Unknown range declaration: \n  = heading\n  ---\n  rest ?]"
+    },
+    "rich-content-qdisplay-548": {
+      "ok": false,
+      "error": "\"bad.name\" is not a valid qdisplay name."
+    },
+    "rich-content-untracked-body": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"root\" which has count-visits-max undefined."
+    },
+    "rich-content-untracked-title": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-opaque-name": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "rich-content-opaque-info": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-comments": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-ignored-qdisplay-continuation": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "rich-content-captured-qdisplay-continuation": {
+      "ok": false,
+      "error": "No valid way to parse this content: 1 +"
     }
   }
 }

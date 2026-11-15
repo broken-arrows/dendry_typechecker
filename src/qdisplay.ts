@@ -1,4 +1,5 @@
 import { ControlSource } from './scene-control';
+import { parseRichContent, RichContent } from './rich-content';
 
 export const BUILTIN_QDISPLAYS = new Set(['cardinal', 'ordinal', 'number', 'fudge']);
 export function qdisplayIdFromPath(path: string): string | undefined {
@@ -6,7 +7,7 @@ export function qdisplayIdFromPath(path: string): string | undefined {
   return filename.endsWith('.qdisplay.dry') ? filename.slice(0, -'.qdisplay.dry'.length) : undefined;
 }
 export interface QDisplayIssue { source: ControlSource; message: string }
-export interface QDisplayRange { min?: number; max?: number; source: ControlSource; output?: ControlSource }
+export interface QDisplayRange { min?: number; max?: number; source: ControlSource; output?: ControlSource; content?: RichContent }
 
 // Pinned qdcontent.js syntax. Decimal endpoints require complete tokens. Source
 // order is retained; the engine chooses the first inclusive matching range.
@@ -63,7 +64,7 @@ export function parseQDisplay(text: string, path: string): { id?: string; ranges
     const output = match[4].trim() ? source.slice(match.index + match[0].length - match[4].length, match.index + match[0].length) : undefined;
     // Upstream consumes continuation lines, but its regex only captures one
     // output line (possibly the first continuation if the first output is empty).
-    ranges.push({ min, max, source, output });
+    ranges.push({ min, max, source, output, content: output ? parseRichContent(output, 'inline') : undefined });
   }
   return { id, ranges, issues };
 }

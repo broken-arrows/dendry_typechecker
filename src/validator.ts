@@ -6,6 +6,7 @@ import { SCENE_SCHEMA } from './scene-schema';
 import { ControlSource, controlPropertySource, destinationClauses } from './scene-control';
 import { checkShorthand, LogicKind } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
+import { RichContent } from './rich-content';
 import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
 type FileData = {
@@ -51,8 +52,22 @@ export class DendryValidator {
     qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    this.qdisplayFiles = new Set(qdisplayFiles);
+    this.setProjectContext(allFileData, qdisplayFiles);
 
+    const rootId = sceneIdFromPath(document.uri.path) || '';
+    this.contextSceneId = rootId;
+
+    for (const node of ast.nodes) {
+      this.contextSceneId = node.type === 'scene' ? node.properties.get('id') || rootId : node.parentSceneId || rootId;
+      diagnostics.push(...this.validateNode(node, document));
+      for (const content of node.richContent) diagnostics.push(...this.validateRichContent(content.parsed, content.linked));
+    }
+
+    return diagnostics;
+  }
+
+  private setProjectContext(allFileData: Map<string, FileData>, qdisplayFiles: string[]): void {
+    this.qdisplayFiles = new Set(qdisplayFiles);
     // rebuild global IDs
     this.sceneIds.clear();
     this.sceneNodes.clear();
@@ -70,93 +85,40 @@ export class DendryValidator {
         }
       }
     });
-
-    const rootId = sceneIdFromPath(document.uri.path) || '';
-    this.contextSceneId = rootId;
     for (const id of BUILTIN_SCENE_IDS) this.sceneIds.add(id);
+  }
 
-    for (const node of ast.nodes) {
-      this.contextSceneId = node.type === 'scene' ? node.properties.get('id') || rootId : node.parentSceneId || rootId;
-      diagnostics.push(...this.validateNode(node, document));
-      if (node.interpolations && node.interpolations.length > 0) {
-        this.validateInterpolations(node.interpolations, diagnostics);
-      }
+  public validateQDisplay(parsed: ReturnType<typeof parseQDisplay>, allFileData: Map<string, FileData>, qdisplayFiles: string[]): vscode.Diagnostic[] {
+    this.setProjectContext(allFileData, qdisplayFiles);
+    this.contextSceneId = '';
+    const diagnostics = parsed.issues.map(issue => this.sourceDiagnostic(issue.source, issue.message));
+    for (const range of parsed.ranges) {
+      if (range.content) diagnostics.push(...this.validateRichContent(range.content, false));
     }
-
     return diagnostics;
   }
 
-  public validateQDisplayFile(document: vscode.TextDocument): vscode.Diagnostic[] {
-    return parseQDisplay(document.getText(), document.uri.path).issues.map(issue => {
-      const start = issue.source.position(0);
-      const end = issue.source.position(issue.source.text.length);
-      return this.createDiagnostic(new vscode.Range(start.line, start.character, end.line, end.character),
-        issue.message, vscode.DiagnosticSeverity.Error);
-    });
+  private sourceDiagnostic(source: ControlSource, message: string): vscode.Diagnostic {
+    const start = source.position(0), end = source.position(source.text.length);
+    return this.createDiagnostic(new vscode.Range(start.line, start.character, end.line, end.character), message, vscode.DiagnosticSeverity.Error);
   }
 
-  private validateInterpolations(interpolations: DendryNode['interpolations'], diagnostics: vscode.Diagnostic[]): void {
-    const validIdentifierRegex = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
-
-    for (const interpolation of interpolations) {
-      // Validate variable name format
-      if (!validIdentifierRegex.test(interpolation.variable)) {
-        diagnostics.push(
-          this.createDiagnostic(
-            interpolation.range,
-            `Invalid quality name '${interpolation.variable}'. Start with a letter; use letters, digits, _ or -.`,
-            vscode.DiagnosticSeverity.Error
-          )
-        );
-      }
-
-      // Validate qdisplay reference
-      if (interpolation.qdisplay) {
-        // First validate the qdisplay name format
-        if (!validIdentifierRegex.test(interpolation.qdisplay)) {
-          diagnostics.push(
-            this.createDiagnostic(
-              interpolation.range,
-              `Invalid QDisplay name '${interpolation.qdisplay}'. Start with a letter; use letters, digits, _ or -.`,
-              vscode.DiagnosticSeverity.Error
-            )
-          );
-        } else if (!BUILTIN_QDISPLAYS.has(interpolation.qdisplay) && !this.qdisplayFiles.has(interpolation.qdisplay)) {
-          // Use the fullText to find the exact position of the qdisplay identifier
-          const fullText = interpolation.fullText || '';
-          const qdisplayIndex = fullText.lastIndexOf(interpolation.qdisplay);
-
-          if (qdisplayIndex !== -1) {
-            const qdisplayStart = interpolation.range.start.character + qdisplayIndex;
-            const qdisplayEnd = qdisplayStart + interpolation.qdisplay.length;
-            const qdisplayRange = new vscode.Range(
-              interpolation.range.start.line,
-              qdisplayStart,
-              interpolation.range.end.line,
-              qdisplayEnd
-            );
-            diagnostics.push(
-              this.createDiagnostic(
-                qdisplayRange,
-                `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
-                vscode.DiagnosticSeverity.Error
-              )
-            );
-          } else {
-            // Fallback if we can't find it
-            diagnostics.push(
-              this.createDiagnostic(
-                interpolation.range,
-                `QDisplay file "${interpolation.qdisplay}.qdisplay.dry" not found.`,
-                vscode.DiagnosticSeverity.Error
-              )
-            );
-          }
-        }
+  private validateRichContent(content: RichContent, linked: boolean): vscode.Diagnostic[] {
+    const diagnostics = content.issues.map(issue => this.sourceDiagnostic(issue.source, issue.message));
+    for (const dependency of content.dependencies) {
+      diagnostics.push(...(dependency.language === 'magic'
+        ? this.validateAsJsBlock(dependency.source)
+        : this.validateAsShorthand(dependency.source, dependency.kind, linked)));
+      const display = dependency.qdisplay;
+      if (!display?.text) continue;
+      if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(display.text)) {
+        diagnostics.push(this.sourceDiagnostic(display, `Invalid QDisplay name '${display.text}'. Start with a letter; use letters, digits, _ or -.`));
+      } else if (!BUILTIN_QDISPLAYS.has(display.text) && !this.qdisplayFiles.has(display.text)) {
+        diagnostics.push(this.sourceDiagnostic(display, `QDisplay file "${display.text}.qdisplay.dry" not found.`));
       }
     }
+    return diagnostics;
   }
-
 
   private validateNode(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
     switch (node.type) {
@@ -263,11 +225,7 @@ export class DendryValidator {
             diagnostics.push(this.createDiagnostic(range, 'set-sprites requires none or comma-separated location: path pairs.', vscode.DiagnosticSeverity.Error));
           }
           break;
-        case 'text':
-          for (let line = sourceRange.start.line; line <= sourceRange.end.line; line++) {
-            this.validateInlineConditionalsInLine(document.lineAt(line).text, line, diagnostics);
-          }
-          break;
+        case 'text': break;
         case 'opaque': break;
       }
     }
@@ -278,7 +236,6 @@ export class DendryValidator {
       this.findRangeForProperty(document, node.propertyRanges?.get('count-visits-max') || node.range, 'count-visits-max'),
       'count-visits-max cannot be lower than max-visits.', vscode.DiagnosticSeverity.Error,
     ));
-    if (node.content.trim()) this.validateSceneContent(node, document, diagnostics);
     return diagnostics;
   }
 
@@ -319,50 +276,6 @@ export class DendryValidator {
     else diagnostics.push(...this.validatePredicateValue(source, fallback, 'predicate', linked));
   }
 
-  private validateSceneContent(node: DendryNode, document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {
-      // Get all content from the scene (between properties and next scene/end)
-      const startLine = node.contentRange?.start.line ?? node.range.start.line;
-      const endLine = node.contentRange ? node.contentRange.end.line + 1 : node.range.end.line;
-
-    for (let i = startLine; i < endLine; i++) {
-        const lineText = document.lineAt(i).text;
-        if (lineText.trim().startsWith('#')) {
-            continue; // Skip comments
-        }
-        this.validateInlineConditionalsInLine(lineText, i, diagnostics, node.type === 'scene');
-    }
-  }
-
-  private validateInlineConditionalsInLine(lineText: string, lineNum: number, diagnostics: vscode.Diagnostic[], linked = false) {
-      // Match ONLY: [? condition : text ?]
-      // Brackets are REQUIRED
-      const regex = /(\[\?\s*)([^:]+?)\s*:\s*([^?]*)\?\]/gi;
-      let match;
-
-      while ((match = regex.exec(lineText)) !== null) {
-          const conditionPrefix = match[1]; // '[?'
-          const condition = match[2].trim();
-
-          if (!condition) {
-              const fullMatchStart = match.index;
-              const fullMatchEnd = regex.lastIndex;
-              const errRange = new vscode.Range(lineNum, fullMatchStart, lineNum, fullMatchEnd);
-              diagnostics.push(this.createDiagnostic(errRange, 'Inline conditional is missing a condition before :', vscode.DiagnosticSeverity.Error));
-              continue;
-          }
-
-          const conditionStartCol = match.index + conditionPrefix.length;
-          const conditionEndCol = conditionStartCol + condition.length;
-          const conditionRange = new vscode.Range(lineNum, conditionStartCol, lineNum, conditionEndCol);
-          const source = ControlSource.literal(match[2], lineNum, conditionStartCol).trim();
-          const keyword = source.text.match(/^if\s+/);
-          if (!keyword) diagnostics.push(this.createDiagnostic(conditionRange, 'Inline condition must start with if.', vscode.DiagnosticSeverity.Error));
-          else diagnostics.push(...this.validatePredicateValue(source.slice(keyword[0].length).trim(), conditionRange, 'predicate', linked));
-      }
-  }
-
-
-
   private validateQuality(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     if (!/^[A-Za-z][\-A-Za-z0-9_]*$/.test(String(node.properties.get('id') || ''))) {
@@ -390,7 +303,6 @@ export class DendryValidator {
     }
     // initial accepts numbers, booleans and strings. Upstream does not reject
     // out-of-range initial values or contradictory bounds; clamping is runtime behavior.
-    if (node.content.trim()) this.validateSceneContent(node, document, diagnostics);
     return diagnostics;
   }
 
@@ -470,12 +382,7 @@ export class DendryValidator {
           vscode.DiagnosticSeverity.Error,
         ));
       }
-      if (key === 'title' || key === 'subtitle' || key === 'unavailable-subtitle') {
-        const source = node.propertyRanges?.get(key);
-        if (source) for (let line = source.start.line; line <= source.end.line; line++) {
-          this.validateInlineConditionalsInLine(document.lineAt(line).text, line, diagnostics);
-        }
-      }
+
     }
 
     const reference = String(node.properties.get('id') || '');
@@ -608,8 +515,8 @@ export class DendryValidator {
   //    `validateActions`; alternating chunks dispatch to magic (JS
   //    block) or logic (Dendry shorthand) validation.
   // All executable properties carry their source map through dispatch.
-  // Extracted inline conditions also use the grammar; full content extraction
-  // remains a separate parser task.
+  // Rich-content dependencies arrive already separated by their parser and use
+  // the same mapped JavaScript and shorthand checkers below.
 
   private validatePredicateValue(source: ControlSource, fallback: vscode.Range, kind: 'predicate' | 'expression', linked: boolean): vscode.Diagnostic[] {
     const range = this.controlRange(source, fallback);

@@ -1,18 +1,15 @@
 import * as vscode from 'vscode';
 import { ABSOLUTE_SCENE_ID, RELATIVE_SCENE_ID, sceneIdFromPath } from './scene-ids';
 import { dendryFileKind } from './file-kinds';
+import { ControlSource, controlPropertySource } from './scene-control';
+import { parseRichContent, RichContent } from './rich-content';
 
 // ----------------- AST -----------------
 export interface DendryNode {
   type: 'scene' | 'choice' | 'divider' | 'quality' | 'info';
   properties: Map<string, any>;
   content: string;
-  interpolations: {
-    variable: string;
-    qdisplay?: string;
-    range: vscode.Range;
-    fullText?: string;
-  }[];
+  richContent: { parsed: RichContent; linked: boolean }[];
   range: vscode.Range;
   contentRange?: vscode.Range;
   declarationType?: 'explicit' | 'implicit';
@@ -168,7 +165,7 @@ class DendryHandParser {
       range: new vscode.Range(0, 0, lastLine, this.lines[lastLine].length),
       contentRange: this.bodyRange(body.startLine, body.endLine),
       // info body is opaque in the upstream schema; quality descriptions are rich content.
-      interpolations: kind === 'quality' ? this.parseInterpolations(body.content, body.startLine) : [],
+      richContent: kind === 'quality' ? [this.bodyContent(body.source, false)] : [],
     });
     this.currentLine = this.lines.length;
   }
@@ -194,7 +191,7 @@ class DendryHandParser {
       properties,
       propertyRanges: this.rootPropertyRanges,
       content,
-      interpolations: [...this.parseInterpolations(content, body.startLine), ...this.scenePropertyInterpolations(this.rootPropertyRanges)],
+      richContent: [this.bodyContent(body.source, true), ...this.scenePropertyContent(this.rootPropertyRanges)],
       range: new vscode.Range(0, 0, endLine, endCharacter),
       contentRange: body.startLine > endLine
         ? new vscode.Range(endLine, endCharacter, endLine, endCharacter)
@@ -227,9 +224,6 @@ class DendryHandParser {
 
     const body = this.parseBody(sceneId);
     const content = body.content;
-    const contentInterpolations = this.parseInterpolations(content, body.startLine);
-
-    const allInterpolations = [...contentInterpolations, ...this.scenePropertyInterpolations(propertyRanges)];
 
     const endLine = this.currentLine - 1;
     this.nodes.push({
@@ -238,7 +232,7 @@ class DendryHandParser {
         properties,
         propertyRanges,
         content,
-        interpolations: allInterpolations,
+        richContent: [this.bodyContent(body.source, true), ...this.scenePropertyContent(propertyRanges)],
         range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0),
         contentRange: this.bodyRange(body.startLine, body.endLine),
     });
@@ -246,9 +240,10 @@ class DendryHandParser {
   }
 
 
-  private parseBody(parentSceneId?: string, stopAtDivider = true): { content: string; startLine: number; endLine: number } {
+  private parseBody(parentSceneId?: string, stopAtDivider = true): { content: string; source: ControlSource; startLine: number; endLine: number } {
     const startLine = this.currentLine;
-    const content: string[] = [];
+    const content: ControlSource[] = [];
+    let pendingBlank: number | undefined;
     let separated = true;
     let inOptions = false;
     let afterOptions = false;
@@ -259,13 +254,12 @@ class DendryHandParser {
       const line = this.lines[this.currentLine];
       if (this.isSceneMarker(line) || (stopAtDivider && this.isDivider(line))) break;
       if (line.startsWith('#')) {
-        if (!inOptions && !afterOptions) content.push('');
         this.currentLine++;
         continue;
       }
       if (!line.trim()) {
         if (inOptions) { inOptions = false; afterOptions = true; }
-        if (!afterOptions) { content.push(line); endLine = this.currentLine; }
+        if (!afterOptions && content.length && pendingBlank === undefined) pendingBlank = this.currentLine;
         separated = true;
         this.currentLine++;
         continue;
@@ -282,12 +276,22 @@ class DendryHandParser {
           choice = this.parseChoice(parentSceneId, choice, targets);
         }
       } else {
-        content.push(line);
+        if (pendingBlank !== undefined) {
+          content.push(ControlSource.literal('', pendingBlank));
+          pendingBlank = undefined;
+        }
+        content.push(ControlSource.literal(line, this.currentLine));
         endLine = this.currentLine++;
         separated = false;
       }
     }
-    return { content: content.join('\n'), startLine, endLine };
+    const pieces = content.flatMap((source, index) => {
+      if (!index) return [source];
+      const previous = content[index - 1], position = previous.position(previous.text.length);
+      return [ControlSource.literal('\n', position.line, position.character), source];
+    });
+    const source = pieces.length ? ControlSource.join(pieces) : ControlSource.literal('', Math.min(startLine, this.lines.length - 2));
+    return { content: source.text, source, startLine, endLine };
   }
 
   private bodyRange(startLine: number, endLine: number): vscode.Range {
@@ -311,7 +315,9 @@ class DendryHandParser {
     const endLine = collected.endLine;
     this.currentLine = endLine + 1;
     const content = String(collected.value);
-    const match = content.match(/^([@#][^\s:]+)(?:\s*:\s*([\s\S]*))?$/);
+    // Upstream's option title uses '.', so gobbled magic containing a newline
+    // cannot be an inline option title. A separate - title: property can be.
+    const match = content.match(/^([@#][^\s:]+)(?:\s*:\s*(.*))?$/);
     if (match && (match[1][0] === '#' ? /^#[\w-]+$/.test(match[1]) : RELATIVE_SCENE_ID.test(match[1].slice(1)))) {
       if (targets.has(match[1])) this.errors.push({ message: `Option with id/tag '${match[1]}' already specified.`, line: lineNum });
       targets.add(match[1]);
@@ -321,7 +327,7 @@ class DendryHandParser {
       const node: DendryNode = {
         type: 'choice', parentSceneId, properties, content,
         propertyRanges: match[2] ? new Map([['title', declarationRange]]) : new Map(),
-        interpolations: this.parseInterpolations(this.lines.slice(lineNum, endLine + 1).join('\n'), lineNum),
+        richContent: this.scenePropertyContent(match[2] ? new Map([['title', declarationRange]]) : new Map()),
         range: declarationRange,
       };
       this.nodes.push(node);
@@ -345,7 +351,7 @@ class DendryHandParser {
       previous.propertyRanges!.set(key, this.propertyRange(lineNum, property.endLine));
       previous.range = this.propertyRange(previous.range.start.line, property.endLine);
       if (['title', 'subtitle', 'unavailable-subtitle'].includes(key)) {
-        previous.interpolations.push(...this.parseInterpolations(this.lines.slice(lineNum, property.endLine + 1).join('\n'), lineNum));
+        previous.richContent.push(...this.scenePropertyContent(new Map([[key, previous.propertyRanges!.get(key)!]])));
       }
     }
     return previous;
@@ -360,79 +366,24 @@ class DendryHandParser {
       type: 'divider',
       properties: new Map(),
       content: '',
-      interpolations: [],
+      richContent: [],
       range: new vscode.Range(lineNum, 0, lineNum, line.length)
     });
 
     this.currentLine++;
   }
 
-  private parseInterpolations(text: string, offset: number): DendryNode['interpolations'] {
-      const interpolations: DendryNode['interpolations'] = [];
-      
-      // Split text into lines and filter out comment lines
-      const lines = text.split('\n');
-      let processedText = '';
-      
-      for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-          // Skip comment lines
-          if (line.trim().startsWith('#')) {
-              processedText += '\n';
-          } else {
-              processedText += line + '\n';
-          }
-      }
-      
-      // First, find all inline conditionals and extract their text parts
-      const inlineConditionalRegex = /\[\?\s*[^:]+?\s*:\s*([^?]*)\?\]/g;
-      let conditionalMatch;
-      const conditionalTextRanges: Array<{text: string, startOffset: number}> = [];
-      
-      while ((conditionalMatch = inlineConditionalRegex.exec(processedText)) !== null) {
-          const textPart = conditionalMatch[1];
-          const textStartOffset = conditionalMatch.index + conditionalMatch[0].indexOf(':') + 1;
-          // Trim leading whitespace and adjust offset
-          const trimmedStart = textPart.length - textPart.trimStart().length;
-          conditionalTextRanges.push({
-              text: textPart.trim(),
-              startOffset: textStartOffset + trimmedStart
-          });
-      }
-      
-      // Parse interpolations from the full text (including those in conditionals)
-      const interpolationRegex = /\[\+\s*([^\s:]+)\s*(?::\s*([^\s+]+))?\s*\+\]/g;
-      let match;
-      
-      while ((match = interpolationRegex.exec(processedText)) !== null) {
-        const [fullMatch, variable, qdisplay] = match;
-        const start = match.index;
-
-        // Calculate line and character position
-        const textBeforeMatch = processedText.substring(0, start);
-        const lineBreaks = textBeforeMatch.split('\n');
-        const line = lineBreaks.length - 1 + offset;
-        const character = lineBreaks[lineBreaks.length - 1].length;
-
-        interpolations.push({
-          variable,
-          qdisplay,
-          range: new vscode.Range(line, character, line, character + fullMatch.length),
-          fullText: fullMatch 
-        });
-      }
-      
-      return interpolations;
+  private bodyContent(source: ControlSource, linked: boolean): DendryNode['richContent'][number] {
+    return { parsed: parseRichContent(source, 'paragraphs'), linked };
   }
 
-
-  private scenePropertyInterpolations(ranges: Map<string, vscode.Range>): DendryNode['interpolations'] {
-    const result: DendryNode['interpolations'] = [];
+  private scenePropertyContent(ranges: Map<string, vscode.Range>): DendryNode['richContent'] {
+    const result: DendryNode['richContent'] = [];
     for (const key of ['title', 'subtitle', 'unavailable-subtitle']) {
       const range = ranges.get(key);
-      if (range) result.push(...this.parseInterpolations(
-        this.lines.slice(range.start.line, range.end.line + 1).join('\n'), range.start.line,
-      ));
+      if (!range) continue;
+      const source = controlPropertySource(this.lines.slice(range.start.line, range.end.line + 1).join('\n'), range.start.line);
+      result.push({ parsed: parseRichContent(source, 'inline'), linked: false });
     }
     return result;
   }

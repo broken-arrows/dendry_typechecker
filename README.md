@@ -7,11 +7,11 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 - **Syntax Highlighting**: Supporting Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
 - **Real-time Validation**: Validates `.scene.dry`, `.quality.dry`, `.qdisplay.dry` and `info.dry` files as you type.
 - **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
-- **JavaScript Validation**: Checks executable property blocks for syntax and undefined identifiers, with function-body `return`, lexical scopes, real `state`/`Q` bindings and original source positions.
+- **JavaScript Validation**: Checks executable property and rich-content blocks for syntax and undefined identifiers, with function-body `return`, lexical scopes, real `state`/`Q` bindings and original source positions.
 - **Dendry Logic Validation**: Parses actions, predicates and arithmetic expressions, including conditional actions, hyphenated names and visit counts.
 - **QDisplay Validation**: Supports range separators, decimal/open/reversed bounds, comments and continuations.
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
-- **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existence.
+- **Rich Content Validation**: Checks expression inserts, nested/multiline conditionals and formatter references in scene text, titles, option text, quality descriptions and QDisplay output. Respects escaping and opaque HTML blocks.
 - **Basic Debugging Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode. _(Desktop only — see "Web support" below.)_
 - **Runs in the browser**: Works as a web extension on [github.dev](https://github.dev) and [vscode.dev](https://vscode.dev) — open a repo with `.dry` files and get the same validation, no install or local setup.
 
@@ -64,15 +64,15 @@ The extension will:
 
 - Provide proper syntax highlighting.
 - Validate scene property names and types.
-- Check executable property JavaScript and extracted inline conditions in their respective languages.
+- Check executable JavaScript, content expressions and conditional predicates in their respective languages.
 - Ensure referenced scenes and subscenes exist.
-- Check simple variable/display inserts, including custom display files and built-in formatters.
+- Check expression/display inserts, including custom display files and built-in formatters.
 
-Full rich-content extraction, nested/multiline conditionals, arbitrary insert
-expressions and QDisplay output traversal remain incomplete. Ordinary body
-`{! ... !}` blocks are opaque HTML upstream. JavaScript member/engine API types
-are not checked. Missing custom display references are authoring diagnostics;
-upstream compilation accepts them.
+Rich-content parsing follows feature and nesting rules. Ordinary
+body `{! ... !}` blocks are opaque HTML; JavaScript in inserts and predicates is
+checked as a function body. JavaScript member/engine API types are not checked.
+Missing custom display references are authoring diagnostics; upstream compilation
+accepts them.
 
 ## Development checks
 
