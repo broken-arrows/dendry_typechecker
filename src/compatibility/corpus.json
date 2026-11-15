@@ -9551,6 +9551,3363 @@
         "pattern": "tag",
         "line": 9
       }
+    },
+    {
+      "id": "javascript-root-view-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-return-inline",
+      "description": "accepts return inline in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-return-multiline",
+      "description": "accepts return multiline in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-new-target",
+      "description": "accepts new target in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-trailing-comment",
+      "description": "accepts trailing comment in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-template-literal",
+      "description": "accepts template literal in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-view-if-syntax-first-line",
+      "description": "rejects syntax first line in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-syntax-closing-line",
+      "description": "rejects syntax closing line in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-unfinished-expression",
+      "description": "rejects unfinished expression in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-parameter-collision",
+      "description": "rejects parameter collision in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-strict-with",
+      "description": "rejects strict with in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-view-if-mixed-predicate",
+      "description": "rejects mixed predicate in root-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-return-inline",
+      "description": "accepts return inline in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-return-multiline",
+      "description": "accepts return multiline in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-new-target",
+      "description": "accepts new target in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-trailing-comment",
+      "description": "accepts trailing comment in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-template-literal",
+      "description": "accepts template literal in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-choose-if-syntax-first-line",
+      "description": "rejects syntax first line in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-syntax-closing-line",
+      "description": "rejects syntax closing line in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-unfinished-expression",
+      "description": "rejects unfinished expression in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-parameter-collision",
+      "description": "rejects parameter collision in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-strict-with",
+      "description": "rejects strict with in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-choose-if-mixed-predicate",
+      "description": "rejects mixed predicate in root-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nchoose-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-return-inline",
+      "description": "accepts return inline in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-return-multiline",
+      "description": "accepts return multiline in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-new-target",
+      "description": "accepts new target in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-trailing-comment",
+      "description": "accepts trailing comment in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-template-literal",
+      "description": "accepts template literal in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-frequency-var-syntax-first-line",
+      "description": "rejects syntax first line in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-syntax-closing-line",
+      "description": "rejects syntax closing line in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-unfinished-expression",
+      "description": "rejects unfinished expression in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-parameter-collision",
+      "description": "rejects parameter collision in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-strict-with",
+      "description": "rejects strict with in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-adjacent-predicates",
+      "description": "rejects adjacent predicates in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-frequency-var-mixed-predicate",
+      "description": "rejects mixed predicate in root-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nfrequency-var: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-return-inline",
+      "description": "accepts return inline in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-return-multiline",
+      "description": "accepts return multiline in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-new-target",
+      "description": "accepts new target in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-trailing-comment",
+      "description": "accepts trailing comment in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-template-literal",
+      "description": "accepts template literal in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-max-visits-var-syntax-first-line",
+      "description": "rejects syntax first line in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-syntax-closing-line",
+      "description": "rejects syntax closing line in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-unfinished-expression",
+      "description": "rejects unfinished expression in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-parameter-collision",
+      "description": "rejects parameter collision in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-strict-with",
+      "description": "rejects strict with in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-adjacent-predicates",
+      "description": "rejects adjacent predicates in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-max-visits-var-mixed-predicate",
+      "description": "rejects mixed predicate in root-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits-var: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-return-inline",
+      "description": "accepts return inline in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-return-multiline",
+      "description": "accepts return multiline in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-new-target",
+      "description": "accepts new target in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-trailing-comment",
+      "description": "accepts trailing comment in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-template-literal",
+      "description": "accepts template literal in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-syntax-first-line",
+      "description": "rejects syntax first line in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-syntax-closing-line",
+      "description": "rejects syntax closing line in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-unfinished-expression",
+      "description": "rejects unfinished expression in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-parameter-collision",
+      "description": "rejects parameter collision in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-strict-with",
+      "description": "rejects strict with in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-arrival-adjacent-blocks",
+      "description": "accepts adjacent blocks in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-mixed-actions",
+      "description": "accepts mixed actions in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-folded-continuations",
+      "description": "accepts folded continuations in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-arrival-invalid-second-block",
+      "description": "rejects invalid second block in root-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-return-inline",
+      "description": "accepts return inline in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-return-multiline",
+      "description": "accepts return multiline in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-new-target",
+      "description": "accepts new target in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-trailing-comment",
+      "description": "accepts trailing comment in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-template-literal",
+      "description": "accepts template literal in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-syntax-first-line",
+      "description": "rejects syntax first line in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-syntax-closing-line",
+      "description": "rejects syntax closing line in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-unfinished-expression",
+      "description": "rejects unfinished expression in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-parameter-collision",
+      "description": "rejects parameter collision in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-strict-with",
+      "description": "rejects strict with in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-departure-adjacent-blocks",
+      "description": "accepts adjacent blocks in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-mixed-actions",
+      "description": "accepts mixed actions in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-folded-continuations",
+      "description": "accepts folded continuations in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-departure-invalid-second-block",
+      "description": "rejects invalid second block in root-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-departure: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-return-inline",
+      "description": "accepts return inline in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-return-multiline",
+      "description": "accepts return multiline in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-new-target",
+      "description": "accepts new target in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-trailing-comment",
+      "description": "accepts trailing comment in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-template-literal",
+      "description": "accepts template literal in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-syntax-first-line",
+      "description": "rejects syntax first line in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-syntax-closing-line",
+      "description": "rejects syntax closing line in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-unfinished-expression",
+      "description": "rejects unfinished expression in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-parameter-collision",
+      "description": "rejects parameter collision in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-strict-with",
+      "description": "rejects strict with in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-root-on-display-adjacent-blocks",
+      "description": "accepts adjacent blocks in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-mixed-actions",
+      "description": "accepts mixed actions in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-folded-continuations",
+      "description": "accepts folded continuations in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-root-on-display-invalid-second-block",
+      "description": "rejects invalid second block in root-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-display: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-return-inline",
+      "description": "accepts return inline in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-return-multiline",
+      "description": "accepts return multiline in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-new-target",
+      "description": "accepts new target in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-trailing-comment",
+      "description": "accepts trailing comment in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-template-literal",
+      "description": "accepts template literal in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-view-if-syntax-first-line",
+      "description": "rejects syntax first line in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-syntax-closing-line",
+      "description": "rejects syntax closing line in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-unfinished-expression",
+      "description": "rejects unfinished expression in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-parameter-collision",
+      "description": "rejects parameter collision in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-strict-with",
+      "description": "rejects strict with in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-view-if-mixed-predicate",
+      "description": "rejects mixed predicate in section-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nview-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-return-inline",
+      "description": "accepts return inline in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-return-multiline",
+      "description": "accepts return multiline in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-new-target",
+      "description": "accepts new target in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-trailing-comment",
+      "description": "accepts trailing comment in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-template-literal",
+      "description": "accepts template literal in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-choose-if-syntax-first-line",
+      "description": "rejects syntax first line in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-syntax-closing-line",
+      "description": "rejects syntax closing line in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-unfinished-expression",
+      "description": "rejects unfinished expression in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-parameter-collision",
+      "description": "rejects parameter collision in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-strict-with",
+      "description": "rejects strict with in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-choose-if-mixed-predicate",
+      "description": "rejects mixed predicate in section-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nchoose-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-return-inline",
+      "description": "accepts return inline in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-return-multiline",
+      "description": "accepts return multiline in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-new-target",
+      "description": "accepts new target in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-trailing-comment",
+      "description": "accepts trailing comment in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-template-literal",
+      "description": "accepts template literal in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-frequency-var-syntax-first-line",
+      "description": "rejects syntax first line in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-syntax-closing-line",
+      "description": "rejects syntax closing line in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-unfinished-expression",
+      "description": "rejects unfinished expression in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-parameter-collision",
+      "description": "rejects parameter collision in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-strict-with",
+      "description": "rejects strict with in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-adjacent-predicates",
+      "description": "rejects adjacent predicates in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-frequency-var-mixed-predicate",
+      "description": "rejects mixed predicate in section-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nfrequency-var: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-return-inline",
+      "description": "accepts return inline in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-return-multiline",
+      "description": "accepts return multiline in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-new-target",
+      "description": "accepts new target in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-trailing-comment",
+      "description": "accepts trailing comment in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-template-literal",
+      "description": "accepts template literal in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-max-visits-var-syntax-first-line",
+      "description": "rejects syntax first line in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-syntax-closing-line",
+      "description": "rejects syntax closing line in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-unfinished-expression",
+      "description": "rejects unfinished expression in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-parameter-collision",
+      "description": "rejects parameter collision in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-strict-with",
+      "description": "rejects strict with in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-adjacent-predicates",
+      "description": "rejects adjacent predicates in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-max-visits-var-mixed-predicate",
+      "description": "rejects mixed predicate in section-max-visits-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\nmax-visits-var: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-return-inline",
+      "description": "accepts return inline in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-return-multiline",
+      "description": "accepts return multiline in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-new-target",
+      "description": "accepts new target in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-trailing-comment",
+      "description": "accepts trailing comment in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-template-literal",
+      "description": "accepts template literal in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-syntax-first-line",
+      "description": "rejects syntax first line in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-syntax-closing-line",
+      "description": "rejects syntax closing line in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-unfinished-expression",
+      "description": "rejects unfinished expression in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-parameter-collision",
+      "description": "rejects parameter collision in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-strict-with",
+      "description": "rejects strict with in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-arrival-adjacent-blocks",
+      "description": "accepts adjacent blocks in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-mixed-actions",
+      "description": "accepts mixed actions in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-folded-continuations",
+      "description": "accepts folded continuations in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-arrival-invalid-second-block",
+      "description": "rejects invalid second block in section-on-arrival",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-arrival: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-return-inline",
+      "description": "accepts return inline in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-return-multiline",
+      "description": "accepts return multiline in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-new-target",
+      "description": "accepts new target in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-trailing-comment",
+      "description": "accepts trailing comment in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-template-literal",
+      "description": "accepts template literal in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-syntax-first-line",
+      "description": "rejects syntax first line in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-syntax-closing-line",
+      "description": "rejects syntax closing line in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-unfinished-expression",
+      "description": "rejects unfinished expression in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-parameter-collision",
+      "description": "rejects parameter collision in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-strict-with",
+      "description": "rejects strict with in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-departure-adjacent-blocks",
+      "description": "accepts adjacent blocks in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-mixed-actions",
+      "description": "accepts mixed actions in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-folded-continuations",
+      "description": "accepts folded continuations in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-departure-invalid-second-block",
+      "description": "rejects invalid second block in section-on-departure",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-departure: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-return-inline",
+      "description": "accepts return inline in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-return-multiline",
+      "description": "accepts return multiline in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-new-target",
+      "description": "accepts new target in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-trailing-comment",
+      "description": "accepts trailing comment in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-template-literal",
+      "description": "accepts template literal in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-syntax-first-line",
+      "description": "rejects syntax first line in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-syntax-closing-line",
+      "description": "rejects syntax closing line in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-unfinished-expression",
+      "description": "rejects unfinished expression in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-parameter-collision",
+      "description": "rejects parameter collision in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-strict-with",
+      "description": "rejects strict with in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-section-on-display-adjacent-blocks",
+      "description": "accepts adjacent blocks in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! const x = 1; Q.foo = x; !} {! const x = 2; Q.bar = x; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-mixed-actions",
+      "description": "accepts mixed actions in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: foo = 1; {! Q.foo++; !} bar = 2; {! Q.bar++; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-folded-continuations",
+      "description": "accepts folded continuations in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: foo = 1;\n    {! Q.foo++; !}\n    {! Q.bar++; !}\n    bar = 2;\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-section-on-display-invalid-second-block",
+      "description": "rejects invalid second block in section-on-display",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n@part\ntitle: Part\non-display: {! Q.foo++; !} {! Q.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-return-inline",
+      "description": "accepts return inline in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-return-multiline",
+      "description": "accepts return multiline in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-new-target",
+      "description": "accepts new target in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-trailing-comment",
+      "description": "accepts trailing comment in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-template-literal",
+      "description": "accepts template literal in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-view-if-syntax-first-line",
+      "description": "rejects syntax first line in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-syntax-closing-line",
+      "description": "rejects syntax closing line in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-unfinished-expression",
+      "description": "rejects unfinished expression in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-parameter-collision",
+      "description": "rejects parameter collision in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-strict-with",
+      "description": "rejects strict with in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-view-if-mixed-predicate",
+      "description": "rejects mixed predicate in choice-view-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- view-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-return-inline",
+      "description": "accepts return inline in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-return-multiline",
+      "description": "accepts return multiline in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-new-target",
+      "description": "accepts new target in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-trailing-comment",
+      "description": "accepts trailing comment in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-template-literal",
+      "description": "accepts template literal in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-choose-if-syntax-first-line",
+      "description": "rejects syntax first line in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-syntax-closing-line",
+      "description": "rejects syntax closing line in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-unfinished-expression",
+      "description": "rejects unfinished expression in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-parameter-collision",
+      "description": "rejects parameter collision in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-strict-with",
+      "description": "rejects strict with in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-adjacent-predicates",
+      "description": "rejects adjacent predicates in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-choose-if-mixed-predicate",
+      "description": "rejects mixed predicate in choice-choose-if",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- choose-if: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-return-inline",
+      "description": "accepts return inline in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-return-multiline",
+      "description": "accepts return multiline in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-new-target",
+      "description": "accepts new target in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-trailing-comment",
+      "description": "accepts trailing comment in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-template-literal",
+      "description": "accepts template literal in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-choice-frequency-var-syntax-first-line",
+      "description": "rejects syntax first line in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-syntax-closing-line",
+      "description": "rejects syntax closing line in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-unfinished-expression",
+      "description": "rejects unfinished expression in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-parameter-collision",
+      "description": "rejects parameter collision in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-strict-with",
+      "description": "rejects strict with in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-adjacent-predicates",
+      "description": "rejects adjacent predicates in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-choice-frequency-var-mixed-predicate",
+      "description": "rejects mixed predicate in choice-frequency-var",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nRoot prose.\n\n- @root\n- frequency-var: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-return-inline",
+      "description": "accepts return inline in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-return-multiline",
+      "description": "accepts return multiline in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-new-target",
+      "description": "accepts new target in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-trailing-comment",
+      "description": "accepts trailing comment in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-template-literal",
+      "description": "accepts template literal in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-quality-is-valid-syntax-first-line",
+      "description": "rejects syntax first line in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-syntax-closing-line",
+      "description": "rejects syntax closing line in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-unfinished-expression",
+      "description": "rejects unfinished expression in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-parameter-collision",
+      "description": "rejects parameter collision in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-strict-with",
+      "description": "rejects strict with in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-adjacent-predicates",
+      "description": "rejects adjacent predicates in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-quality-is-valid-mixed-predicate",
+      "description": "rejects mixed predicate in quality-is-valid",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "score.quality.dry",
+          "contents": "name: Score\nis-valid: flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "score.quality.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-assignments-beside-delimiters",
+      "description": "accepts assignments beside delimiters in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! Q.foo = \"text\";\nQ.bar = \"other text\"; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-return-inline",
+      "description": "accepts return inline in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! return state.qualities.foo === Q.foo && this && arguments; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-return-multiline",
+      "description": "accepts return multiline in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {!\n\nconst x = Q.foo;\nreturn x;\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-new-target",
+      "description": "accepts new target in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! return new.target; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-trailing-comment",
+      "description": "accepts trailing comment in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! Q.foo = 1; // comment\n!}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-template-literal",
+      "description": "accepts template literal in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! const text = `first\nsecond`; return text; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "javascript-destination-syntax-first-line",
+      "description": "rejects syntax first line in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! Q.foo = ;\nQ.bar = \"text\"; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-syntax-closing-line",
+      "description": "rejects syntax closing line in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! Q.foo = \"text\";\nQ.bar = ; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-unfinished-expression",
+      "description": "rejects unfinished expression in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! return (Q.foo + !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-parameter-collision",
+      "description": "rejects parameter collision in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! const Q = {}; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-strict-with",
+      "description": "rejects strict with in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! \"use strict\"; with (Q) {} !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-adjacent-predicates",
+      "description": "rejects adjacent predicates in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if {! return true; !} {! return false; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
+    },
+    {
+      "id": "javascript-destination-mixed-predicate",
+      "description": "rejects mixed predicate in destination",
+      "source": "pinned upstream dry.js gobbleFollowOnLines, validators.js makeCompile/validateActions and engine.js makeFunctionFromSource",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: root if flag {! return true; !}\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "JavaScript|logic|condition"
+      }
     }
   ]
 }

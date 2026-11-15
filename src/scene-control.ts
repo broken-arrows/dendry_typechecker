@@ -20,8 +20,13 @@ export class ControlSource {
 
   positionAt(line: number, column: number): SourcePosition {
     let offset = 0;
-    for (let i = 0; i < line; i++) offset = this.text.indexOf('\n', offset) + 1;
-    return this.position(offset + column);
+    for (let i = 0; i < line; i++) {
+      const newline = this.text.indexOf('\n', offset);
+      if (newline < 0) return this.position(this.text.length);
+      offset = newline + 1;
+    }
+    const newline = this.text.indexOf('\n', offset);
+    return this.position(Math.min(offset + Math.max(0, column), newline < 0 ? this.text.length : newline));
   }
 
   slice(start: number, end = this.text.length): ControlSource {

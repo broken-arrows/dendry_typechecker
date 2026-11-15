@@ -444,12 +444,8 @@ class DendryHandParser {
   // last `!}` closes magic). Multiple magic blocks per value are
   // allowed.
   //
-  // Backward-compat: if the entire collected value is a single
-  // `{! ... !}` block (no surrounding text), the braces are stripped
-  // and the inside is returned. This preserves the prior behavior for
-  // the common case `view-if: {! foo() !}`. Values that mix Dendry
-  // shorthand with `{! ... !}` blocks are returned with braces intact;
-  // the validator will chunk-split them in step 3.
+  // Retain language delimiters. Code dispatch must distinguish shorthand,
+  // one JavaScript block and multiple independent action blocks.
   private propertyRange(start: number, end: number): vscode.Range {
     // Unclosed blocks may consume the appended parser sentinel. Keep source
     // ranges in the real document so diagnostics still work while typing.
@@ -494,15 +490,7 @@ class DendryHandParser {
       parts.push(thisLine);
     }
 
-    let value = parts.join('').trim();
-
-    // Backward-compat: unwrap a single, complete magic block.
-    const pureBlock = value.match(/^\{!([\s\S]*)!\}$/);
-    // Text fields contain rich content. Keep their delimiters even for empty
-    // blocks: upstream treats these as dynamic titles, not missing titles.
-    const textField = ['title', 'subtitle', 'unavailable-subtitle'].includes(normalizePropertyName(key));
-    if (pureBlock && !textField) value = pureBlock[1];
-
+    const value = parts.join('').trim();
     return { key, value, endLine: lastConsumed };
   }
 

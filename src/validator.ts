@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { DendryAST, DendryNode, normalizePropertyName } from './parser';
-import { checkScript, Finding, FindingSeverity } from './js-check';
+import { checkScript, FindingSeverity } from './js-check';
 import { SCENE_SCHEMA } from './scene-schema';
 import { ControlSource, controlPropertySource, destinationClauses } from './scene-control';
-import { convertCondition, convertAction, ConversionResult } from './dendry-logic/shorthand';
+import { convertCondition, convertAction } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
 import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
@@ -260,8 +260,7 @@ export class DendryValidator {
       const range = this.findRangeForProperty(document, sourceRange, key);
       const raw = document.getText(sourceRange);
       const rawValue = raw.slice(raw.indexOf(':') + 1).trim();
-      // The legacy parser unwraps pure magic for code validation. Scalar
-      // validators must still see the delimiters: `{! 2 !}` is not an integer.
+      // Scalar validators must see delimiters: `{! 2 !}` is not an integer.
       const scalar = containsMagicMarker(rawValue) ? rawValue : String(value);
       const kind = Object.prototype.hasOwnProperty.call(SCENE_SCHEMA, key) ? SCENE_SCHEMA[key] : undefined;
       switch (kind) {
@@ -286,13 +285,11 @@ export class DendryValidator {
           if (!rawValue) diagnostics.push(this.createDiagnostic(
             range, `Property "${key}" requires a nonempty ${kind}.`, vscode.DiagnosticSeverity.Error,
           ));
-          else if (containsMagicMarker(rawValue) && /^\{![\s\S]*!\}$/.test(rawValue)) {
-            diagnostics.push(...this.validateAsJsBlock(String(value), range));
-          } else diagnostics.push(...this.validatePredicateValue(String(value), range));
+          else diagnostics.push(...this.validatePredicateValue(controlPropertySource(raw, sourceRange.start.line), range));
           break;
         }
         case 'action':
-          diagnostics.push(...this.validateActionValue(String(value), range));
+          diagnostics.push(...this.validateActionValue(controlPropertySource(raw, sourceRange.start.line), range));
           break;
         case 'destination': case 'quality-destination': {
           const source = controlPropertySource(raw, sourceRange.start.line);
@@ -395,25 +392,8 @@ export class DendryValidator {
   }
 
   private validateDestinationPredicate(source: ControlSource, fallback: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
-    const range = this.controlRange(source, fallback);
-    if (/^\{![\s\S]*!\}$/.test(source.text)) {
-      const body = source.slice(2, source.text.length - 2);
-      const findings = checkScript(body.text, {
-        functionBody: true, checkUndefined: true,
-        extraGlobals: ['state', 'Q', 'arguments', ...this.extraLibraries],
-        undefinedSeverity: this.strictMode ? 'warning' : 'hint',
-      });
-      for (const finding of findings) {
-        const start = body.positionAt(finding.startLine, finding.startColumn);
-        const end = body.positionAt(finding.endLine, finding.endColumn);
-        diagnostics.push(this.createDiagnostic(new vscode.Range(start.line, start.character, end.line, end.character),
-          finding.message, this.severityFor(finding.severity)));
-      }
-    } else if (!source.text) diagnostics.push(this.createDiagnostic(range, 'Destination requires a nonempty predicate after if.', vscode.DiagnosticSeverity.Error));
-    else if (containsMagicMarker(source.text)) diagnostics.push(this.createDiagnostic(
-      range, 'Wrap the entire condition in {! !}.', vscode.DiagnosticSeverity.Error,
-    ));
-    else diagnostics.push(...this.validateAsShorthand(source.text, range, false));
+    if (!source.text) diagnostics.push(this.createDiagnostic(fallback, 'Destination requires a nonempty predicate after if.', vscode.DiagnosticSeverity.Error));
+    else diagnostics.push(...this.validatePredicateValue(source, fallback));
   }
 
   private validateSceneContent(node: DendryNode, document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {
@@ -483,18 +463,9 @@ export class DendryValidator {
         diagnostics.push(this.createDiagnostic(range, 'Quality default-display must be a quality-name-shaped formatter ID.', vscode.DiagnosticSeverity.Error));
       }
       if (key === 'is-valid') {
-        const source = document.getText(node.propertyRanges?.get(key) || range);
-        const raw = source.slice(source.indexOf(':') + 1).trim();
-        if (raw.includes('{!') || raw.includes('!}')) {
-          if (!/^\{![\s\S]*!\}$/.test(raw)) diagnostics.push(this.createDiagnostic(
-            range, 'Wrap the entire is-valid condition in {! !}.', vscode.DiagnosticSeverity.Error,
-          ));
-          else diagnostics.push(...checkScript(String(value), {
-            functionBody: true, checkUndefined: true,
-            extraGlobals: ['state', 'Q', 'arguments', ...this.extraLibraries],
-            undefinedSeverity: this.strictMode ? 'warning' : 'hint',
-          }).map(finding => this.findingToDiagnostic(finding, range)));
-        } else diagnostics.push(...this.validateAsShorthand(String(value), range, false));
+        const header = node.propertyRanges?.get(key) || range;
+        const source = controlPropertySource(document.getText(header), header.start.line);
+        diagnostics.push(...this.validatePredicateValue(source, range));
       }
     }
     // initial accepts numbers, booleans and strings. Upstream does not reject
@@ -567,7 +538,8 @@ export class DendryValidator {
       }
 
       if (key === 'view-if' || key === 'choose-if' || key === 'frequency-var') {
-          diagnostics.push(...this.validatePredicateValue(String(value ?? ''), r));
+        const header = node.propertyRanges?.get(key) || node.range;
+        diagnostics.push(...this.validatePredicateValue(controlPropertySource(document.getText(header), header.start.line), r));
       }
 
       if (key === 'priority' || key === 'order' || key === 'frequency') {
@@ -714,63 +686,52 @@ export class DendryValidator {
   //    and any other `on-*`. Mixed values are chunk-split per upstream
   //    `validateActions`; alternating chunks dispatch to magic (JS
   //    block) or logic (Dendry shorthand) validation.
-  //  - validateDendryCondition: legacy inline-conditional dispatch.
-  // Destination clauses use the mapped validateDestinationPredicate path.
+  // All executable properties carry their source map through dispatch.
+  // Inline content still uses the shorthand checker until content parsing aligns.
 
-  private validatePredicateValue(value: string, range: vscode.Range): vscode.Diagnostic[] {
-    // The parser unwraps pure `{! ... !}` blocks; if the value still
-    // contains `{!` or `!}`, it must have surrounding text — which
-    // upstream rejects.
-    if (containsMagicMarker(value)) {
-      return [
-        this.createDiagnostic(
-          range,
-          'Wrap the entire condition in {! !}.',
-          vscode.DiagnosticSeverity.Error
-        ),
-      ];
+  private validatePredicateValue(source: ControlSource, fallback: vscode.Range): vscode.Diagnostic[] {
+    const range = this.controlRange(source, fallback);
+    if (containsMagicMarker(source.text)) {
+      // makeCompile uses the FIRST closing marker, unlike action chunking.
+      if (source.text.indexOf('{!') > 0 || source.text.indexOf('!}') < source.text.length - 2) {
+        return [this.createDiagnostic(range, 'Wrap the entire condition in {! !}.', vscode.DiagnosticSeverity.Error)];
+      }
+      return this.validateAsJsBlock(source.slice(2, source.text.length - 2));
     }
-    return this.runJsValidation(value, range, /* isAction */ false);
+    return this.validateAsShorthand(source.text, range, false);
   }
 
-  private validateActionValue(value: string, range: vscode.Range): vscode.Diagnostic[] {
-    if (!containsMagicMarker(value)) {
-      return this.runJsValidation(value, range, /* isAction */ true);
-    }
-
-    // Mixed: alternate logic + magic chunks.
+  private validateActionValue(source: ControlSource, fallback: vscode.Range): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    const chunks = splitActionChunks(value);
+    const chunks = splitActionChunks(source.text);
     for (const chunk of chunks) {
-      const chunkAnchor = this.chunkAnchor(value, chunk.offset, range);
+      const mapped = source.slice(chunk.offset, chunk.offset + chunk.source.length);
       if (chunk.kind === 'magic') {
-        diagnostics.push(...this.validateAsJsBlock(chunk.source, chunkAnchor));
+        diagnostics.push(...this.validateAsJsBlock(mapped));
       } else {
-        diagnostics.push(...this.validateAsShorthand(chunk.source, chunkAnchor, /* isAction */ true));
+        diagnostics.push(...this.validateAsShorthand(mapped.text, this.controlRange(mapped, fallback), true));
       }
     }
     return diagnostics;
   }
 
   private validateDendryCondition(code: string, range: vscode.Range): vscode.Diagnostic[] {
-    return this.runJsValidation(code, range, /* isAction */ false);
+    return this.validateAsShorthand(code, range, false);
   }
 
-// Single-chunk validation: pick path based on source shape (the
-  // multi-line / has-newline heuristic).
-  private runJsValidation(code: string, range: vscode.Range, isAction: boolean): vscode.Diagnostic[] {
-    const isJsBlock = range.start.line !== range.end.line || code.includes('\n');
-    if (isJsBlock) return this.validateAsJsBlock(code, range);
-    return this.validateAsShorthand(code, range, isAction);
-  }
-
-  private validateAsJsBlock(code: string, anchor: vscode.Range): vscode.Diagnostic[] {
-    const findings = checkScript(code, {
-      extraGlobals: this.extraJsGlobals(),
+  private validateAsJsBlock(source: ControlSource): vscode.Diagnostic[] {
+    const findings = checkScript(source.text, {
+      functionBody: true,
+      extraGlobals: this.extraLibraries,
       checkUndefined: true,
       undefinedSeverity: this.strictMode ? 'warning' : 'hint',
     });
-    return findings.map(f => this.findingToDiagnostic(f, anchor));
+    return findings.map(f => {
+      const start = source.positionAt(f.startLine, f.startColumn);
+      const end = source.positionAt(f.endLine, f.endColumn);
+      return this.createDiagnostic(new vscode.Range(start.line, start.character, end.line, end.character),
+        f.message, this.severityFor(f.severity));
+    });
   }
 
   private validateAsShorthand(code: string, anchor: vscode.Range, isAction: boolean): vscode.Diagnostic[] {
@@ -793,7 +754,6 @@ export class DendryValidator {
     }
 
     const findings = checkScript(conversion.jsSource, {
-      extraGlobals: this.extraJsGlobals(),
       checkUndefined: false,
     });
     for (const f of findings) {
@@ -812,41 +772,10 @@ export class DendryValidator {
           this.createDiagnostic(anchor, f.message, this.severityFor(f.severity))
         );
       }
-      // typos/undefined are skipped in shorthand mode (matches prior behavior)
+      // Undefined-name checking is disabled for shorthand qualities.
     }
 
     return diagnostics;
-  }
-
-  // For chunked actions: compute a single-point anchor at the chunk's
-  // start position within the document.
-  private chunkAnchor(value: string, chunkOffset: number, propertyAnchor: vscode.Range): vscode.Range {
-    const before = value.substring(0, chunkOffset);
-    const lineDelta = (before.match(/\n/g) ?? []).length;
-    const lastNewline = before.lastIndexOf('\n');
-    const colInLine = lastNewline === -1 ? chunkOffset : chunkOffset - lastNewline - 1;
-    const startLine = propertyAnchor.start.line + lineDelta;
-    const startCol = lineDelta === 0
-      ? propertyAnchor.start.character + colInLine
-      : colInLine;
-    return new vscode.Range(startLine, startCol, startLine, startCol);
-  }
-
-  private extraJsGlobals(): Iterable<string> {
-    return [
-      ...this.extraLibraries,
-      ...this.qualityIds,
-      ...this.sceneIds,
-    ];
-  }
-
-  private findingToDiagnostic(f: Finding, anchor: vscode.Range): vscode.Diagnostic {
-    const startLine = anchor.start.line + f.startLine;
-    const endLine = anchor.start.line + f.endLine;
-    const startCol = f.startLine === 0 ? anchor.start.character + f.startColumn : f.startColumn;
-    const endCol = f.endLine === 0 ? anchor.start.character + f.endColumn : f.endColumn;
-    const range = new vscode.Range(startLine, startCol, endLine, endCol);
-    return this.createDiagnostic(range, f.message, this.severityFor(f.severity));
   }
 
   private severityFor(s: FindingSeverity): vscode.DiagnosticSeverity {
@@ -899,10 +828,7 @@ function stripJsErrorPrefix(msg: string): string {
   return msg.replace(/^JavaScript Error:\s*/, '');
 }
 
-// True if the value still contains a magic marker. The parser
-// unwraps pure `{! ... !}` blocks, so the only way a value reaches
-// the validator with `{!` or `!}` in it is if there's surrounding
-// content — i.e. mixed shorthand + magic.
+// Language markers are retained independently of line count.
 function containsMagicMarker(value: string): boolean {
   return value.includes('{!') || value.includes('!}');
 }

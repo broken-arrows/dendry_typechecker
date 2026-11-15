@@ -2,10 +2,9 @@
 // positions relative to the source string passed in. Callers translate
 // those positions into document positions for VS Code diagnostics.
 
-import { JS_KEYWORDS, RUNTIME_GLOBALS, DENDRY_GLOBALS } from './globals';
+import { RUNTIME_GLOBALS, DENDRY_GLOBALS } from './globals';
 import { parseScript } from './parse';
 import {
-  collectDeclarations,
   findUndefinedReferences,
   findAssignmentsInConditions,
 } from './scope';
@@ -22,13 +21,13 @@ export interface Finding {
   message: string;
   severity: FindingSeverity;
   // Tag so the caller can filter / re-severity by category
-  kind: 'parse-error' | 'typo' | 'undefined-identifier' | 'assignment-in-condition';
+  kind: 'parse-error' | 'undefined-identifier' | 'assignment-in-condition';
 }
 
 export interface JsCheckOptions {
-  // Embedded engine predicates are function bodies and may return values.
+  // Embedded engine JavaScript is a function body and may return values.
   functionBody?: boolean;
-  // Extra identifiers to treat as defined (qualities, scenes, user libs).
+  // Extra globals provided by the game/page (configured libraries).
   extraGlobals?: Iterable<string>;
   // Whether to flag bare identifiers that don't resolve to a global or
   // a declaration. Defaults to true.
@@ -38,7 +37,6 @@ export interface JsCheckOptions {
 }
 
 const ALL_GLOBALS = new Set<string>([
-  ...JS_KEYWORDS,
   ...RUNTIME_GLOBALS,
   ...DENDRY_GLOBALS,
 ]);
@@ -49,6 +47,7 @@ export function checkScript(source: string, opts: JsCheckOptions = {}): Finding[
   if (opts.extraGlobals) {
     for (const g of opts.extraGlobals) known.add(g);
   }
+  if (opts.functionBody) known.add('arguments');
 
   const { ast, error } = parseScript(source, opts.functionBody);
 
@@ -62,13 +61,11 @@ export function checkScript(source: string, opts: JsCheckOptions = {}): Finding[
       severity: 'error',
       kind: 'parse-error',
     });
-    findings.push(...findTyposOnLine(source, error.line, known));
+    // Without an AST, scanning words mistakes property names and string contents for keyword typos. Report the actual syntax error only.
     return findings;
   }
 
   if (!ast) return findings;
-
-  for (const decl of collectDeclarations(ast)) known.add(decl);
 
   for (const ac of findAssignmentsInConditions(ast)) {
     findings.push({
@@ -85,7 +82,7 @@ export function checkScript(source: string, opts: JsCheckOptions = {}): Finding[
   if (opts.checkUndefined !== false) {
     const severity = opts.undefinedSeverity ?? 'hint';
     for (const ref of findUndefinedReferences(ast, known)) {
-      const suggestion = findClosestMatch(ref.name, known);
+      const suggestion = findClosestMatch(ref.name, ref.visibleNames);
       const message = suggestion
         ? `Possible undefined identifier or variable: "${ref.name}". Did you mean "${suggestion.candidate}"?`
         : `Possible undefined identifier or variable: "${ref.name}"`;
@@ -101,34 +98,5 @@ export function checkScript(source: string, opts: JsCheckOptions = {}): Finding[
     }
   }
 
-  return findings;
-}
-
-// When parsing fails we can't trust the AST, but we can still scan the
-// failing line for words that look like typos of JS keywords.
-function findTyposOnLine(source: string, line: number, known: ReadonlySet<string>): Finding[] {
-  const lines = source.split('\n');
-  if (line < 0 || line >= lines.length) return [];
-  const text = lines[line];
-  const findings: Finding[] = [];
-  const wordRe = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/g;
-  const keywords = JS_KEYWORDS;
-
-  let match: RegExpExecArray | null;
-  while ((match = wordRe.exec(text)) !== null) {
-    const word = match[0];
-    if (known.has(word)) continue;
-    const suggestion = findClosestMatch(word, keywords);
-    if (!suggestion) continue;
-    findings.push({
-      startLine: line,
-      startColumn: match.index,
-      endLine: line,
-      endColumn: match.index + word.length,
-      message: `Unknown identifier "${word}". Did you mean "${suggestion.candidate}"?`,
-      severity: 'warning',
-      kind: 'typo',
-    });
-  }
   return findings;
 }
