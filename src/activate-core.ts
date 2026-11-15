@@ -1,209 +1,146 @@
 import * as vscode from 'vscode';
 import { DendryProjectValidator } from './project-validator';
 import { DENDRY_FILE_GLOBS, dendryFileKind } from './file-kinds';
+import { uriKey } from './uri-key';
 
-let diagnosticCollection: vscode.DiagnosticCollection;
-let projectValidator: DendryProjectValidator;
-let lastDiagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map();
-let isValidating = false;
-let openSuppressCount = 0;
+let stopCore: (() => void) | undefined;
 
-// Debounce function
-function debounce<F extends (...args: any[]) => any>(func: F, delay: number): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    return function(this: ThisParameterType<F>, ...args: Parameters<F>) {
-        const context = this;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), delay);
-    };
-}
-
-const outputChannel = vscode.window.createOutputChannel('Dendry');
-outputChannel.appendLine('Dendry activated');
-
-/**
- * Host-agnostic activation shared by both the desktop (`extension.ts`) and the
- * web (`extension.web.ts`) entry points. It wires up diagnostics, the project
- * validator and the file-system event listeners — everything that does NOT
- * depend on Node.js. The F5 build-and-launch feature (which needs
- * `child_process`) is registered only by the desktop entry, so it never enters
- * the web bundle's import graph.
- */
+/** Shared desktop/web lifecycle. All queue state belongs to this activation. */
 export function activateCore(context: vscode.ExtensionContext) {
-    console.log('Dendry type checker is now active');
-    outputChannel.appendLine('Dendry type checker is now active');
+    stopCore?.();
+    const diagnostics = vscode.languages.createDiagnosticCollection('dendry');
+    const output = vscode.window.createOutputChannel('Dendry');
+    const validator = new DendryProjectValidator();
+    const lastDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
+    const dirtyFiles = new Map<string, vscode.Uri>();
+    let fullRefresh = false;
+    let generation = 0;
+    let running = false;
+    let ready = false;
+    let disposed = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let startupTimer: ReturnType<typeof setTimeout> | undefined;
 
-    diagnosticCollection = vscode.languages.createDiagnosticCollection('dendry');
-    context.subscriptions.push(diagnosticCollection);
-
-    projectValidator = new DendryProjectValidator();
-
-    const debouncedValidateProject = debounce(validateProject, 500);
-
-    // Initial validation (delayed for workspace ready)
-    if (vscode.workspace.workspaceFolders?.length) {
-        outputChannel.appendLine(`Workspace ready: ${vscode.workspace.workspaceFolders.length} folders`);
-        setTimeout(() => {
-            outputChannel.appendLine('--- Initial full validation ---');
-            debouncedValidateProject();
-        }, 1000);
-    } else {
-        outputChannel.appendLine('No workspace - waiting...');
+    function schedule(uri?: vscode.Uri) {
+        if (disposed) return;
+        if (uri) dirtyFiles.set(uriKey(uri), uri);
+        else fullRefresh = true;
+        generation++;
+        ready = false;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            timer = undefined;
+            ready = true;
+            void drain();
+        }, 500);
     }
 
-    // Existing triggers
+    function publish(current: Map<vscode.Uri, vscode.Diagnostic[]>) {
+        const seen = new Set<string>();
+        for (const [uri, items] of current) {
+            const key = uriKey(uri), previous = lastDiagnostics.get(key);
+            seen.add(key);
+            if (stableDiagKey(items) !== stableDiagKey(previous?.diagnostics || [])) {
+                // Retain one diagnostic URI even if a provider changes its
+                // query/fragment or returns a new URI object for this file.
+                const target = previous?.uri || uri;
+                diagnostics.set(target, items);
+                lastDiagnostics.set(key, { uri: target, diagnostics: items });
+            }
+        }
+        for (const [key, entry] of lastDiagnostics) {
+            if (!seen.has(key)) {
+                diagnostics.delete(entry.uri);
+                lastDiagnostics.delete(key);
+            }
+        }
+    }
+
+    async function drain() {
+        if (running || disposed) return;
+        running = true;
+        try {
+            while (ready && !disposed) {
+                ready = false;
+                const batch = [...dirtyFiles.values()];
+                const full = fullRefresh;
+                const revision = generation;
+                dirtyFiles.clear();
+                fullRefresh = false;
+                try {
+                    const config = vscode.workspace.getConfiguration('dendry');
+                    if (!config.get('validation.enable', true)) continue;
+                    const excludes = config.get<string[]>('validation.exclude', [
+                        '**/node_modules/**', '**/.git/**', '**/dist/**', '**/build/**', '**/out/**',
+                    ]);
+                    const exclude = excludes.length > 1 ? `{${excludes.join(',')}}` : excludes[0] || undefined;
+                    const files = (await Promise.all(DENDRY_FILE_GLOBS.map(pattern => vscode.workspace.findFiles(pattern, exclude)))).flat();
+                    if (disposed) return;
+                    const results = await validator.validateProject(files, full ? undefined : batch);
+                    // Events invalidate publication immediately, even before
+                    // their debounce expires. Their queued pass will publish.
+                    if (!disposed && revision === generation) publish(results);
+                } catch (error) {
+                    for (const uri of batch) if (!dirtyFiles.has(uriKey(uri))) dirtyFiles.set(uriKey(uri), uri);
+                    fullRefresh ||= full;
+                    if (!disposed) {
+                        output.appendLine(`ERROR: ${error}`);
+                        void vscode.window.showErrorMessage(`Dendry validation failed: ${error instanceof Error ? error.message : String(error)}`);
+                    }
+                }
+            }
+        } finally {
+            running = false;
+        }
+    }
+
+    const dispose = () => {
+        if (disposed) return;
+        disposed = true;
+        clearTimeout(timer);
+        clearTimeout(startupTimer);
+        dirtyFiles.clear();
+        diagnostics.dispose();
+        output.dispose();
+    };
+    stopCore = dispose;
+    context.subscriptions.push({ dispose });
+
+    output.appendLine('Dendry activated');
+    if (vscode.workspace.workspaceFolders?.length) startupTimer = setTimeout(() => schedule(), 1000);
+
     context.subscriptions.push(
         vscode.workspace.onDidChangeTextDocument(event => {
-            if (event.document.languageId === 'dendry') {
-                outputChannel.appendLine(`Change: ${event.document.uri.fsPath}`);
-                debouncedValidateProject(event.document.uri);
-            }
-        })
-    );
-
-    context.subscriptions.push(
+            if (event.document.languageId === 'dendry') schedule(event.document.uri);
+        }),
         vscode.workspace.onDidSaveTextDocument(document => {
-            if (document.languageId === 'dendry') {
-                outputChannel.appendLine(`Save: ${document.uri.fsPath}`);
-                debouncedValidateProject(document.uri);
-            }
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidDeleteFiles(event => {
-            if (event.files.some(file => dendryFileKind(file.path) !== undefined)) {
-                outputChannel.appendLine('Delete detected');
-                debouncedValidateProject();
-            }
-        })
-    );
-
-    // Open trigger
-    context.subscriptions.push(
+            if (document.languageId === 'dendry') schedule(document.uri);
+        }),
         vscode.workspace.onDidOpenTextDocument(document => {
-            if (openSuppressCount > 0) {
-                outputChannel.appendLine(`Open suppressed: ${document.uri.fsPath}. Count at ${openSuppressCount}.`);
-                return;
-            }
-            if (document.languageId === 'dendry') {
-                outputChannel.appendLine(`Open: ${document.uri.fsPath}`);
-                debouncedValidateProject(document.uri);
-            }
-        })
-    );
-
-    // Workspace folder changes (add/remove folders)
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeWorkspaceFolders(() => {
-            outputChannel.appendLine('Workspace folders changed');
-            debouncedValidateProject();
-        })
-    );
-
-    // Clear on close (existing)
-    context.subscriptions.push(
+            if (document.languageId === 'dendry') schedule(document.uri);
+        }),
+        vscode.workspace.onDidDeleteFiles(event => {
+            if (event.files.some(file => dendryFileKind(file.path) !== undefined)) schedule();
+        }),
+        vscode.workspace.onDidChangeWorkspaceFolders(() => schedule()),
         vscode.workspace.onDidCloseTextDocument(document => {
-            diagnosticCollection.delete(document.uri);
-            lastDiagnostics.delete(document.uri);
-        })
+            if (disposed) return;
+            const key = uriKey(document.uri);
+            diagnostics.delete(lastDiagnostics.get(key)?.uri || document.uri);
+            lastDiagnostics.delete(key);
+        }),
     );
 }
 
-
-async function validateProject(changedFileUri?: vscode.Uri) {
-    outputChannel.appendLine(`validateProject(${changedFileUri?.fsPath || 'full'})`);
-    if (isValidating) {
-        outputChannel.appendLine('Skipped: already validating');
-        return;
-    }
-
-    const config = vscode.workspace.getConfiguration('dendry');
-    if (!config.get('validation.enable', true)) {
-        outputChannel.appendLine('Skipped: validation disabled');
-        return;
-    }
-
-    isValidating = true;
-    openSuppressCount++;
-    try {
-        // Get exclude patterns from configuration
-        const excludePatterns = config.get<string[]>('validation.exclude', [
-            '**/node_modules/**',
-            '**/.git/**',
-            '**/dist/**',
-            '**/build/**',
-            '**/out/**'
-        ]);
-
-        // Build exclude pattern string
-        const excludePattern = excludePatterns.length > 1
-            ? `{${excludePatterns.join(',')}}`
-            : excludePatterns[0] || undefined;
-
-        const dendryFiles = (await Promise.all(DENDRY_FILE_GLOBS.map(pattern =>
-            vscode.workspace.findFiles(pattern, excludePattern)
-        ))).flat();
-
-        outputChannel.appendLine(`Found ${dendryFiles.length} Dendry files`);
-
-        const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
-
-        // Stable key: sort diags by position + msg/severity (ignores order)
-        function stableDiagKey(diags: vscode.Diagnostic[]): string {
-            return JSON.stringify(
-                diags.map(d => ({
-                    start: d.range.start.line * 10000 + d.range.start.character,
-                    end: d.range.end.line * 10000 + d.range.end.character,
-                    msg: d.message,
-                    sev: d.severity
-                })).sort((a, b) =>
-                    a.start - b.start ||
-                    a.end - b.end ||
-                    a.msg.localeCompare(b.msg) ||
-                    (a.sev || 0) - (b.sev || 0)
-                )
-            );
-        }
-
-        const urisWithNewDiagnostics = new Set<vscode.Uri>();
-        currentDiagnostics.forEach((newDiags, uri) => {
-            urisWithNewDiagnostics.add(uri);
-            const oldDiags = lastDiagnostics.get(uri) || [];
-            if (stableDiagKey(newDiags) !== stableDiagKey(oldDiags)) {
-                diagnosticCollection.set(uri, newDiags);
-                lastDiagnostics.set(uri, newDiags);
-                outputChannel.appendLine(`Updated: ${uri.fsPath} (${newDiags.length} diags)`);
-            }
-        });
-
-        // Clear missing/deleted
-        const urisToDelete: vscode.Uri[] = [];
-        lastDiagnostics.forEach((diags, uri) => {
-            if (!urisWithNewDiagnostics.has(uri)) {
-                urisToDelete.push(uri);
-            }
-        });
-        urisToDelete.forEach(uri => {
-            diagnosticCollection.delete(uri);
-            lastDiagnostics.delete(uri);
-            outputChannel.appendLine(`Cleared: ${uri.fsPath}`);
-        });
-
-        outputChannel.appendLine(`Updated ${urisWithNewDiagnostics.size} / cleared ${urisToDelete.length}`);
-    } catch (error) {
-        outputChannel.appendLine(`ERROR: ${error}`);
-        vscode.window.showErrorMessage(`Dendry validation failed: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-        isValidating = false;
-        openSuppressCount--;
-        if (openSuppressCount < 0) openSuppressCount = 0;
-    }
+function stableDiagKey(diagnostics: readonly vscode.Diagnostic[]): string {
+    return JSON.stringify(diagnostics.map(diagnostic => JSON.stringify([
+        diagnostic.range.start.line, diagnostic.range.start.character,
+        diagnostic.range.end.line, diagnostic.range.end.character,
+        diagnostic.message, diagnostic.severity,
+    ])).sort());
 }
-
 
 export function deactivateCore() {
-    if (diagnosticCollection) {
-        diagnosticCollection.dispose();
-    }
+    stopCore?.();
+    stopCore = undefined;
 }

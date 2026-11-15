@@ -14,8 +14,8 @@ no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
 The corpus contains 1924 independently recorded compiler cases. Together with
-parser and project regressions, the suite has 2096 checks. The helper suite has
-82 checks. These totals describe the rich-content repair on 2026-11-15; they are not
+parser and project regressions, the suite has 2117 checks. The helper suite has
+82 checks. These totals describe the validation-queue repair on 2026-11-15; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -25,6 +25,11 @@ rich-content traversal. The 556 rich-content compiler cases cover expressions,
 magic predicates/inserts, nesting, escaping, hidden/emphasis/paragraph structure,
 unfinished delimiters, all text locations and linked/unlinked visits. Thirty new
 public parser/project regressions check positions and incremental transitions.
+Another 21 regressions exercise actual activateCore event wiring and the project
+coordinator with fake timers and gated host reads/discovery: multi-file batches,
+queued edits, superseded publication, source snapshots, deletion, read recovery,
+virtual URI variants and deactivation. The host supplies events/IO only; no queue
+or validator implementation is replaced.
 QDisplay cases cover ranges, comments, continuations, filenames, reserved IDs
 and built-in references; project regressions check retained/cleared diagnostics
 and duplicate-ID warnings. Source positions, configuration and incremental edits
@@ -37,6 +42,7 @@ npm run test:compat -- --testNamePattern=shorthand-
 npm run test:compat -- src/compatibility/javascript.compat.ts
 npm run test:compat -- src/compatibility/qdisplay.compat.ts
 npm run test:compat -- src/compatibility/rich-content.compat.ts
+npm run test:compat -- src/compatibility/validation-queue.compat.ts
 npm test -- src/qdisplay.test.ts
 ```
 
@@ -75,9 +81,10 @@ discarded content or disconnected validation from looking like full support.
 Current acceptance of `quality-string-initial`, for example, does not establish
 quality support: its missing-name counterpart must also report an error.
 
-The host stand-in tests project logic, selected incremental transitions and source
-positions. It does not establish real VS Code discovery/activation, editor events,
-highlighting or browser execution, and it does not cover every audit finding.
+The host stand-in exercises real project logic and activation/event scheduling,
+including selected incremental transitions and source positions. Fake event emitters,
+fake clocks and gated IO do not establish real VS Code host timing, discovery,
+highlighting or browser execution, and do not cover every audit finding.
 
 The standalone root missing-display regression preserves an existing extension
 diagnostic. The reference compiler accepts an unknown formatter name, so this

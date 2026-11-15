@@ -3,32 +3,20 @@ import { parseText, DendryAST, DendryNode } from './parser';
 import { BUILTIN_SCENE_IDS } from './scene-ids';
 import { DendryValidator } from './validator';
 import { qdisplayIdFromPath, parseQDisplay } from './qdisplay';
+import { uriKey } from './uri-key';
+import { SourceDocument, sourceDocument } from './source-document';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
-  private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; }> = new Map();
+  private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; document: SourceDocument; }> = new Map();
   private parseDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
   private qdisplayData = new Map<string, { uri: vscode.Uri; parsed: ReturnType<typeof parseQDisplay> }>();
-  private isValidating: boolean = false;
-  private lastResults: Map<vscode.Uri, vscode.Diagnostic[]> | null = null;
+  private pendingWorkspaceFiles?: vscode.Uri[];
+  private pendingChangedFiles = new Map<string, vscode.Uri>();
+  private pendingFullRefresh = false;
+  private running?: Promise<Map<vscode.Uri, vscode.Diagnostic[]>>;
 
-  /**
-   * Canonical cache key for a file URI. Virtual filesystem providers (notably
-   * github.dev's `vscode-vfs://github/...`) can hand us *different*
-   * `Uri.toString()` representations for the *same* file depending on whether it
-   * came from `findFiles` or from an editor document event — differing only in
-   * query/fragment or authority casing while sharing the same `.path`. Keying
-   * the cache by the raw `Uri` object (reference identity) let those diverging
-   * representations coexist as two entries, which made a file flag itself as a
-   * duplicate filename. Collapsing to `scheme://authority/path` (lowercased
-   * authority, no query/fragment) gives one entry per logical file. On desktop
-   * (`file://`) this is a no-op since those URIs are already normalized.
-   */
-  private keyFor(uri: vscode.Uri): string {
-    return `${uri.scheme}://${uri.authority.toLowerCase()}${uri.path}`;
-  }
-
-  private async _parseAndExtractLocalIds(document: vscode.TextDocument): Promise<vscode.Diagnostic[]> {
+  private parseDocument(document: SourceDocument): void {
     const diagnostics: vscode.Diagnostic[] = [];
     const { ast, errors } = parseText(document.getText(), document.uri.path);
     for (const error of errors) {
@@ -39,11 +27,11 @@ export class DendryProjectValidator {
       ));
     }
     if (errors.length) {
-      this.fileData.delete(this.keyFor(document.uri));
-      this.parseDiagnostics.set(this.keyFor(document.uri), { uri: document.uri, diagnostics });
-      return diagnostics;
+      this.fileData.delete(uriKey(document.uri));
+      this.parseDiagnostics.set(uriKey(document.uri), { uri: document.uri, diagnostics });
+      return;
     }
-    this.parseDiagnostics.delete(this.keyFor(document.uri));
+    this.parseDiagnostics.delete(uriKey(document.uri));
     const localSceneIds = new Set<string>();
     // The parser owns declaration syntax and source context. Never rescan raw
     // lines: an @name inside JavaScript or prose is not a scene declaration.
@@ -51,21 +39,60 @@ export class DendryProjectValidator {
       const id = node.properties.get('id');
       if (node.type === 'scene' && id) localSceneIds.add(id);
     }
-    this.fileData.set(this.keyFor(document.uri), { uri: document.uri, ast, localSceneIds });
-    return diagnostics;
+    this.fileData.set(uriKey(document.uri), { uri: document.uri, ast, localSceneIds, document });
   }
 
-  async validateProject(workspaceFiles: vscode.Uri[], changedFileUri?: vscode.Uri): Promise<Map<vscode.Uri, vscode.Diagnostic[]>> {
-    if (this.isValidating) {
-      return this.lastResults || new Map();
+  // Concurrent callers join the same drain. Their latest workspace inventory
+  // wins, while dirty URIs accumulate until a pass consumes them.
+  validateProject(workspaceFiles: vscode.Uri[], changed?: vscode.Uri | readonly vscode.Uri[]): Promise<Map<vscode.Uri, vscode.Diagnostic[]>> {
+    this.pendingWorkspaceFiles = [...new Map(workspaceFiles.map(uri => [uriKey(uri), uri])).values()];
+    if (changed === undefined) this.pendingFullRefresh = true;
+    else for (const uri of Array.isArray(changed) ? changed : [changed as vscode.Uri]) {
+      this.pendingChangedFiles.set(uriKey(uri), uri);
     }
-    this.isValidating = true;
-    
+    if (!this.running) this.running = Promise.resolve().then(() => this.drainValidation());
+    return this.running;
+  }
+
+  private async drainValidation(): Promise<Map<vscode.Uri, vscode.Diagnostic[]>> {
+    let results = new Map<vscode.Uri, vscode.Diagnostic[]>();
+    let failed = false, failure: unknown;
     try {
+      while (this.pendingWorkspaceFiles) {
+        const files = this.pendingWorkspaceFiles;
+        const changed = [...this.pendingChangedFiles.values()];
+        const full = this.pendingFullRefresh;
+        this.pendingWorkspaceFiles = undefined;
+        this.pendingChangedFiles.clear();
+        this.pendingFullRefresh = false;
+        try {
+          results = await this.validatePass(files, changed, full);
+          failed = false;
+        } catch (error) {
+          // Keep failed invalidations for a queued or future request. Do not
+          // spin retrying a failed pass when no new request has arrived.
+          for (const uri of changed) if (!this.pendingChangedFiles.has(uriKey(uri))) this.pendingChangedFiles.set(uriKey(uri), uri);
+          this.pendingFullRefresh ||= full;
+          failed = true; failure = error;
+        }
+      }
+      if (failed) throw failure;
+      return results;
+    } finally {
+      this.running = undefined;
+    }
+  }
+
+  private async validatePass(workspaceFiles: vscode.Uri[], changedFiles: vscode.Uri[], fullRefresh: boolean): Promise<Map<vscode.Uri, vscode.Diagnostic[]>> {
       const finalDiagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map();
+      const projectUris = new Map(workspaceFiles.map(uri => [uriKey(uri), uri]));
+      const getDiagnostics = (uri: vscode.Uri) => finalDiagnostics.get(projectUris.get(uriKey(uri))!);
+      const setDiagnostics = (uri: vscode.Uri, diagnostics: vscode.Diagnostic[]) => {
+        finalDiagnostics.set(projectUris.get(uriKey(uri))!, diagnostics);
+      };
 
       // 1. Remove deleted files from cache
-      const currentWorkspaceFileKeys = new Set(workspaceFiles.map(uri => this.keyFor(uri)));
+      const currentWorkspaceFileKeys = new Set(workspaceFiles.map(uri => uriKey(uri)));
       for (const cachedKey of this.fileData.keys()) {
         if (!currentWorkspaceFileKeys.has(cachedKey)) {
           this.fileData.delete(cachedKey);
@@ -78,39 +105,33 @@ export class DendryProjectValidator {
         if (!currentWorkspaceFileKeys.has(key)) this.qdisplayData.delete(key);
       }
 
-      // 2. Parse/re-parse changed file or new files
-      let filesToParse: vscode.Uri[] = [];
-      if (changedFileUri) {
-        filesToParse.push(changedFileUri);
-      } else {
-        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)) && !this.qdisplayData.has(this.keyFor(uri)));
-      }
+      // Always include new files. Only current project members may contribute
+      // symbols, including after a queued deletion or workspace-folder change.
+      const changedKeys = new Set(changedFiles.map(uriKey));
+      const filesToParse = workspaceFiles.filter(uri => fullRefresh || changedKeys.has(uriKey(uri)) ||
+        (!this.fileData.has(uriKey(uri)) && !this.qdisplayData.has(uriKey(uri)) && !this.parseDiagnostics.has(uriKey(uri))));
 
       for (const fileUri of filesToParse) {
-        let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
-        if (!document) {
-          try {
-            document = await vscode.workspace.openTextDocument(fileUri);
-          } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            const range = new vscode.Range(0, 0, 0, 1);
-            finalDiagnostics.set(fileUri, [new vscode.Diagnostic(range, `Error opening file: ${message}`, vscode.DiagnosticSeverity.Error)]);
-            continue;
-          }
-        }
-
-        if (fileUri.path.endsWith('.qdisplay.dry')) {
-          this.qdisplayData.set(this.keyFor(fileUri), { uri: fileUri, parsed: parseQDisplay(document.getText(), document.uri.path) });
-        } else {
-            const parsingDiags = await this._parseAndExtractLocalIds(document);
-            if (parsingDiags.length > 0) {
-              finalDiagnostics.set(fileUri, parsingDiags);
-            }
+        try {
+          const open = vscode.workspace.textDocuments.find(doc => uriKey(doc.uri) === uriKey(fileUri));
+          const text = open ? open.getText() : new TextDecoder().decode(await vscode.workspace.fs.readFile(fileUri));
+          const document = sourceDocument(fileUri, text);
+          if (fileUri.path.endsWith('.qdisplay.dry')) {
+            this.qdisplayData.set(uriKey(fileUri), { uri: fileUri, parsed: parseQDisplay(text, fileUri.path) });
+            this.parseDiagnostics.delete(uriKey(fileUri));
+          } else this.parseDocument(document);
+        } catch (error) {
+          this.fileData.delete(uriKey(fileUri));
+          this.qdisplayData.delete(uriKey(fileUri));
+          const message = error instanceof Error ? error.message : String(error);
+          this.parseDiagnostics.set(uriKey(fileUri), { uri: fileUri, diagnostics: [new vscode.Diagnostic(
+            new vscode.Range(0, 0, 0, 0), `Error reading file for validation: ${message}`, vscode.DiagnosticSeverity.Error,
+          )] });
         }
       }
 
       for (const { uri, diagnostics } of this.parseDiagnostics.values()) {
-        finalDiagnostics.set(uri, [...diagnostics]);
+        setDiagnostics(uri, [...diagnostics]);
       }
 
       const displays = new Map<string, vscode.Uri[]>();
@@ -118,24 +139,24 @@ export class DendryProjectValidator {
         const id = qdisplayIdFromPath(uri.path);
         if (id === undefined) continue;
         const entries = displays.get(id) || [];
-        if (!entries.some(entry => this.keyFor(entry) === this.keyFor(uri))) entries.push(uri);
+        if (!entries.some(entry => uriKey(entry) === uriKey(uri))) entries.push(uri);
         displays.set(id, entries);
       }
       for (const [id, entries] of displays) {
         if (entries.length < 2) continue;
         for (const uri of entries) {
           const other = entries.find(entry => entry !== uri)!;
-          const diagnostics = finalDiagnostics.get(uri) || [];
+          const diagnostics = getDiagnostics(uri) || [];
           diagnostics.push(new vscode.Diagnostic(new vscode.Range(0, 0, 0, 0),
             `Duplicate QDisplay ID '${id}' also defined at ${other.path}.`, vscode.DiagnosticSeverity.Warning));
-          finalDiagnostics.set(uri, diagnostics);
+          setDiagnostics(uri, diagnostics);
         }
       }
       const qdisplayFiles = [...displays.keys()];
       // Cache parsing, but recheck references against the current project each pass.
       for (const { uri, parsed } of this.qdisplayData.values()) {
         const diagnostics = this.validator.validateQDisplay(parsed, this.fileData, qdisplayFiles);
-        if (diagnostics.length) finalDiagnostics.set(uri, [...(finalDiagnostics.get(uri) || []), ...diagnostics]);
+        if (diagnostics.length) setDiagnostics(uri, [...(getDiagnostics(uri) || []), ...diagnostics]);
       }
 
       // 3. Recheck declarations on every pass, including cached files. Absolute
@@ -144,10 +165,10 @@ export class DendryProjectValidator {
       const sceneDefinitions = new Map<string, Definition[]>();
       const qualityDefinitions = new Map<string, Definition[]>();
       const addDiagnostic = (definition: Definition, message: string) => {
-        const items = finalDiagnostics.get(definition.uri) || [];
+        const items = getDiagnostics(definition.uri) || [];
         const point = definition.node.range.start;
         items.push(new vscode.Diagnostic(new vscode.Range(point, point), message, vscode.DiagnosticSeverity.Error));
-        finalDiagnostics.set(definition.uri, items);
+        setDiagnostics(definition.uri, items);
       };
       for (const data of this.fileData.values()) {
         for (const node of data.ast.nodes) {
@@ -175,72 +196,22 @@ export class DendryProjectValidator {
       // Validate cached ASTs against the complete project index.
       for (const data of this.fileData.values()) {
           const fileUri = data.uri;
-          // ONLY skip if there were PARSING errors (not just any diagnostics)
-          // We need to run full validation even if there are other types of errors
-          const existingDiags = finalDiagnostics.get(fileUri) || [];
-          const hasParsingErrors = existingDiags.some(diag => 
-              diag.message.includes('Lexer Error:') || 
-              diag.message.includes('Parser Error:') ||
-              diag.message.includes('Error parsing file:') ||
-              diag.message.includes('Error opening file:')
-          );
-          
-          if (hasParsingErrors) {
-              // Skip validation if we couldn't parse the file
-              console.warn(`Skipping validation for ${fileUri.fsPath} due to parsing errors`);
-              continue;
-          }
-          
-          let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
-          if (!document) {
-              try {
-                const uint8 = await vscode.workspace.fs.readFile(fileUri);
-                const text = new TextDecoder().decode(uint8);
-                const lines = text.split('\n');
-                document = {
-                  lineAt: (lineNum: number) => ({ text: lines[lineNum] } as vscode.TextLine),
-                  getText: (range?: vscode.Range) => {
-                    if (!range) {
-                      return text;
-                    }
-                    // Handle range parameter properly
-                    const rangeLines = lines.slice(range.start.line, range.end.line + 1);
-                    if (rangeLines.length === 0) return '';
-                    if (rangeLines.length === 1) {
-                      return rangeLines[0].substring(range.start.character, range.end.character);
-                    }
-                    // Multi-line range
-                    rangeLines[0] = rangeLines[0].substring(range.start.character);
-                    rangeLines[rangeLines.length - 1] = rangeLines[rangeLines.length - 1].substring(0, range.end.character);
-                    return rangeLines.join('\n');
-                  },
-                  uri: fileUri
-                } as vscode.TextDocument;
-              } catch (error) {
-                  const message = error instanceof Error ? error.message : String(error);
-                  const range = new vscode.Range(0, 0, 0, 1);
-                  finalDiagnostics.set(fileUri, [new vscode.Diagnostic(range, `Error reading file for validation: ${message}`, vscode.DiagnosticSeverity.Error)]);
-                  continue;
-              }
-          }
+          const existingDiags = getDiagnostics(fileUri) || [];
+          const document = data.document;
 
           try {
               const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData, qdisplayFiles);
               if (validationDiagnostics.length > 0) {
-                finalDiagnostics.set(fileUri, [...existingDiags, ...validationDiagnostics]);
+                setDiagnostics(fileUri, [...existingDiags, ...validationDiagnostics]);
               }
           } catch (error) {
               const message = error instanceof Error ? error.message : String(error);
               const range = new vscode.Range(0, 0, 0, 1);
               const errorDiag = new vscode.Diagnostic(range, `Error validating file: ${message}`, vscode.DiagnosticSeverity.Error);
-              finalDiagnostics.set(fileUri, [...existingDiags, errorDiag]);
+              setDiagnostics(fileUri, [...existingDiags, errorDiag]);
           }
       }
 
-      this.lastResults = finalDiagnostics;
       return finalDiagnostics;
-    } finally {
-      this.isValidating = false;
-    }
   }
 }

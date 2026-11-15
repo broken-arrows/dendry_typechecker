@@ -29,6 +29,67 @@ export class Diagnostic {
   constructor(public range: Range, public message: string, public severity = DiagnosticSeverity.Error) {}
 }
 
+function hostEvent<T>() {
+  const listeners = new Set<(event: T) => unknown>();
+  return {
+    event(listener: (event: T) => unknown) {
+      listeners.add(listener);
+      return { dispose: () => { listeners.delete(listener); } };
+    },
+    fire(event: T) { for (const listener of listeners) listener(event); },
+    reset() { listeners.clear(); },
+  };
+}
+
+const events = {
+  change: hostEvent<{ document: vscode.TextDocument }>(),
+  save: hostEvent<vscode.TextDocument>(),
+  open: hostEvent<vscode.TextDocument>(),
+  close: hostEvent<vscode.TextDocument>(),
+  delete: hostEvent<{ files: vscode.Uri[] }>(),
+  folders: hostEvent<void>(),
+};
+const diskDocuments = new Map<string, vscode.TextDocument>();
+
+class HostDiagnostics {
+  readonly entries = new Map<string, { uri: vscode.Uri; diagnostics: readonly vscode.Diagnostic[] }>();
+  readonly updates: string[] = [];
+  disposed = false;
+  set(uri: vscode.Uri, diagnostics: readonly vscode.Diagnostic[]) {
+    if (this.disposed) throw new Error('Writing to disposed diagnostic collection');
+    this.entries.set(uri.toString(), { uri, diagnostics });
+    this.updates.push(uri.toString());
+  }
+  delete(uri: vscode.Uri) { this.entries.delete(uri.toString()); this.updates.push(uri.toString()); }
+  clear() { this.entries.clear(); }
+  dispose() { this.disposed = true; this.entries.clear(); }
+}
+
+export const editor = {
+  events,
+  collections: [] as HostDiagnostics[],
+  errors: [] as string[],
+  reset() {
+    for (const event of Object.values(events)) event.reset();
+    this.collections = [];
+    this.errors = [];
+    workspace.workspaceFolders = [{ name: 'compatibility' }];
+    loadProject([]);
+  },
+};
+
+export const languages = {
+  createDiagnosticCollection() {
+    const collection = new HostDiagnostics();
+    editor.collections.push(collection);
+    return collection;
+  },
+};
+export const window = {
+  createOutputChannel: () => ({ appendLine: (_message: string) => {}, dispose: () => {} }),
+  showErrorMessage: (message: string) => { editor.errors.push(message); },
+};
+
 function makeDocument(name: string, text: string): vscode.TextDocument {
   const path = `/compatibility/${name}`;
   const uri = {
@@ -68,20 +129,39 @@ function makeDocument(name: string, text: string): vscode.TextDocument {
 
 export const workspace = {
   textDocuments: [] as vscode.TextDocument[],
+  workspaceFolders: [{ name: 'compatibility' }],
+  onDidChangeTextDocument: events.change.event,
+  onDidSaveTextDocument: events.save.event,
+  onDidOpenTextDocument: events.open.event,
+  onDidCloseTextDocument: events.close.event,
+  onDidDeleteFiles: events.delete.event,
+  onDidChangeWorkspaceFolders: events.folders.event,
+  async findFiles(pattern: string, _exclude?: string) {
+    const suffix = pattern.replace('**/*', '').replace('**/', '/');
+    return [...diskDocuments.values()].filter(document => document.uri.path.endsWith(suffix)).map(document => document.uri);
+  },
   getConfiguration: () => ({ get: <T>(_key: string, fallback: T): T => fallback }),
   async openTextDocument(uri: vscode.Uri): Promise<vscode.TextDocument> {
-    const document = workspace.textDocuments.find(doc => doc.uri.toString() === uri.toString());
+    const document = diskDocuments.get(uri.toString());
     if (!document) throw new Error(`Missing test document: ${uri.path}`);
+    if (!workspace.textDocuments.includes(document)) {
+      workspace.textDocuments.push(document);
+      events.open.fire(document);
+    }
     return document;
   },
   fs: {
     async readFile(uri: vscode.Uri): Promise<Uint8Array> {
-      return Buffer.from((await workspace.openTextDocument(uri)).getText(), 'utf8');
+      const document = diskDocuments.get(uri.toString());
+      if (!document) throw new Error(`Missing test file: ${uri.path}`);
+      return Buffer.from(document.getText(), 'utf8');
     },
   },
 };
 
 export function loadProject(files: { name: string; contents: string }[]): vscode.Uri[] {
   workspace.textDocuments = files.map(file => makeDocument(file.name, file.contents));
+  diskDocuments.clear();
+  for (const document of workspace.textDocuments) diskDocuments.set(document.uri.toString(), document);
   return workspace.textDocuments.map(document => document.uri);
 }

@@ -7,6 +7,7 @@ import { ControlSource, controlPropertySource, destinationClauses } from './scen
 import { checkShorthand, LogicKind } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
 import { RichContent } from './rich-content';
+import { SourceDocument } from './source-document';
 import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
 type FileData = {
@@ -47,7 +48,7 @@ export class DendryValidator {
 
   validate(
     ast: DendryAST,
-    document: vscode.TextDocument,
+    document: SourceDocument,
     allFileData: Map<string, FileData>,
     qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
@@ -120,7 +121,7 @@ export class DendryValidator {
     return diagnostics;
   }
 
-  private validateNode(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+  private validateNode(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     switch (node.type) {
       case 'scene':
         return this.validateScene(node, document);
@@ -135,7 +136,7 @@ export class DendryValidator {
     }
   }
 
-  private validateScene(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+  private validateScene(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     const visitLimits = new Map<string, number>();
 
@@ -276,7 +277,7 @@ export class DendryValidator {
     else diagnostics.push(...this.validatePredicateValue(source, fallback, 'predicate', linked));
   }
 
-  private validateQuality(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+  private validateQuality(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     if (!/^[A-Za-z][\-A-Za-z0-9_]*$/.test(String(node.properties.get('id') || ''))) {
       diagnostics.push(this.createDiagnostic(node.range, 'Invalid filename-derived quality name.', vscode.DiagnosticSeverity.Error));
@@ -306,7 +307,7 @@ export class DendryValidator {
     return diagnostics;
   }
 
-  private validateInfo(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+  private validateInfo(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     const fields = new Set(['id', 'type', 'title', 'author', 'ifid', 'first-scene', 'root-scene',
       'animate', 'scene-signal', 'quality-signal', 'display-sidebar', 'display-stats', 'display-options', 'sidebar-stats']);
@@ -353,7 +354,7 @@ export class DendryValidator {
     return diagnostics;
   }
 
-  private validateChoice(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+  private validateChoice(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
 
     for (const [key, value] of node.properties.entries()) {
@@ -418,7 +419,7 @@ export class DendryValidator {
     return Boolean(String(node?.properties.get('title') ?? '').trim());
   }
 
-  private findRangeForProperty(document: vscode.TextDocument, nodeRange: vscode.Range, key: string): vscode.Range {
+  private findRangeForProperty(document: SourceDocument, nodeRange: vscode.Range, key: string): vscode.Range {
     const nodeText = document.getText(nodeRange);
     const lines = nodeText.split('\n');
     let propertyLineIndex = -1;
