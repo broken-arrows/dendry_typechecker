@@ -3,7 +3,7 @@ import { DendryAST, DendryNode, normalizePropertyName } from './parser';
 import { checkScript, FindingSeverity } from './js-check';
 import { SCENE_SCHEMA } from './scene-schema';
 import { ControlSource, controlPropertySource, destinationClauses } from './scene-control';
-import { convertCondition, convertAction } from './dendry-logic/shorthand';
+import { checkShorthand, LogicKind } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
 import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
@@ -285,11 +285,11 @@ export class DendryValidator {
           if (!rawValue) diagnostics.push(this.createDiagnostic(
             range, `Property "${key}" requires a nonempty ${kind}.`, vscode.DiagnosticSeverity.Error,
           ));
-          else diagnostics.push(...this.validatePredicateValue(controlPropertySource(raw, sourceRange.start.line), range));
+          else diagnostics.push(...this.validatePredicateValue(controlPropertySource(raw, sourceRange.start.line), range, kind, kind === 'predicate'));
           break;
         }
         case 'action':
-          diagnostics.push(...this.validateActionValue(controlPropertySource(raw, sourceRange.start.line), range));
+          diagnostics.push(...this.validateActionValue(controlPropertySource(raw, sourceRange.start.line)));
           break;
         case 'destination': case 'quality-destination': {
           const source = controlPropertySource(raw, sourceRange.start.line);
@@ -387,13 +387,13 @@ export class DendryValidator {
       else this.validateSceneReference(target, targetRange, diagnostics,
         key === 'go-to' ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
 
-      if (clause.predicate) this.validateDestinationPredicate(clause.predicate, fallback, diagnostics);
+      if (clause.predicate) this.validateDestinationPredicate(clause.predicate, fallback, diagnostics, key === 'go-to');
     }
   }
 
-  private validateDestinationPredicate(source: ControlSource, fallback: vscode.Range, diagnostics: vscode.Diagnostic[]): void {
+  private validateDestinationPredicate(source: ControlSource, fallback: vscode.Range, diagnostics: vscode.Diagnostic[], linked: boolean): void {
     if (!source.text) diagnostics.push(this.createDiagnostic(fallback, 'Destination requires a nonempty predicate after if.', vscode.DiagnosticSeverity.Error));
-    else diagnostics.push(...this.validatePredicateValue(source, fallback));
+    else diagnostics.push(...this.validatePredicateValue(source, fallback, 'predicate', linked));
   }
 
   private validateSceneContent(node: DendryNode, document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {
@@ -406,11 +406,11 @@ export class DendryValidator {
         if (lineText.trim().startsWith('#')) {
             continue; // Skip comments
         }
-        this.validateInlineConditionalsInLine(lineText, i, diagnostics);
+        this.validateInlineConditionalsInLine(lineText, i, diagnostics, node.type === 'scene');
     }
   }
 
-  private validateInlineConditionalsInLine(lineText: string, lineNum: number, diagnostics: vscode.Diagnostic[]) {
+  private validateInlineConditionalsInLine(lineText: string, lineNum: number, diagnostics: vscode.Diagnostic[], linked = false) {
       // Match ONLY: [? condition : text ?]
       // Brackets are REQUIRED
       const regex = /(\[\?\s*)([^:]+?)\s*:\s*([^?]*)\?\]/gi;
@@ -428,16 +428,13 @@ export class DendryValidator {
               continue;
           }
 
-          const preParsedCondition = '(' + condition.slice(2) + ')';
-
-          // Precise condition range: after [? if up to (but not including) first :
           const conditionStartCol = match.index + conditionPrefix.length;
           const conditionEndCol = conditionStartCol + condition.length;
           const conditionRange = new vscode.Range(lineNum, conditionStartCol, lineNum, conditionEndCol);
-
-          // Validate ONLY condition as Dendry logic (condition context: = -> ==)
-          const conditionDiagnostics = this.validateDendryCondition(preParsedCondition, conditionRange);
-          diagnostics.push(...conditionDiagnostics);
+          const source = ControlSource.literal(match[2], lineNum, conditionStartCol).trim();
+          const keyword = source.text.match(/^if\s+/);
+          if (!keyword) diagnostics.push(this.createDiagnostic(conditionRange, 'Inline condition must start with if.', vscode.DiagnosticSeverity.Error));
+          else diagnostics.push(...this.validatePredicateValue(source.slice(keyword[0].length).trim(), conditionRange, 'predicate', linked));
       }
   }
 
@@ -465,7 +462,7 @@ export class DendryValidator {
       if (key === 'is-valid') {
         const header = node.propertyRanges?.get(key) || range;
         const source = controlPropertySource(document.getText(header), header.start.line);
-        diagnostics.push(...this.validatePredicateValue(source, range));
+        diagnostics.push(...this.validatePredicateValue(source, range, 'predicate', false));
       }
     }
     // initial accepts numbers, booleans and strings. Upstream does not reject
@@ -539,7 +536,8 @@ export class DendryValidator {
 
       if (key === 'view-if' || key === 'choose-if' || key === 'frequency-var') {
         const header = node.propertyRanges?.get(key) || node.range;
-        diagnostics.push(...this.validatePredicateValue(controlPropertySource(document.getText(header), header.start.line), r));
+        diagnostics.push(...this.validatePredicateValue(controlPropertySource(document.getText(header), header.start.line), r,
+          key === 'frequency-var' ? 'expression' : 'predicate', key !== 'frequency-var'));
       }
 
       if (key === 'priority' || key === 'order' || key === 'frequency') {
@@ -682,14 +680,15 @@ export class DendryValidator {
   // Top-level entry points (matched to property kind):
   //  - validatePredicateValue: `view-if`, `choose-if`, expression fields.
   //    Mixing logic + magic is rejected per upstream `makeCompile`.
-  //  - validateActionValue:    `on-arrival`, `on-departure`, `on-display`,
-  //    and any other `on-*`. Mixed values are chunk-split per upstream
+  //  - validateActionValue:    `on-arrival`, `on-departure`, `on-display`.
+  //    Mixed values are chunk-split per upstream
   //    `validateActions`; alternating chunks dispatch to magic (JS
   //    block) or logic (Dendry shorthand) validation.
   // All executable properties carry their source map through dispatch.
-  // Inline content still uses the shorthand checker until content parsing aligns.
+  // Extracted inline conditions also use the grammar; full content extraction
+  // remains a separate parser task.
 
-  private validatePredicateValue(source: ControlSource, fallback: vscode.Range): vscode.Diagnostic[] {
+  private validatePredicateValue(source: ControlSource, fallback: vscode.Range, kind: 'predicate' | 'expression', linked: boolean): vscode.Diagnostic[] {
     const range = this.controlRange(source, fallback);
     if (containsMagicMarker(source.text)) {
       // makeCompile uses the FIRST closing marker, unlike action chunking.
@@ -698,10 +697,10 @@ export class DendryValidator {
       }
       return this.validateAsJsBlock(source.slice(2, source.text.length - 2));
     }
-    return this.validateAsShorthand(source.text, range, false);
+    return this.validateAsShorthand(source, kind, linked);
   }
 
-  private validateActionValue(source: ControlSource, fallback: vscode.Range): vscode.Diagnostic[] {
+  private validateActionValue(source: ControlSource): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     const chunks = splitActionChunks(source.text);
     for (const chunk of chunks) {
@@ -709,14 +708,10 @@ export class DendryValidator {
       if (chunk.kind === 'magic') {
         diagnostics.push(...this.validateAsJsBlock(mapped));
       } else {
-        diagnostics.push(...this.validateAsShorthand(mapped.text, this.controlRange(mapped, fallback), true));
+        diagnostics.push(...this.validateAsShorthand(mapped, 'actions', true));
       }
     }
     return diagnostics;
-  }
-
-  private validateDendryCondition(code: string, range: vscode.Range): vscode.Diagnostic[] {
-    return this.validateAsShorthand(code, range, false);
   }
 
   private validateAsJsBlock(source: ControlSource): vscode.Diagnostic[] {
@@ -734,47 +729,34 @@ export class DendryValidator {
     });
   }
 
-  private validateAsShorthand(code: string, anchor: vscode.Range, isAction: boolean): vscode.Diagnostic[] {
+  private validateAsShorthand(source: ControlSource, kind: LogicKind, linked: boolean): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    const conversion = isAction ? convertAction(code) : convertCondition(code);
-
-    for (const err of conversion.errors) {
-      diagnostics.push(this.createDiagnostic(anchor, err.message, vscode.DiagnosticSeverity.Error));
+    const checked = checkShorthand(source.text, kind);
+    const tokenRange = (offset: number, length: number) => {
+      const start = source.position(offset);
+      const end = source.position(offset + length);
+      return new vscode.Range(start.line, start.character, end.line, end.character);
+    };
+    for (const error of checked.errors) {
+      diagnostics.push(this.createDiagnostic(tokenRange(error.offset, error.length), error.message, vscode.DiagnosticSeverity.Error));
     }
-
-    for (const warn of conversion.prefixWarnings) {
-      const warnRange = this.offsetToRange(anchor, code, warn.offset, warn.length);
-      diagnostics.push(
-        this.createDiagnostic(
-          warnRange,
-          `Use "${warn.identifier}" without the "${warn.prefix}." prefix in Dendry logic.`,
-          vscode.DiagnosticSeverity.Warning
-        )
-      );
-    }
-
-    const findings = checkScript(conversion.jsSource, {
-      checkUndefined: false,
-    });
-    for (const f of findings) {
-      // Position-mapping through the shorthand conversion is unreliable,
-      // so report the whole property range — matches prior behavior.
-      if (f.kind === 'parse-error') {
-        diagnostics.push(
-          this.createDiagnostic(
-            anchor,
-            `Dendry logic Error: ${stripJsErrorPrefix(f.message)}`,
-            vscode.DiagnosticSeverity.Error
-          )
-        );
-      } else if (f.kind === 'assignment-in-condition') {
-        diagnostics.push(
-          this.createDiagnostic(anchor, f.message, this.severityFor(f.severity))
-        );
+    if (checked.errors.length) return diagnostics;
+    // Upstream linking scans source with a regex, even inside quoted strings.
+    // Unlinked schema fields get authoring warnings for actual visit tokens.
+    const visits = linked
+      ? [...source.text.matchAll(/@((?:\.+|[\w-])[\w-]*(?:\.[\w-]+)*)/g)].map(match =>
+        ({ text: match[0], offset: match.index!, length: match[0].length }))
+      : checked.visits;
+    for (const visit of visits) {
+      const range = tokenRange(visit.offset, visit.length);
+      const severity = linked ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning;
+      const target = this.validateSceneReference(visit.text.slice(1), range, diagnostics, severity);
+      if (!target) continue;
+      const properties = this.sceneNodes.get(target)?.properties;
+      if (!properties || !['count-visits-max', 'max-visits', 'max-visits-var'].some(key => properties.has(key))) {
+        diagnostics.push(this.createDiagnostic(range, `Scene '${target}' needs count-visits-max for this visit count.`, severity));
       }
-      // Undefined-name checking is disabled for shorthand qualities.
     }
-
     return diagnostics;
   }
 
@@ -784,19 +766,6 @@ export class DendryValidator {
       case 'warning': return vscode.DiagnosticSeverity.Warning;
       case 'hint': return vscode.DiagnosticSeverity.Hint;
     }
-  }
-
-  // Convert a (offset, length) inside `source` into a vscode.Range,
-  // anchored at `anchor` (which corresponds to source position 0).
-  // Assumes `source` is single-line — used only in the shorthand path.
-  private offsetToRange(anchor: vscode.Range, source: string, offset: number, length: number): vscode.Range {
-    const before = source.substring(0, offset);
-    const lineBreaks = before.split('\n');
-    const lineDelta = lineBreaks.length - 1;
-    const colInLine = lineBreaks[lineBreaks.length - 1].length;
-    const startLine = anchor.start.line + lineDelta;
-    const startCol = lineDelta === 0 ? anchor.start.character + colInLine : colInLine;
-    return new vscode.Range(startLine, startCol, startLine, startCol + length);
   }
 
 
@@ -820,12 +789,6 @@ export class DendryValidator {
     d.source = 'dendry';
     return d;
   }
-}
-
-// "JavaScript Error: <msg>" comes back from js-check; strip the prefix
-// so we can re-prefix as "Dendry logic Error: <msg>" in shorthand mode.
-function stripJsErrorPrefix(msg: string): string {
-  return msg.replace(/^JavaScript Error:\s*/, '');
 }
 
 // Language markers are retained independently of line count.

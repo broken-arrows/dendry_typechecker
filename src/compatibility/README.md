@@ -146,6 +146,27 @@ lexical scopes. Unknown identifiers remain hints/warnings; dynamic quality
 members do not require declarations. This does not establish rich-content or
 shorthand grammar parity, an engine API/type model, or editor-host integration.
 
+After shorthand grammar and visit dependencies: **1346 checks, 1344 passing and
+the same 2 QDisplay failures**. The recording contains 1237 compiler cases,
+including 389 new shorthand cases. Twenty-four public-boundary regressions cover
+mapped tokens through continuation/mixed chunks, local resolution, tracking
+derivation, warning/error policies, opaque JS and incremental tracking changes.
+The helper suite has 78 passing checks, including 34 grammar checks replacing
+the old eight approximation tests.
+
+```sh
+npm run test:compat -- --testNamePattern=shorthand-
+npm run test:compat -- src/compatibility/shorthand.compat.ts
+npm test -- src/dendry-logic/shorthand.test.ts
+```
+
+Actions, predicates and arithmetic expressions have explicit pinned grammars.
+Dynamic qualities/functions are legal. Visit dependencies are errors only in
+the compiler's linking passes; unlinked expression/quality/go-sub/go-to-ref
+fields get authoring warnings. Linked source also scans quoted @IDs as upstream
+does. Full rich-content extraction and the existing QDisplay defects remain
+open. Ordinary tests require no upstream checkout, probe dependencies or network.
+
 ## Boundaries and assertions
 
 The user agreed to `parseText(text, filename)` and

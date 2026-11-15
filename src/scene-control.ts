@@ -3,6 +3,16 @@
 export interface SourcePosition { line: number; character: number }
 
 export class ControlSource {
+  static literal(text: string, line: number, character = 0): ControlSource {
+    const positions: SourcePosition[] = [];
+    const fallback = { line, character };
+    for (const char of text.split('')) {
+      positions.push({ line, character });
+      if (char === '\n') { line++; character = 0; } else character++;
+    }
+    return new ControlSource(text, positions, fallback);
+  }
+
   constructor(
     readonly text: string,
     private readonly positions: SourcePosition[],

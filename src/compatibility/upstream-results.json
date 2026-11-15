@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "23bb92f5f09ddededec3d43a59804318e8ebe2eea0838c1a112741ef5a3af0ac",
+    "corpusSha256": "e8d90bfc1c5ce9efd779b6f6d354b6bab2775517c0c21c53e0a48a9aea81082a",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -7124,6 +7124,3638 @@
     "javascript-destination-mixed-predicate": {
       "ok": false,
       "error": "root.scene.dry: Magic in a predicate must have no other content surrounding it."
+    },
+    "shorthand-root-view-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score === 1"
+    },
+    "shorthand-root-view-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-root-view-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-root-view-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-root-view-if-grammar-8": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: a > 0; b > 0"
+    },
+    "shorthand-root-view-if-grammar-9": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: a And b"
+    },
+    "shorthand-root-view-if-grammar-10": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: not not a"
+    },
+    "shorthand-root-view-if-grammar-11": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-12": {
+      "ok": false,
+      "error": "Unexpected token '&&'"
+    },
+    "shorthand-root-view-if-grammar-13": {
+      "ok": false,
+      "error": "Unexpected token '||'"
+    },
+    "shorthand-root-view-if-grammar-14": {
+      "ok": false,
+      "error": "Unexpected token ')'"
+    },
+    "shorthand-root-view-if-grammar-15": {
+      "ok": false,
+      "error": "Unexpected token ')'"
+    },
+    "shorthand-root-view-if-grammar-16": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: TRUE = 1"
+    },
+    "shorthand-root-view-if-grammar-17": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-18": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-19": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-20": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: \"bar\" = foo"
+    },
+    "shorthand-root-view-if-grammar-21": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo !== 1"
+    },
+    "shorthand-root-view-if-grammar-22": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-23": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-24": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo ="
+    },
+    "shorthand-root-view-if-grammar-25": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo > 0;"
+    },
+    "shorthand-root-view-if-grammar-26": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo[0]"
+    },
+    "shorthand-root-view-if-grammar-27": {
+      "ok": false,
+      "error": "root.scene.dry line 3: @.root: Unrecognized content at position 0."
+    },
+    "shorthand-root-view-if-grammar-28": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: @root..part"
+    },
+    "shorthand-root-view-if-grammar-29": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-30": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-grammar-31": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: IF a"
+    },
+    "shorthand-root-view-if-grammar-32": {
+      "ok": false,
+      "error": "root.scene.dry line 3: a || b: Unrecognized content at position 2."
+    },
+    "shorthand-root-view-if-grammar-33": {
+      "ok": false,
+      "error": "root.scene.dry line 3: !a: Unrecognized content at position 0."
+    },
+    "shorthand-root-view-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-view-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-root-view-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score === 1"
+    },
+    "shorthand-root-choose-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-root-choose-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-root-choose-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-root-choose-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-choose-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-choose-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-root-choose-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score > 3"
+    },
+    "shorthand-root-frequency-var-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: TRUE"
+    },
+    "shorthand-root-frequency-var-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score === 1"
+    },
+    "shorthand-root-frequency-var-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: 1e3"
+    },
+    "shorthand-root-frequency-var-grammar-8": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: 3-1"
+    },
+    "shorthand-root-frequency-var-grammar-9": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-10": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-11": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: -score"
+    },
+    "shorthand-root-frequency-var-grammar-12": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: (-score)"
+    },
+    "shorthand-root-frequency-var-grammar-13": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-14": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-15": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-16": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: 1e-3"
+    },
+    "shorthand-root-frequency-var-grammar-17": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-18": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-19": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: a = 1"
+    },
+    "shorthand-root-frequency-var-grammar-20": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: a; b"
+    },
+    "shorthand-root-frequency-var-grammar-21": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: [1,2]"
+    },
+    "shorthand-root-frequency-var-grammar-22": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Math.sqrt(4)"
+    },
+    "shorthand-root-frequency-var-grammar-23": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-24": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-25": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-grammar-26": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: not a"
+    },
+    "shorthand-root-frequency-var-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-frequency-var-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score > 3"
+    },
+    "shorthand-root-max-visits-var-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: TRUE"
+    },
+    "shorthand-root-max-visits-var-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: score === 1"
+    },
+    "shorthand-root-max-visits-var-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: 1e3"
+    },
+    "shorthand-root-max-visits-var-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-max-visits-var-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-root-on-arrival-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-root-on-arrival-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo++"
+    },
+    "shorthand-root-on-arrival-grammar-8": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-9": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-10": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-11": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-12": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-13": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-14": {
+      "ok": false,
+      "error": "Unexpected token ')'"
+    },
+    "shorthand-root-on-arrival-grammar-15": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-16": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: ;x=1"
+    },
+    "shorthand-root-on-arrival-grammar-17": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: x=1;;y=2"
+    },
+    "shorthand-root-on-arrival-grammar-18": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: x=1; ;y=2"
+    },
+    "shorthand-root-on-arrival-grammar-19": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: x=[1,2]"
+    },
+    "shorthand-root-on-arrival-grammar-20": {
+      "ok": false,
+      "error": "root.scene.dry line 3: _score=1: Unrecognized content at position 0."
+    },
+    "shorthand-root-on-arrival-grammar-21": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo()"
+    },
+    "shorthand-root-on-arrival-grammar-22": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-23": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: x=1-2"
+    },
+    "shorthand-root-on-arrival-grammar-24": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-grammar-25": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: x=1 /* comment */"
+    },
+    "shorthand-root-on-arrival-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-on-arrival-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-root-on-arrival-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-root-on-departure-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-root-on-departure-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo++"
+    },
+    "shorthand-root-on-departure-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-departure-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-on-departure-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-root-on-departure-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-root-on-display-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-root-on-display-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 3: No valid way to parse this content: foo++"
+    },
+    "shorthand-root-on-display-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-display-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-on-display-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-root-on-display-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score === 1"
+    },
+    "shorthand-section-view-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-section-view-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-section-view-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-section-view-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-view-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-section-view-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root.part\"."
+    },
+    "shorthand-section-view-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score === 1"
+    },
+    "shorthand-section-choose-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-section-choose-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-section-choose-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-section-choose-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-choose-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-section-choose-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root.part\"."
+    },
+    "shorthand-section-choose-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score > 3"
+    },
+    "shorthand-section-frequency-var-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: TRUE"
+    },
+    "shorthand-section-frequency-var-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score === 1"
+    },
+    "shorthand-section-frequency-var-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: 1e3"
+    },
+    "shorthand-section-frequency-var-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-frequency-var-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score > 3"
+    },
+    "shorthand-section-max-visits-var-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: TRUE"
+    },
+    "shorthand-section-max-visits-var-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: score === 1"
+    },
+    "shorthand-section-max-visits-var-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: 1e3"
+    },
+    "shorthand-section-max-visits-var-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-max-visits-var-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-section-on-arrival-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-section-on-arrival-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: foo++"
+    },
+    "shorthand-section-on-arrival-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-arrival-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-section-on-arrival-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root.part\"."
+    },
+    "shorthand-section-on-arrival-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-section-on-departure-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-section-on-departure-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: foo++"
+    },
+    "shorthand-section-on-departure-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-departure-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-section-on-departure-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root.part\"."
+    },
+    "shorthand-section-on-departure-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: var score = 1"
+    },
+    "shorthand-section-on-display-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-section-on-display-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 9: No valid way to parse this content: foo++"
+    },
+    "shorthand-section-on-display-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-section-on-display-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-section-on-display-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root.part\"."
+    },
+    "shorthand-section-on-display-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score === 1"
+    },
+    "shorthand-choice-view-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-choice-view-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 7: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-choice-view-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-choice-view-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-view-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-choice-view-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-choice-view-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score === 1"
+    },
+    "shorthand-choice-choose-if-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-choice-choose-if-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 7: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-choice-choose-if-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-choice-choose-if-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-choose-if-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-choice-choose-if-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-choice-choose-if-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score > 3"
+    },
+    "shorthand-choice-frequency-var-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: TRUE"
+    },
+    "shorthand-choice-frequency-var-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score === 1"
+    },
+    "shorthand-choice-frequency-var-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: 1e3"
+    },
+    "shorthand-choice-frequency-var-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-choice-frequency-var-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-quality-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-grammar-4": {
+      "ok": false,
+      "error": "score.quality.dry line 2: No valid way to parse this content: score === 1"
+    },
+    "shorthand-quality-grammar-5": {
+      "ok": false,
+      "error": "score.quality.dry line 2: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-quality-grammar-6": {
+      "ok": false,
+      "error": "score.quality.dry line 2: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-quality-grammar-7": {
+      "ok": false,
+      "error": "score.quality.dry line 2: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-quality-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-quality-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "score"
+      ]
+    },
+    "shorthand-go-to-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score === 1"
+    },
+    "shorthand-go-to-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-go-to-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-go-to-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-go-to-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-visits-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-go-to-visits-missing": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"target\" in \"root\"."
+    },
+    "shorthand-go-to-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score === 1"
+    },
+    "shorthand-go-to-ref-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-go-to-ref-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-go-to-ref-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-go-to-ref-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-to-ref-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score === 1"
+    },
+    "shorthand-go-sub-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-go-sub-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-go-sub-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-go-sub-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score === 1"
+    },
+    "shorthand-go-sub-start-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-go-sub-start-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-go-sub-start-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-go-sub-start-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-start-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-grammar-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-grammar-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-grammar-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-grammar-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-grammar-4": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score === 1"
+    },
+    "shorthand-go-sub-end-grammar-5": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: Q.score = 1"
+    },
+    "shorthand-go-sub-end-grammar-6": {
+      "ok": false,
+      "error": "root.scene.dry: ready && awake: Unrecognized content at position 6."
+    },
+    "shorthand-go-sub-end-grammar-7": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: if a then x=1"
+    },
+    "shorthand-go-sub-end-visits-count-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-visits-max-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-visits-dynamic-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-visits-untracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-visits-missing": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-go-sub-end-js-string-is-opaque": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-quoted-visit-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-on-arrival-quoted-visit-tracked": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "shorthand-root-view-if-quoted-visit-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "shorthand-root-on-arrival-quoted-visit-untracked": {
+      "ok": false,
+      "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
     }
   }
 }

@@ -1,6 +1,6 @@
 # Dendry Type Checker for VSCode
 
-A Visual Studio Code extension providing type checking and validation for DendryNexys interactive fiction files. This extension is currently in **beta** versioning, expect bugs and incomplete checking and highlighting.
+A Visual Studio Code extension providing type checking and validation for DendryNexys interactive fiction files. Now fully released!
 
 ## Features
 
