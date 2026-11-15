@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import { DendryProjectValidator } from './project-validator';
-import { DENDRY_FILE_GLOBS, dendryFileKind } from './file-kinds';
+import { dendryFileKind } from './file-kinds';
 import { uriKey } from './uri-key';
+import { discoverProjects } from './project-inputs';
+import { validationSettings } from './validation-settings';
 
 let stopCore: (() => void) | undefined;
 
@@ -10,7 +12,9 @@ export function activateCore(context: vscode.ExtensionContext) {
     stopCore?.();
     const diagnostics = vscode.languages.createDiagnosticCollection('dendry');
     const output = vscode.window.createOutputChannel('Dendry');
-    const validator = new DendryProjectValidator();
+    const watcher = vscode.workspace.createFileSystemWatcher('**');
+    const validators = new Map<string, DendryProjectValidator>();
+    let knownFiles: vscode.Uri[] = [];
     const lastDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
     const dirtyFiles = new Map<string, vscode.Uri>();
     let fullRefresh = false;
@@ -68,15 +72,18 @@ export function activateCore(context: vscode.ExtensionContext) {
                 dirtyFiles.clear();
                 fullRefresh = false;
                 try {
-                    const config = vscode.workspace.getConfiguration('dendry');
-                    if (!config.get('validation.enable', true)) continue;
-                    const excludes = config.get<string[]>('validation.exclude', [
-                        '**/node_modules/**', '**/.git/**', '**/dist/**', '**/build/**', '**/out/**',
-                    ]);
-                    const exclude = excludes.length > 1 ? `{${excludes.join(',')}}` : excludes[0] || undefined;
-                    const files = (await Promise.all(DENDRY_FILE_GLOBS.map(pattern => vscode.workspace.findFiles(pattern, exclude)))).flat();
+                    const projects = await discoverProjects();
                     if (disposed) return;
-                    const results = await validator.validateProject(files, full ? undefined : batch);
+                    knownFiles = projects.flatMap(project => project.files);
+                    const active = new Set(projects.map(project => project.key));
+                    for (const key of validators.keys()) if (!active.has(key)) validators.delete(key);
+                    const projectResults = await Promise.all(projects.map(project => {
+                        if (!project.files.some(uri => validationSettings(uri).enabled)) return Promise.resolve(new Map<vscode.Uri, vscode.Diagnostic[]>());
+                        let validator = validators.get(project.key);
+                        if (!validator) { validator = new DendryProjectValidator(); validators.set(project.key, validator); }
+                        return validator.validateProject(project.files, full ? undefined : batch);
+                    }));
+                    const results = new Map(projectResults.flatMap(result => [...result]));
                     // Events invalidate publication immediately, even before
                     // their debounce expires. Their queued pass will publish.
                     if (!disposed && revision === generation) publish(results);
@@ -100,6 +107,8 @@ export function activateCore(context: vscode.ExtensionContext) {
         clearTimeout(timer);
         clearTimeout(startupTimer);
         dirtyFiles.clear();
+        watcher.dispose();
+        validators.clear();
         diagnostics.dispose();
         output.dispose();
     };
@@ -107,27 +116,54 @@ export function activateCore(context: vscode.ExtensionContext) {
     context.subscriptions.push({ dispose });
 
     output.appendLine('Dendry activated');
-    if (vscode.workspace.workspaceFolders?.length) startupTimer = setTimeout(() => schedule(), 1000);
+    startupTimer = setTimeout(() => schedule(), 1000);
+
+    // '**' includes parent-directory deletion/move events that narrower file
+    // globs miss. Ignore unrelated changes and only stat untyped creations.
+    context.subscriptions.push(watcher,
+        watcher.onDidChange(uri => { if (dendryFileKind(uri.path)) schedule(uri); }),
+        watcher.onDidCreate(async uri => {
+            if (disposed) return;
+            if (dendryFileKind(uri.path)) schedule(uri);
+            else {
+                try {
+                    if ((await vscode.workspace.fs.stat(uri)).type & vscode.FileType.Directory) schedule();
+                } catch { /* A transient creation already disappeared. */ }
+            }
+        }),
+        watcher.onDidDelete(uri => {
+            const prefix = uriKey(uri).replace(/\/$/, '') + '/';
+            if (dendryFileKind(uri.path) || knownFiles.some(file => uriKey(file).startsWith(prefix))) schedule();
+        }),
+    );
 
     context.subscriptions.push(
         vscode.workspace.onDidChangeTextDocument(event => {
-            if (event.document.languageId === 'dendry') schedule(event.document.uri);
+            if (dendryFileKind(event.document.uri.path)) schedule(event.document.uri);
         }),
         vscode.workspace.onDidSaveTextDocument(document => {
-            if (document.languageId === 'dendry') schedule(document.uri);
+            if (dendryFileKind(document.uri.path)) schedule(document.uri);
         }),
         vscode.workspace.onDidOpenTextDocument(document => {
-            if (document.languageId === 'dendry') schedule(document.uri);
+            if (dendryFileKind(document.uri.path)) schedule(document.uri);
         }),
-        vscode.workspace.onDidDeleteFiles(event => {
-            if (event.files.some(file => dendryFileKind(file.path) !== undefined)) schedule();
+        vscode.workspace.onDidCreateFiles(() => schedule()),
+        vscode.workspace.onDidRenameFiles(() => schedule()),
+        vscode.workspace.onDidDeleteFiles(() => schedule()),
+        vscode.workspace.onDidChangeConfiguration(event => {
+            if (disposed || !event.affectsConfiguration('dendry.validation')) return;
+            schedule();
+            // Disabling validation clears existing findings without waiting
+            // for discovery or for an in-flight pass to complete.
+            for (const [key, entry] of lastDiagnostics) if (!validationSettings(entry.uri).enabled) {
+                diagnostics.delete(entry.uri);
+                lastDiagnostics.delete(key);
+            }
         }),
         vscode.workspace.onDidChangeWorkspaceFolders(() => schedule()),
         vscode.workspace.onDidCloseTextDocument(document => {
             if (disposed) return;
-            const key = uriKey(document.uri);
-            diagnostics.delete(lastDiagnostics.get(key)?.uri || document.uri);
-            lastDiagnostics.delete(key);
+            if (dendryFileKind(document.uri.path)) schedule(document.uri);
         }),
     );
 }

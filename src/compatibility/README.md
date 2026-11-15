@@ -14,8 +14,8 @@ no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
 The corpus contains 1924 independently recorded compiler cases. Together with
-parser and project regressions, the suite has 2117 checks. The helper suite has
-82 checks. These totals describe the validation-queue repair on 2026-11-15; they are not
+parser and project regressions, the suite has 2150 checks. The helper suite has
+82 checks. These totals describe the editor-lifecycle repair on 2026-11-15; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -29,7 +29,10 @@ Another 21 regressions exercise actual activateCore event wiring and the project
 coordinator with fake timers and gated host reads/discovery: multi-file batches,
 queued edits, superseded publication, source snapshots, deletion, read recovery,
 virtual URI variants and deactivation. The host supplies events/IO only; no queue
-or validator implementation is replaced.
+or validator implementation is replaced. Another 33 lifecycle regressions cover
+file/directory watcher and editor events, configuration changes, scoped settings,
+exclusions, nested/multiple workspace indexes, saved-text close recovery, startup
+with standalone files, disabling during an in-flight read and watcher disposal.
 QDisplay cases cover ranges, comments, continuations, filenames, reserved IDs
 and built-in references; project regressions check retained/cleared diagnostics
 and duplicate-ID warnings. Source positions, configuration and incremental edits
@@ -43,6 +46,7 @@ npm run test:compat -- src/compatibility/javascript.compat.ts
 npm run test:compat -- src/compatibility/qdisplay.compat.ts
 npm run test:compat -- src/compatibility/rich-content.compat.ts
 npm run test:compat -- src/compatibility/validation-queue.compat.ts
+npm run test:compat -- src/compatibility/editor-lifecycle.compat.ts
 npm test -- src/qdisplay.test.ts
 ```
 
@@ -52,8 +56,9 @@ missing-display diagnostics and duplicate-display warnings are authoring policy.
 Built-in formatters need no file. Overlap and source order are legal QDisplay
 semantics, with the first inclusive matching range selected at runtime.
 
-Engine API/member types and real VS Code activation/events/highlighting remain
-outside the established coverage. Ordinary content magic is opaque HTML; content
+Engine API/member types and real VS Code host/provider execution and highlighting
+remain outside the established coverage. Activation and event logic are exercised
+through the host stand-in. Ordinary content magic is opaque HTML; content
 JavaScript is checked only in inserts and predicates. QDisplay traversal checks
 the output actually captured by upstream, including its continuation quirks.
 The preserved audit findings and dated developer diary record earlier red
@@ -63,8 +68,8 @@ baselines; they do not describe the current implementation status.
 
 The user agreed to `parseText(text, filename)` and
 `DendryProjectValidator.validateProject(files)` as the public boundaries.
-`vscode-host.ts` supplies only host values, configuration defaults and in-memory
-documents. All extension language code runs normally. Tests do not inspect
+`vscode-host.ts` supplies host values, scoped configuration, in-memory documents/FS,
+event emitters, watchers and a fixture glob matcher. All extension language code runs normally. Tests do not inspect
 private project caches or call private validators.
 
 `corpus.json` defines shared valid `info.dry` and root inputs. A case replaces

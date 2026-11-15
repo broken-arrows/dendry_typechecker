@@ -5,6 +5,7 @@ import { DendryValidator } from './validator';
 import { qdisplayIdFromPath, parseQDisplay } from './qdisplay';
 import { uriKey } from './uri-key';
 import { SourceDocument, sourceDocument } from './source-document';
+import { validationSettings } from './validation-settings';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
@@ -86,9 +87,10 @@ export class DendryProjectValidator {
   private async validatePass(workspaceFiles: vscode.Uri[], changedFiles: vscode.Uri[], fullRefresh: boolean): Promise<Map<vscode.Uri, vscode.Diagnostic[]>> {
       const finalDiagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map();
       const projectUris = new Map(workspaceFiles.map(uri => [uriKey(uri), uri]));
+      const enabled = new Set(workspaceFiles.filter(uri => validationSettings(uri).enabled).map(uriKey));
       const getDiagnostics = (uri: vscode.Uri) => finalDiagnostics.get(projectUris.get(uriKey(uri))!);
       const setDiagnostics = (uri: vscode.Uri, diagnostics: vscode.Diagnostic[]) => {
-        finalDiagnostics.set(projectUris.get(uriKey(uri))!, diagnostics);
+        if (enabled.has(uriKey(uri))) finalDiagnostics.set(projectUris.get(uriKey(uri))!, diagnostics);
       };
 
       // 1. Remove deleted files from cache
@@ -113,7 +115,7 @@ export class DendryProjectValidator {
 
       for (const fileUri of filesToParse) {
         try {
-          const open = vscode.workspace.textDocuments.find(doc => uriKey(doc.uri) === uriKey(fileUri));
+          const open = vscode.workspace.textDocuments.find(doc => !doc.isClosed && uriKey(doc.uri) === uriKey(fileUri));
           const text = open ? open.getText() : new TextDecoder().decode(await vscode.workspace.fs.readFile(fileUri));
           const document = sourceDocument(fileUri, text);
           if (fileUri.path.endsWith('.qdisplay.dry')) {
@@ -155,7 +157,8 @@ export class DendryProjectValidator {
       const qdisplayFiles = [...displays.keys()];
       // Cache parsing, but recheck references against the current project each pass.
       for (const { uri, parsed } of this.qdisplayData.values()) {
-        const diagnostics = this.validator.validateQDisplay(parsed, this.fileData, qdisplayFiles);
+        if (!enabled.has(uriKey(uri))) continue;
+        const diagnostics = this.validator.validateQDisplay(parsed, this.fileData, qdisplayFiles, uri);
         if (diagnostics.length) setDiagnostics(uri, [...(getDiagnostics(uri) || []), ...diagnostics]);
       }
 
@@ -196,6 +199,7 @@ export class DendryProjectValidator {
       // Validate cached ASTs against the complete project index.
       for (const data of this.fileData.values()) {
           const fileUri = data.uri;
+          if (!enabled.has(uriKey(fileUri))) continue;
           const existingDiags = getDiagnostics(fileUri) || [];
           const document = data.document;
 

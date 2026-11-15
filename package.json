@@ -63,16 +63,19 @@
       "title": "Dendry",
       "properties": {
         "dendry.validation.enable": {
+          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable/disable validation"
         },
         "dendry.validation.strict": {
+          "scope": "resource",
           "type": "boolean",
           "default": false,
           "description": "Enable/disable strict validation mode"
         },
         "dendry.validation.exclude": {
+          "scope": "resource",
           "type": "array",
           "default": [
             "**/node_modules/**",
@@ -84,9 +87,10 @@
           "items": {
             "type": "string"
           },
-          "description": "Global patterns for files/folders to exclude from Dendry validation"
+          "description": "Glob patterns for files/folders to exclude from Dendry validation"
         },
         "dendry.validation.jsLibraries": {
+          "scope": "resource",
           "type": "array",
           "default": [
             "d3"

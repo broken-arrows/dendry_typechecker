@@ -8,6 +8,7 @@ import { checkShorthand, LogicKind } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
 import { RichContent } from './rich-content';
 import { SourceDocument } from './source-document';
+import { validationSettings } from './validation-settings';
 import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
 type FileData = {
@@ -18,8 +19,8 @@ type FileData = {
 
 export class DendryValidator {
   private contextSceneId = '';
-  private strictMode: boolean;
-  private extraLibraries: string[];
+  private strictMode = false;
+  private extraLibraries: string[] = ['d3'];
   private sceneIds: Set<string> = new Set();
   private sceneNodes = new Map<string, DendryNode>();
   private taggedScenes = new Map<string, DendryNode[]>();
@@ -40,10 +41,10 @@ export class DendryValidator {
     'unavailable-subtitle'
   ]);
 
-  constructor() {
-    const config = vscode.workspace.getConfiguration('dendry');
-    this.strictMode = config.get<boolean>('validation.strict', false);
-    this.extraLibraries = config.get<string[]>('validation.jsLibraries', ['d3']);
+  private configure(resource: vscode.Uri): void {
+    const settings = validationSettings(resource);
+    this.strictMode = settings.strict;
+    this.extraLibraries = settings.libraries;
   }
 
   validate(
@@ -52,6 +53,7 @@ export class DendryValidator {
     allFileData: Map<string, FileData>,
     qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
+    this.configure(document.uri);
     const diagnostics: vscode.Diagnostic[] = [];
     this.setProjectContext(allFileData, qdisplayFiles);
 
@@ -89,7 +91,8 @@ export class DendryValidator {
     for (const id of BUILTIN_SCENE_IDS) this.sceneIds.add(id);
   }
 
-  public validateQDisplay(parsed: ReturnType<typeof parseQDisplay>, allFileData: Map<string, FileData>, qdisplayFiles: string[]): vscode.Diagnostic[] {
+  public validateQDisplay(parsed: ReturnType<typeof parseQDisplay>, allFileData: Map<string, FileData>, qdisplayFiles: string[], resource: vscode.Uri): vscode.Diagnostic[] {
+    this.configure(resource);
     this.setProjectContext(allFileData, qdisplayFiles);
     this.contextSceneId = '';
     const diagnostics = parsed.issues.map(issue => this.sourceDiagnostic(issue.source, issue.message));
