@@ -15,8 +15,8 @@ alone does not establish compiler compatibility.
 
 The corpus contains 1924 independently recorded compiler cases. Together with
 parser, project and build/launch regressions, the suite has 2201 checks. The unit suite has
-226 checks, including 144 TextMate highlighting checks. These totals describe
-the desktop build/launch repair on 2026-11-15; they are not
+284 checks, including 202 TextMate highlighting checks. The unit totals include
+inline HTML, qualified-reference scopes and long-line highlighting repairs on 2026-11-16; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -63,8 +63,15 @@ Highlighting tests tokenize the shipped grammar using vscode-textmate and the
 Oniguruma WASM engine, retaining rule stacks across lines. They cover field
 inventory/value contexts, normalized spelling, references, option fields,
 shorthand, QDisplay separators, comments, rich content, escaping and embedded
-language boundaries. Small guest grammars check JS/HTML dispatch; complete VS Code
-guest grammars, theme appearance and a running editor host are not exercised.
+language boundaries. A pinned full VS Code JavaScript grammar checks nested guest
+states, delimiter ownership and multiline scopes. The shipped derived grammar
+adds Dendry boundary guards; tests compare ordinary JavaScript scopes with the
+unmodified guest grammar. All lines use VS Code's 500 ms tokenization budget;
+the reported long nested subtitle exercises all text-field contexts, plus an
+18k-character stress case. Inline HTML tags/attributes/entities and distinct
+namespace/leaf scopes are checked directly. Embedded HTML blocks use
+a small dispatch fixture. Theme appearance,
+the full HTML grammar and a running editor host are not exercised.
 
 The 51 desktop build/launch checks exercise the real launcher, inline adapter,
 configuration provider and desktop/web registration. A separate API boundary host

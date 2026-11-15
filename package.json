@@ -58,6 +58,10 @@
           "meta.embedded.block.javascript.dendry": "javascript",
           "meta.embedded.block.html.dendry": "html"
         }
+      },
+      {
+        "scopeName": "source.dendry.javascript",
+        "path": "./syntaxes/dendry-javascript.tmLanguage.json"
       }
     ],
     "configuration": {

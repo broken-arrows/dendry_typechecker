@@ -44,7 +44,12 @@
           "name": "punctuation.definition.scene.dendry"
         },
         "2": {
-          "name": "entity.name.function.dendry"
+          "name": "meta.scene-reference.dendry",
+          "patterns": [
+            {
+              "include": "#scene-reference"
+            }
+          ]
         }
       },
       "patterns": [
@@ -269,7 +274,12 @@
               "name": "punctuation.definition.scene-reference.dendry"
             },
             "3": {
-              "name": "entity.name.function.dendry"
+              "name": "meta.scene-reference.dendry",
+              "patterns": [
+                {
+                  "include": "#scene-reference"
+                }
+              ]
             },
             "4": {
               "name": "punctuation.definition.tag.dendry"
@@ -310,6 +320,31 @@
     "value-reference": {
       "patterns": [
         {
+          "include": "#scene-reference"
+        }
+      ]
+    },
+    "scene-reference": {
+      "patterns": [
+        {
+          "name": "meta.qualified-scene-ref.dendry",
+          "match": "(@?)((?:\\.+)?[\\w-]+(?:\\.[\\w-]+)*)(\\.)([\\w-]+)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.scene-reference.dendry"
+            },
+            "2": {
+              "name": "entity.name.type.dendry"
+            },
+            "3": {
+              "name": "punctuation.accessor.dendry"
+            },
+            "4": {
+              "name": "entity.name.function.dendry"
+            }
+          }
+        },
+        {
           "name": "entity.name.function.dendry",
           "match": "@?(?:\\.+|[\\w-])[\\w-]*(?:\\.[\\w-]+)*"
         }
@@ -345,7 +380,12 @@
               "name": "punctuation.definition.scene-reference.dendry"
             },
             "2": {
-              "name": "entity.name.function.dendry"
+              "name": "meta.scene-reference.dendry",
+              "patterns": [
+                {
+                  "include": "#scene-reference"
+                }
+              ]
             }
           },
           "patterns": [
@@ -415,6 +455,23 @@
         },
         {
           "name": "variable.other.scene-visits.dendry",
+          "match": "(@)([\\w-]+(?:\\.[\\w-]+)+)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.scene-reference.dendry"
+            },
+            "2": {
+              "name": "meta.scene-reference.dendry",
+              "patterns": [
+                {
+                  "include": "#scene-reference"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "variable.other.scene-visits.dendry",
           "match": "@[\\w-]+(?:\\.[\\w-]+)*"
         },
         {
@@ -467,23 +524,47 @@
       "match": "(?<![\\w.])-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?![\\w.])"
     },
     "js-block": {
-      "name": "meta.logic.javascript.dendry",
-      "contentName": "meta.embedded.block.javascript.dendry",
-      "begin": "\\{!",
-      "end": "!\\}",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.section.embedded.begin.dendry"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.section.embedded.end.dendry"
-        }
-      },
       "patterns": [
         {
-          "include": "source.js"
+          "name": "meta.logic.javascript.dendry",
+          "match": "(\\{!)(.*?)(!\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.section.embedded.begin.dendry"
+            },
+            "2": {
+              "name": "meta.embedded.block.javascript.dendry",
+              "patterns": [
+                {
+                  "include": "source.dendry.javascript"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.section.embedded.end.dendry"
+            }
+          }
+        },
+        {
+          "name": "meta.logic.javascript.dendry",
+          "contentName": "meta.embedded.block.javascript.dendry",
+          "begin": "\\{!",
+          "end": "!\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.begin.dendry"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.end.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.dendry.javascript"
+            }
+          ]
         }
       ]
     },
@@ -539,6 +620,12 @@
           "include": "#html-block"
         },
         {
+          "include": "#inline-html"
+        },
+        {
+          "include": "#html-entity"
+        },
+        {
           "include": "#emphasis"
         },
         {
@@ -553,6 +640,110 @@
     "escape": {
       "name": "constant.character.escape.dendry",
       "match": "\\\\(?=[*`\\[\\]{}?+!/=<>])"
+    },
+    "html-entity": {
+      "name": "constant.character.entity.html",
+      "match": "(?<!\\\\)&(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#[xX][0-9A-Fa-f]+);"
+    },
+    "inline-html": {
+      "patterns": [
+        {
+          "name": "comment.block.html",
+          "begin": "(?<!\\\\)<!--",
+          "end": "-->",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.html"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.html"
+            }
+          }
+        },
+        {
+          "name": "meta.tag.inline.html.dendry",
+          "begin": "(?<!\\\\)(</?)([A-Za-z][A-Za-z0-9:_-]*)(?=[\\s/>])",
+          "end": "/?>",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.html"
+            },
+            "2": {
+              "name": "entity.name.tag.html"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.tag.end.html"
+            }
+          },
+          "patterns": [
+            {
+              "name": "entity.other.attribute-name.html",
+              "match": "[A-Za-z_:][\\w:.-]*"
+            },
+            {
+              "name": "meta.attribute.value.html",
+              "begin": "(=)\\s*",
+              "end": "(?=\\s|/?>)",
+              "beginCaptures": {
+                "1": {
+                  "name": "keyword.operator.assignment.html"
+                }
+              },
+              "patterns": [
+                {
+                  "name": "string.quoted.double.html",
+                  "begin": "\"",
+                  "end": "\"",
+                  "patterns": [
+                    {
+                      "include": "#variable-interpolation"
+                    },
+                    {
+                      "include": "#inline-conditional"
+                    },
+                    {
+                      "include": "#html-entity"
+                    }
+                  ]
+                },
+                {
+                  "name": "string.quoted.single.html",
+                  "begin": "'",
+                  "end": "'",
+                  "patterns": [
+                    {
+                      "include": "#variable-interpolation"
+                    },
+                    {
+                      "include": "#inline-conditional"
+                    },
+                    {
+                      "include": "#html-entity"
+                    }
+                  ]
+                },
+                {
+                  "include": "#variable-interpolation"
+                },
+                {
+                  "include": "#inline-conditional"
+                },
+                {
+                  "include": "#html-entity"
+                },
+                {
+                  "name": "string.unquoted.html",
+                  "match": "(?:/(?!>)|[^\\s<>\"'=`/])+"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "variable-interpolation": {
       "name": "meta.variable-interpolation.dendry",
@@ -708,23 +899,47 @@
       "match": "^[ \\t]*#.*$"
     },
     "content-js-block": {
-      "name": "meta.logic.javascript.dendry",
-      "contentName": "meta.embedded.block.javascript.dendry",
-      "begin": "(?<!\\\\)\\{!",
-      "end": "(?<!\\\\)!\\}",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.section.embedded.begin.dendry"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.section.embedded.end.dendry"
-        }
-      },
       "patterns": [
         {
-          "include": "source.js"
+          "name": "meta.logic.javascript.dendry",
+          "match": "((?<!\\\\)\\{!)(.*?)((?<!\\\\)!\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.section.embedded.begin.dendry"
+            },
+            "2": {
+              "name": "meta.embedded.block.javascript.dendry",
+              "patterns": [
+                {
+                  "include": "source.dendry.javascript#content"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.section.embedded.end.dendry"
+            }
+          }
+        },
+        {
+          "name": "meta.logic.javascript.dendry",
+          "contentName": "meta.embedded.block.javascript.dendry",
+          "begin": "(?<!\\\\)\\{!",
+          "end": "(?<!\\\\)!\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.begin.dendry"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.end.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.dendry.javascript#content"
+            }
+          ]
         }
       ]
     },

@@ -6,8 +6,13 @@ import { createOnigScanner, createOnigString, loadWASM } from 'vscode-oniguruma'
 import { SCENE_SCHEMA } from './scene-schema';
 
 let grammar: IGrammar;
+let upstreamJavascript: IGrammar;
 const root = resolve(__dirname, '..');
 const raw = JSON.parse(readFileSync(resolve(root, 'syntaxes/dendry.tmLanguage.json'), 'utf8')) as IRawGrammar;
+const javascript = JSON.parse(readFileSync(resolve(__dirname, 'test-fixtures/javascript/JavaScript.tmLanguage.json'), 'utf8')) as IRawGrammar;
+const embeddedJavascript = JSON.parse(readFileSync(resolve(root, 'syntaxes/dendry-javascript.tmLanguage.json'), 'utf8')) as IRawGrammar;
+const nestedSubtitle = readFileSync(resolve(__dirname, 'test-fixtures/highlighting/nested-subtitle.scene.dry'), 'utf8')
+  .trimEnd().replace(/^unavailable-subtitle: /, '');
 
 beforeAll(async () => {
   const wasm = readFileSync(require.resolve('vscode-oniguruma/release/onig.wasm'));
@@ -16,11 +21,9 @@ beforeAll(async () => {
     onigLib: Promise.resolve({ createOnigScanner, createOnigString }),
     loadGrammar: async scope => {
       if (scope === 'source.dendry') return raw;
-      // Small guest grammars test language dispatch and delimiter ownership.
-      // VS Code supplies its own complete JavaScript/HTML grammars at runtime.
-      if (scope === 'source.js') return {
-        scopeName: scope, patterns: [{ name: 'storage.type.js', match: '\\b(?:const|let|return)\\b' }],
-      } as IRawGrammar;
+      if (scope === 'source.dendry.javascript') return embeddedJavascript;
+      // Full JavaScript rules are essential: nested guest states can hide host ends.
+      if (scope === 'source.js') return javascript;
       if (scope === 'text.html.basic') return {
         scopeName: scope, patterns: [{ name: 'entity.name.tag.html', match: '</?[a-z]+' }],
       } as IRawGrammar;
@@ -28,12 +31,14 @@ beforeAll(async () => {
     },
   });
   grammar = (await registry.loadGrammar('source.dendry'))!;
+  upstreamJavascript = (await registry.loadGrammar('source.js'))!;
 });
 
 function tokenize(source: string) {
   let stack = INITIAL;
   return source.split('\n').map(line => {
-    const result = grammar.tokenizeLine(line, stack);
+    // VS Code cuts off tokenization at this budget; unlimited tests hid long-line failures.
+    const result = grammar.tokenizeLine(line, stack, 500);
     stack = result.ruleStack;
     expect(result.stoppedEarly).toBe(false);
     return { line, tokens: result.tokens };
@@ -57,6 +62,50 @@ function lacksScope(source: string, line: number, text: string, scope: string) {
 }
 
 describe('TextMate highlighting', () => {
+  it('ships the generated JavaScript boundary guards and registers their scope', () => {
+    const { generate } = require('../scripts/generate-embedded-javascript.cjs');
+    expect(embeddedJavascript).toEqual(generate(javascript));
+    const manifest = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+    expect(manifest.contributes.grammars).toContainEqual({
+      scopeName: embeddedJavascript.scopeName,
+      path: './syntaxes/dendry-javascript.tmLanguage.json',
+    });
+  });
+
+  it.each([
+    'const value = Q.score;\nreturn value',
+    'const label = `first\nsecond ${Q.value}`;\nreturn label',
+    '/* first\nsecond */\n// comment\nreturn true',
+    'if (Q.ready) {\n  return { value: [1, 2] };\n}',
+    'const { value: renamed = 1 } = Q;\nreturn renamed > 0 ? renamed : 0',
+    'const fn = async (x) => {\n  await Promise.resolve(x);\n  return x;\n};',
+    'const pattern = /[a-z]+(?:foo|bar)/gi;\nreturn pattern.test("foo")',
+    'try { throw new Error("oops"); } catch (error) { return error.message; }',
+    'const handlers = { run(value = 1) { return value; }, "named(method)": () => true };',
+    'class Example { #value = 1; get value() { return this.#value; } }',
+    'const fn = ({ value = [1, 2] } = {}) => value.map(x => x + 1);',
+  ])('preserves full JavaScript scopes within multiline blocks (%s)', code => {
+    let dendryStack = grammar.tokenizeLine('on-arrival: {!', INITIAL).ruleStack;
+    let javascriptStack = INITIAL;
+    for (const line of code.split('\n')) {
+      const actual = grammar.tokenizeLine(line, dendryStack);
+      const expected = upstreamJavascript.tokenizeLine(line, javascriptStack);
+      dendryStack = actual.ruleStack;
+      javascriptStack = expected.ruleStack;
+      // Compare visible scopes per character, ignoring only the embedding wrappers.
+      for (let position = 0; position < line.length; position++) {
+        const guestScopes = (tokens: typeof actual.tokens) => tokens
+          .find(token => token.startIndex <= position && token.endIndex > position)!.scopes
+          .filter(scope => scope !== 'source.js' && scope.endsWith('.js'));
+        expect(guestScopes(actual.tokens)).toEqual(guestScopes(expected.tokens));
+      }
+    }
+    const end = grammar.tokenizeLine('!}', dendryStack);
+    const after = grammar.tokenizeLine('', end.ruleStack);
+    const prose = grammar.tokenizeLine('Prose', after.ruleStack);
+    expect(prose.tokens.every(token => !token.scopes.includes('meta.embedded.block.javascript.dendry'))).toBe(true);
+  });
+
   it.each(Object.keys(SCENE_SCHEMA))('recognizes scene header %s', key => {
     hasScope(`${key}: value\n\nBody`, 0, key, 'variable.parameter.dendry');
     hasScope(`\n@section.deep-name\n${key}: value`, 2, key, 'variable.parameter.dendry');
@@ -99,13 +148,36 @@ describe('TextMate highlighting', () => {
   });
 
   it('recognizes complete dotted section IDs', () => {
-    hasScope('\n@ chapter-one.deep._2\ntitle: Hi', 1, 'chapter-one.deep._2', 'entity.name.function.dendry');
+    hasScope('\n@ chapter-one.deep._2\ntitle: Hi', 1, 'chapter-one.deep._2', 'meta.scene-reference.dendry');
+  });
+
+  it.each([
+    ['\n@chapter.deep-name\ntitle: Caption', 1],
+    ['\n- @chapter.deep-name: Choose', 1],
+    ['go-to: chapter.deep-name if TRUE', 0],
+    ['go-sub: .chapter.deep-name', 0],
+    ['call: chapter.deep-name', 0],
+    ['set-jump: ..chapter.deep-name', 0],
+    ['view-if: @chapter.deep-name > 0', 0],
+  ] as const)('distinguishes the scene prefix and subscene in %s', (source, line) => {
+    hasScope(source, line, 'chapter', 'entity.name.type.dendry');
+    lacksScope(source, line, 'chapter', 'entity.name.function.dendry');
+    hasScope(source, line, 'deep-name', 'entity.name.function.dendry');
+    lacksScope(source, line, 'deep-name', 'entity.name.type.dendry');
+  });
+
+  it('colors the full namespace of deeply qualified scenes without splitting plain references', () => {
+    const source = 'go-to: ..chapter.branch.leaf; plain; .';
+    hasScope(source, 0, 'chapter.branch', 'entity.name.type.dendry');
+    hasScope(source, 0, 'leaf', 'entity.name.function.dendry');
+    lacksScope(source, 0, 'plain', 'entity.name.type.dendry');
+    hasScope(source, 0, 'plain', 'entity.name.function.dendry');
   });
 
   it.each(['.', '..', '..target.deep-name', '.absolute.deep', 'normal.deep.name', '---'])
     ('recognizes choice reference %s', reference => {
       const source = `\n- @${reference}: Choose [+ skill-name +]`;
-      hasScope(source, 1, reference, 'entity.name.function.dendry');
+      hasScope(source, 1, reference, 'meta.scene-reference.dendry');
       hasScope(source, 1, 'skill-name', 'variable.other.dendry');
     });
 
@@ -175,7 +247,7 @@ describe('TextMate highlighting', () => {
 
   it.each(['go-to', 'go-sub', 'go-sub-start', 'go-sub-end'])('recognizes %s destinations and predicates', key => {
     const source = `${key}: @..target.deep if skill-name > 1; .absolute if {! return Q.ok; !}; .`;
-    hasScope(source, 0, '..target.deep', 'entity.name.function.dendry');
+    hasScope(source, 0, '..target.deep', 'meta.scene-reference.dendry');
     hasScope(source, 0, 'skill-name', 'variable.other.dendry');
     hasScope(source, 0, 'return', 'meta.embedded.block.javascript.dendry');
     hasScope(source, 0, '.absolute', 'entity.name.function.dendry');
@@ -184,7 +256,7 @@ describe('TextMate highlighting', () => {
   it('distinguishes quality destinations, singleton references and scalar names from logic', () => {
     hasScope('go-to-ref: route-name if TRUE', 0, 'route-name', 'variable.other.dendry');
     hasScope('go-to-ref: route-name if TRUE', 0, 'TRUE', 'constant.language.dendry');
-    hasScope('call: chapter.deep', 0, 'chapter.deep', 'entity.name.function.dendry');
+    hasScope('call: chapter.deep', 0, 'deep', 'entity.name.function.dendry');
     hasScope('check-quality: skill-name', 0, 'skill-name', 'variable.other.dendry');
     lacksScope('game-over: {! return true; !}', 0, 'return', 'meta.embedded.block.javascript.dendry');
     lacksScope('broad-difficulty: {! return 2; !}', 0, 'return', 'meta.embedded.block.javascript.dendry');
@@ -195,7 +267,7 @@ describe('TextMate highlighting', () => {
     hasScope(source, 0, 'if', 'entity.name.function.dendry');
     hasScope(source, 1, 'flag-name', 'variable.other.dendry');
     hasScope(source, 2, '..next', 'entity.name.function.dendry');
-    hasScope(source, 3, 'return', 'storage.type.js');
+    hasScope(source, 3, 'return', 'keyword.control.flow.js');
     hasScope(source, 4, '.last', 'entity.name.function.dendry');
     hasScope(source, 5, 'view-if', 'variable.parameter.dendry');
   });
@@ -206,7 +278,7 @@ describe('TextMate highlighting', () => {
     hasScope(source, 2, '@fake', 'meta.embedded.block.javascript.dendry');
     lacksScope(source, 2, 'fake', 'entity.name.function.dendry');
     hasScope(source, 3, 'score-name', 'variable.other.dendry');
-    hasScope(source, 4, 'return', 'storage.type.js');
+    hasScope(source, 4, 'return', 'keyword.control.flow.js');
     hasScope(source, 6, 'view-if', 'variable.parameter.dendry');
     lacksScope(source, 8, 'After', 'meta.embedded.block.javascript.dendry');
   });
@@ -216,10 +288,144 @@ describe('TextMate highlighting', () => {
     hasScope(source, 0, '<b', 'meta.embedded.block.html.dendry');
     hasScope(source, 2, '<div', 'entity.name.tag.html');
     lacksScope(source, 3, 'ignored', 'variable.other.dendry');
-    hasScope(source, 5, 'return', 'storage.type.js');
+    hasScope(source, 5, 'return', 'keyword.control.flow.js');
     hasScope(source, 5, 'rank-display', 'entity.name.type.qdisplay.dendry');
-    hasScope(source, 6, 'return', 'storage.type.js');
+    hasScope(source, 6, 'return', 'keyword.control.flow.js');
     hasScope(source, 6, '<em', 'meta.embedded.block.html.dendry');
+  });
+
+  it.each([
+    ['\n<a class="link" href="path">Caption [+ score +]</a> &amp;', 1],
+    ['title: <a class="link" href="path">Caption [+ score +]</a> &amp;', 0],
+    ['subtitle: <a class="link" href="path">Caption [+ score +]</a> &amp;', 0],
+    ['unavailable-subtitle: <a class="link" href="path">Caption [+ score +]</a> &amp;', 0],
+    ['\n- @target: <a class="link" href="path">Caption [+ score +]</a> &amp;', 1],
+    ['\n[? if TRUE: <a class="link" href="path">Caption [+ score +]</a> &amp; ?]', 1],
+    ['\n(1..5) <a class="link" href="path">Caption [+ score +]</a> &amp;', 1],
+  ] as const)('highlights ordinary inline HTML without hiding Dendry content (%s)', (source, line) => {
+    hasScope(source, line, 'a class', 'meta.tag.inline.html.dendry');
+    hasScope(source, line, 'class', 'entity.other.attribute-name.html');
+    hasScope(source, line, 'link', 'string.quoted.double.html');
+    hasScope(source, line, 'path', 'string.quoted.double.html');
+    hasScope(source, line, 'score', 'variable.other.dendry');
+    hasScope(source, line, '&amp;', 'constant.character.entity.html');
+    lacksScope(source, line, 'Caption', 'meta.tag.inline.html.dendry');
+    lacksScope(source, line, 'Caption', 'meta.embedded.block.html.dendry');
+  });
+
+  it('handles HTML quotes, dynamic attributes, self-closing tags, comments and escapes', () => {
+    const source = '\n<img data-label="a > b" src="img/[+ portrait +].png"/> <!-- comment --> &lt; &#39; &#x3c;\n\\<b>plain\n[? if skill < limit: Prose ?]';
+    hasScope(source, 1, 'img', 'entity.name.tag.html');
+    hasScope(source, 1, 'a > b', 'string.quoted.double.html');
+    hasScope(source, 1, 'portrait', 'variable.other.dendry');
+    hasScope(source, 1, 'comment', 'comment.block.html');
+    for (const entity of ['&lt;', '&#39;', '&#x3c;']) hasScope(source, 1, entity, 'constant.character.entity.html');
+    lacksScope(source, 2, 'b', 'entity.name.tag.html');
+    lacksScope(source, 2, 'plain', 'string.quoted.double.html');
+    hasScope(source, 3, '<', 'keyword.operator.comparison.dendry');
+  });
+
+  it('retains multiline HTML attributes and nested conditionals inside quoted attributes', () => {
+    const source = 'subtitle: <a\n  class="[? if TRUE: active ?]"\n  href=path>Caption</a>\nview-if: TRUE';
+    hasScope(source, 0, 'a', 'entity.name.tag.html');
+    hasScope(source, 1, 'TRUE', 'constant.language.dendry');
+    hasScope(source, 1, 'active', 'meta.conditional-text.dendry');
+    hasScope(source, 2, 'href', 'entity.other.attribute-name.html');
+    lacksScope(source, 2, 'Caption', 'meta.tag.inline.html.dendry');
+    hasScope(source, 3, 'view-if', 'variable.parameter.dendry');
+  });
+
+  it('closes the reported JavaScript conditional without a trailing semicolon', () => {
+    const source = "\n[? if {! return Q.censure_current.kind === 'podemos' !}: All eyes are now on the position that the PSOE will be taking, as it may very well make or break the proposal. ?]\n\n@next\ntitle: Next";
+    hasScope(source, 1, 'podemos', 'string.quoted.single.js');
+    hasScope(source, 1, '!}', 'punctuation.section.embedded.end.dendry');
+    hasScope(source, 1, 'All eyes', 'meta.conditional-text.dendry');
+    lacksScope(source, 1, 'All eyes', 'meta.embedded.block.javascript.dendry');
+    hasScope(source, 3, 'next', 'entity.name.function.dendry');
+    hasScope(source, 4, 'title', 'variable.parameter.dendry');
+  });
+
+  it.each(['title', 'subtitle', 'unavailable-subtitle'].flatMap(field =>
+    ['root', 'section', 'choice', 'continuation'].map(context => ({ field, context })),
+  ))('highlights the reported nested $field in $context within the editor time budget', ({ field, context }) => {
+    const prefix = context === 'root' ? `${field}: `
+      : context === 'section' ? `\n@section\n${field}: `
+      : context === 'choice' ? `\n- @target\n- ${field}: `
+      : `\n- @target\n- ${field}: Caption\n  `;
+    const nextField = context === 'choice' || context === 'continuation' ? '- view-if: TRUE' : 'view-if: TRUE';
+    const source = `${prefix}${nestedSubtitle}\n${nextField}\n\nAfter\n\n@next\ntitle: Next`;
+    const rows = tokenize(source);
+    const lineIndex = prefix.split('\n').length - 1;
+    const { line, tokens } = rows[lineIndex];
+    const at = (position: number) => tokens.find(token => token.startIndex <= position && token.endIndex > position)!.scopes;
+    for (const marker of line.matchAll(/\{!|!\}|\[\?|\?\]/g)) {
+      const expected = marker[0] === '{!' ? 'punctuation.section.embedded.begin.dendry'
+        : marker[0] === '!}' ? 'punctuation.section.embedded.end.dendry'
+        : marker[0] === '[?' ? 'punctuation.definition.conditional.begin.dendry'
+        : 'punctuation.definition.conditional.end.dendry';
+      expect(at(marker.index!)).toContain(expected);
+    }
+    for (const text of ['We have already', 'already supports', 'Susana Díaz is', 'With tensions',
+      'Not enough resources', 'Our relations', 'Tensions between', 'Eduardo Madina is', 'Eduardo Madina will']) {
+      expect(at(line.indexOf(text))).toContain('meta.conditional-text.dendry');
+      expect(at(line.indexOf(text))).not.toContain('meta.embedded.block.javascript.dendry');
+    }
+    expect(tokens.some(token => token.scopes.includes('keyword.control.flow.js'))).toBe(true);
+    expect(rows[lineIndex + 1].tokens.some(token => token.scopes.includes('variable.parameter.dendry'))).toBe(true);
+    expect(rows[lineIndex + 3].tokens.every(token => !token.scopes.includes('meta.inline-conditional.dendry'))).toBe(true);
+    expect(rows[lineIndex + 5].tokens.some(token => token.scopes.includes('entity.name.function.dendry'))).toBe(true);
+  });
+
+  it('finishes an 18k-character line of nested conditionals within the editor budget', () => {
+    const source = `subtitle: ${nestedSubtitle.repeat(8)}\nview-if: TRUE\n\nAfter`;
+    const rows = tokenize(source);
+    const lastMarker = rows[0].line.lastIndexOf('?]');
+    expect(rows[0].tokens.find(token => token.startIndex <= lastMarker && token.endIndex > lastMarker)?.scopes)
+      .toContain('punctuation.definition.conditional.end.dendry');
+    expect(rows[1].tokens.some(token => token.scopes.includes('variable.parameter.dendry'))).toBe(true);
+    expect(rows[3].tokens.every(token => !token.scopes.includes('meta.inline-conditional.dendry'))).toBe(true);
+  });
+
+  it.each([
+    'return 1', 'const value = 1', 'if (true) { return 1; }',
+    'return { value: 1 }', 'return (Q.value)', 'return `text ${Q.value}`',
+    'return "unfinished', '/* unfinished', '// comment',
+  ])('keeps Dendry delimiters outside nested JavaScript rules (%s)', code => {
+    const source = `\n[? if {! ${code} !}: Prose ?] [+ {! ${code} !} : rank-display +] After\n\n@next\ntitle: Next`;
+    lacksScope(source, 1, 'Prose', 'meta.embedded.block.javascript.dendry');
+    hasScope(source, 1, 'Prose', 'meta.conditional-text.dendry');
+    hasScope(source, 1, 'rank-display', 'entity.name.type.qdisplay.dendry');
+    lacksScope(source, 1, 'After', 'meta.embedded.block.javascript.dendry');
+    hasScope(source, 3, 'next', 'entity.name.function.dendry');
+  });
+
+  it.each([
+    'view-if: {! return 1 !}',
+    'on-arrival: {! const value = 1 !}',
+    'go-to: target if {! return 1 !}',
+    '\n- @target\n- view-if: {! return 1 !}',
+  ])('closes executable property JavaScript before the following body (%s)', header => {
+    const source = `${header}\n\nProse\n\n@next\ntitle: Next`;
+    const bodyLine = header.split('\n').length + 1;
+    lacksScope(source, bodyLine, 'Prose', 'meta.embedded.block.javascript.dendry');
+    hasScope(source, bodyLine + 2, 'next', 'entity.name.function.dendry');
+  });
+
+  it('preserves multiline JavaScript strings and comments before closing the block', () => {
+    const source = '\n[? if {! const label = `first\nsecond ${Q.value}`; /* first\nsecond */ return label\n!}: Prose ?]';
+    hasScope(source, 2, 'second', 'string.template.js');
+    hasScope(source, 3, 'second', 'comment.block.js');
+    hasScope(source, 3, 'return', 'keyword.control.flow.js');
+    lacksScope(source, 4, 'Prose', 'meta.embedded.block.javascript.dendry');
+    hasScope(source, 4, 'Prose', 'meta.conditional-text.dendry');
+  });
+
+  it('retains content escaping while property closing markers remain unescaped', () => {
+    const content = '\n[? if {! return `first\\!}still` !}: Prose ?]';
+    hasScope(content, 1, 'still', 'string.template.js');
+    lacksScope(content, 1, 'Prose', 'meta.embedded.block.javascript.dendry');
+    const property = 'on-arrival: {! return `first\\!}\n\nProse';
+    lacksScope(property, 2, 'Prose', 'meta.embedded.block.javascript.dendry');
   });
 
   it('handles nested/multiline rich content, formatter suffixes and escaping', () => {
