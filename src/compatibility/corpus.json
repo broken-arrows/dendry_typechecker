@@ -1,7 +1,13 @@
 {
   "defaults": [
-    { "name": "info.dry", "contents": "title: Compatibility\nauthor: Compatibility\nfirst-scene: root\n" },
-    { "name": "root.scene.dry", "contents": "title: Root\n\nRoot prose.\n" }
+    {
+      "name": "info.dry",
+      "contents": "title: Compatibility\nauthor: Compatibility\nfirst-scene: root\n"
+    },
+    {
+      "name": "root.scene.dry",
+      "contents": "title: Root\n\nRoot prose.\n"
+    }
   ],
   "cases": [
     {
@@ -9,130 +15,674 @@
       "description": "preserves a filename-derived root scene and its prose",
       "source": "upstream test/test_parsers_scene.js: should parse content",
       "files": [],
-      "parser": { "file": "root.scene.dry", "check": "root-content" }
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "root-content"
+      }
     },
     {
       "id": "root-body-invalid-condition",
       "description": "reports an invalid conditional in the last root body line",
       "source": "audit probe root-body-discarded (F03)",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\n[? if score = : Broken ?]" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "predicate|condition|logic|parse|syntax", "line": 2, "count": 1 }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\n[? if score = : Broken ?]"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "predicate|condition|logic|parse|syntax",
+        "line": 2,
+        "count": 1
+      }
     },
     {
       "id": "blank-separates-properties",
       "description": "preserves property-shaped prose after the blank separator",
       "source": "audit probe blank-separates-properties (F04)",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nsubtitle: actually prose\n" }],
-      "parser": { "file": "root.scene.dry", "check": "root-content" }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nsubtitle: actually prose\n"
+        }
+      ],
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "root-content"
+      }
     },
     {
       "id": "choice-properties",
       "description": "attaches option properties to the preceding choice",
       "source": "upstream lib/parsers/dry.js: handleOptionLine; appendix item 4",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score > 0\n- order: 2\n" }],
-      "parser": { "file": "root.scene.dry", "check": "choice-properties" }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score > 0\n- order: 2\n"
+        }
+      ],
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "choice-properties"
+      }
     },
     {
       "id": "choice-invalid-predicate",
       "description": "reports an invalid predicate attached to a choice",
       "source": "audit probe choice-property-block; appendix item 4",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score =\n" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "predicate|condition|logic|parse|syntax" }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score =\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "predicate|condition|logic|parse|syntax",
+        "line": 5,
+        "count": 1
+      }
     },
     {
       "id": "quality-string-initial",
       "description": "accepts a quality with a string initial value",
       "source": "upstream test/test_parsers_quality.js: should parse initial string value; appendix items 1, 8",
-      "files": [{ "name": "mood.quality.dry", "contents": "name: Mood\ninitial: hopeful\n" }]
+      "files": [
+        {
+          "name": "mood.quality.dry",
+          "contents": "name: Mood\ninitial: hopeful\n"
+        }
+      ]
     },
     {
       "id": "quality-missing-name",
       "description": "requires a name in a real quality file",
       "source": "upstream lib/parsers/quality.js: qualitySchema; appendix items 1, 8",
-      "files": [{ "name": "mood.quality.dry", "contents": "initial: hopeful\n" }],
-      "diagnostic": { "file": "mood.quality.dry", "pattern": "name" }
+      "files": [
+        {
+          "name": "mood.quality.dry",
+          "contents": "initial: hopeful\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "mood.quality.dry",
+        "pattern": "name"
+      }
     },
     {
       "id": "info-missing-author",
       "description": "requires an author in info.dry",
       "source": "upstream lib/parsers/info.js: infoSchema; appendix item 2",
-      "files": [{ "name": "info.dry", "contents": "title: Compatibility\nfirst-scene: root\n" }],
-      "diagnostic": { "file": "info.dry", "pattern": "author" }
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Compatibility\nfirst-scene: root\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "author"
+      }
     },
     {
       "id": "boolean-yes",
       "description": "accepts yes as a scene boolean",
       "source": "audit probe boolean-yes; appendix item 6",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nnew-page: yes\n\nText\n" }]
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nnew-page: yes\n\nText\n"
+        }
+      ]
     },
     {
       "id": "boolean-invalid",
       "description": "reports an invalid boolean value (existing diagnostic control)",
       "source": "upstream lib/parsers/validators.js: validateBoolean; appendix item 6",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nnew-page: garbage\n\nText\n" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "new.?page", "count": 1 }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nnew-page: garbage\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "new.?page",
+        "count": 1
+      }
     },
     {
       "id": "max-visits-zero",
       "description": "rejects a max-visits value below one",
       "source": "audit probe max-visits-zero; appendix item 7",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nmax-visits: 0\n\nText\n" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "max.?visits" }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nmax-visits: 0\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "max.?visits"
+      }
     },
     {
       "id": "dotted-section-reference",
       "description": "resolves a section qualified by a dotted filename",
       "source": "full compiler probe dotted-section-absolute-reference; appendix item 12",
       "files": [
-        { "name": "chapter.deep.scene.dry", "contents": "title: Chapter\n\n@inner.part\ntitle: Inner\ngo-to: .root\n\nInner prose.\n" },
-        { "name": "root.scene.dry", "contents": "title: Root\ngo-to: chapter.deep.inner.part\n\nRoot prose.\n" }
+        {
+          "name": "chapter.deep.scene.dry",
+          "contents": "title: Chapter\n\n@inner.part\ntitle: Inner\ngo-to: .root\n\nInner prose.\n"
+        },
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: chapter.deep.inner.part\n\nRoot prose.\n"
+        }
       ],
-      "parser": { "file": "chapter.deep.scene.dry", "check": "section-ids" }
+      "parser": {
+        "file": "chapter.deep.scene.dry",
+        "check": "section-ids"
+      }
     },
     {
       "id": "unrelated-section-not-global",
       "description": "does not resolve a short section name from an unrelated file",
       "source": "full compiler probe unrelated-short-section-not-global; appendix item 12",
       "files": [
-        { "name": "chapter.scene.dry", "contents": "title: Chapter\n\n@one\ntitle: One\n\nText\n" },
-        { "name": "root.scene.dry", "contents": "title: Root\ngo-to: one\n\nText\n" }
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\n\n@one\ntitle: One\n\nText\n"
+        },
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: one\n\nText\n"
+        }
       ],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "one" }
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "one"
+      }
     },
     {
       "id": "builtin-prev-scene",
       "description": "accepts the real prevScene built-in destination",
       "source": "full compiler probe builtin-goto-prevScene; appendix item 13",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\ngo-to: prevScene\n\nText\n" }]
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: prevScene\n\nText\n"
+        }
+      ]
     },
     {
       "id": "option-missing-title",
       "description": "requires an option title when its target has none",
       "source": "full compiler probe direct-option-missing-title; appendix item 14",
       "files": [
-        { "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @target\n" },
-        { "name": "target.scene.dry", "contents": "\nTarget prose.\n" }
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @target\n"
+        },
+        {
+          "name": "target.scene.dry",
+          "contents": "\nTarget prose.\n"
+        }
       ],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "title" }
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "title"
+      }
     },
     {
       "id": "magic-return",
       "description": "accepts a returning JavaScript predicate using the state binding",
       "source": "audit probe magic-multiline-return; engine.makeFunctionFromSource; appendix item 20",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nview-if: {!\nreturn state.qualities.score > 0;\n!}\n\nText\n" }]
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nview-if: {!\nreturn state.qualities.score > 0;\n!}\n\nText\n"
+        }
+      ]
     },
     {
       "id": "qdisplay-alternate-range",
       "description": "accepts the upstream hyphen range separator",
       "source": "upstream test/test_parsers_qdisplay.js: range fixture (1-5); appendix item 17",
-      "files": [{ "name": "rating.qdisplay.dry", "contents": "\n(1-5) Low\n" }]
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1-5) Low\n"
+        }
+      ]
     },
     {
       "id": "qdisplay-malformed-number",
       "description": "rejects a malformed numeric endpoint in a QDisplay range",
       "source": "audit probe qdisplay-malformed-number; appendix item 17",
-      "files": [{ "name": "rating.qdisplay.dry", "contents": "\n(1.2.3..4) Low\n" }],
-      "diagnostic": { "file": "rating.qdisplay.dry", "pattern": "range|number|format|declaration" }
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1.2.3..4) Low\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "range|number|format|declaration"
+      }
+    },
+    {
+      "id": "namespace-local-target",
+      "description": "resolves a bare name to a section of the current file",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\ngo-to: room\n\nText\n\n@room\ntitle: Room\n\nRoom\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-global-fallback",
+      "description": "resolves a global scene from a nested section when no local candidate exists",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\n\n@room\ntitle: Room\ngo-to: outside\n\nRoom\n"
+        },
+        {
+          "name": "outside.scene.dry",
+          "contents": "title: Outside\n\nOutside\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-parent-and-self",
+      "description": "supports current scene, parent and sibling references",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\n\n@one\ntitle: One\ngo-to: .; ..two; ..\n\nOne\n\n@two\ntitle: Two\n\nTwo\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-absolute-skips-local",
+      "description": "does not satisfy an absolute reference using a local section",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\ngo-to: .room\n\nText\n\n@room\ntitle: Room\n\nRoom\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "chapter.scene.dry",
+        "pattern": "room",
+        "line": 1
+      }
+    },
+    {
+      "id": "namespace-hyphenated-target",
+      "description": "accepts hyphenated section names and optional @ reference prefixes",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\ngo-to: @side-room\n\nText\n\n@side-room\ntitle: Room\n\nRoom\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-missing-hyphenated-target",
+      "description": "checks existence of a hyphenated destination",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: never-existed\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "never-existed",
+        "line": 1
+      }
+    },
+    {
+      "id": "namespace-repeated-local-name",
+      "description": "allows the same short section name in separate files",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "one.scene.dry",
+          "contents": "title: One\n\n@room\ntitle: Room\n\nRoom\n"
+        },
+        {
+          "name": "two.scene.dry",
+          "contents": "title: Two\n\n@room\ntitle: Room\n\nRoom\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-qualified-collision",
+      "description": "rejects a dotted filename colliding with another file section",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "a.scene.dry",
+          "contents": "title: A\n\n@b\ntitle: B\n\nText\n"
+        },
+        {
+          "name": "a.b.scene.dry",
+          "contents": "title: Duplicate\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "a.b.scene.dry",
+        "pattern": "duplicate.*a\\.b"
+      }
+    },
+    {
+      "id": "namespace-local-builtin-name",
+      "description": "allows a qualified section whose short name matches a built-in",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\ngo-to: prevScene\n\nText\n\n@prevScene\ntitle: Local previous\n\nText\n"
+        }
+      ]
+    },
+    {
+      "id": "namespace-builtin-collision",
+      "description": "rejects a filename-derived collision with a real built-in",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "returnScene.scene.dry",
+          "contents": "title: User scene\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "returnScene.scene.dry",
+        "pattern": "reserved|duplicate"
+      }
+    },
+    {
+      "id": "namespace-invented-builtin",
+      "description": "does not whitelist the nonexistent backScene built-in",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ngo-to: backScene\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "backScene"
+      }
+    },
+    {
+      "id": "namespace-invalid-declaration",
+      "description": "rejects an inline title on a section declaration",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\n\n@side: Inline title\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "chapter.scene.dry",
+        "pattern": "declaration|section|id",
+        "line": 2
+      }
+    },
+    {
+      "id": "namespace-phantom-template-scene",
+      "description": "does not collect scene IDs from an action template literal",
+      "source": "pinned upstream dry.js section IDs / compiler.js getCandidateAbsoluteIds; audit R01/R02/F07",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\non-arrival: {!\nconst text = `\n@ghost\n`;\n!}\ngo-to: ghost\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "ghost",
+        "line": 6
+      }
+    },
+    {
+      "id": "choice-all-fields",
+      "description": "accepts every upstream choice property and numeric prefix coercion",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root\n- title: Again\n- subtitle: More\n- unavailable-subtitle: Later\n- view-if: score > 0\n- choose-if: score > 1\n- order: 2.9suffix\n- priority: -1\n- frequency: 0.5suffix\n- frequency-var: score + 1\n"
+        }
+      ]
+    },
+    {
+      "id": "choice-unknown-property",
+      "description": "rejects the unsupported on-choose option property",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- on-choose: score = 1\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "on-choose",
+        "line": 5
+      }
+    },
+    {
+      "id": "choice-orphan-property",
+      "description": "rejects properties before any option declaration",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- choose-if: score > 0\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "before.*option|option.*defined",
+        "line": 4
+      }
+    },
+    {
+      "id": "choice-duplicate-property",
+      "description": "rejects an option property specified twice",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- order: 1\n- order: 2\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "order.*already|duplicate.*order",
+        "line": 6
+      }
+    },
+    {
+      "id": "choice-duplicate-target",
+      "description": "rejects the same target twice within a single options block",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- @root: Again\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "already|duplicate",
+        "line": 5
+      }
+    },
+    {
+      "id": "choice-invalid-number",
+      "description": "validates a choice numeric value on its own source line",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- order: nope\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "order",
+        "line": 5
+      }
+    },
+    {
+      "id": "choice-invalid-expression",
+      "description": "validates an attached frequency expression",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- frequency-var: score +\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "logic|parse|syntax|expression",
+        "line": 5
+      }
+    },
+    {
+      "id": "choice-normalized-property",
+      "description": "accepts and validates alternate choice property spellings",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- Choose If: score =\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 5
+      }
+    },
+    {
+      "id": "choice-continued-title",
+      "description": "folds title continuations into one option",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n  and again\n"
+        }
+      ],
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "choice-properties"
+      }
+    },
+    {
+      "id": "choice-dash-prose",
+      "description": "retains a dash line as prose when no blank starts an options block",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n- plain prose\n"
+        }
+      ],
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "root-content"
+      }
+    },
+    {
+      "id": "choice-horizontal-rule",
+      "description": "retains a horizontal rule as body content",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n---\n\nMore text\n"
+        }
+      ],
+      "parser": {
+        "file": "root.scene.dry",
+        "check": "root-content"
+      }
+    },
+    {
+      "id": "choice-after-options",
+      "description": "rejects prose after an options block has ended",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n\nInvalid trailing content\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "content.*options",
+        "line": 6
+      }
+    },
+    {
+      "id": "choice-relative-context",
+      "description": "resolves parent and child option targets within their containing scene",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\n@one\ntitle: One\n\nOne\n\n- @..two: Sibling\n- @local: Child\n\n@one.local\ntitle: Child\n\nChild\n\n@two\ntitle: Two\n\nTwo\n"
+        }
+      ]
+    },
+    {
+      "id": "choice-tag-properties",
+      "description": "attaches conditions to a tag option",
+      "source": "pinned upstream dry.js option attachment/block context and scene.js optionSchema; audit F05/F06/S02",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\ntags: group\n\nText\n\n- #group\n- choose-if: score =\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 6
+      }
+    },
+    {
+      "id": "choice-invalid-title-condition",
+      "description": "validates an inline conditional in an option title",
+      "source": "pinned upstream scene.js option title uses validateLineContent",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: [? if score = : Broken ?]\n" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "logic|parse|syntax|predicate", "line": 4, "count": 1 }
+    },
+    {
+      "id": "choice-invalid-subtitle-condition",
+      "description": "validates an inline conditional in an attached subtitle",
+      "source": "pinned upstream scene.js option subtitle uses validateLineContent",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- subtitle: [? if score = : Broken ?]\n" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "logic|parse|syntax|predicate", "line": 5, "count": 1 }
     }
   ]
 }

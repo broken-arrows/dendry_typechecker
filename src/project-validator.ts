@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
-import { parseText, DendryAST } from './parser';
+import { parseText, DendryAST, DendryNode } from './parser';
+import { BUILTIN_SCENE_IDS } from './scene-ids';
 import { DendryValidator } from './validator';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
   private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
+  private parseDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
   private globalSceneIds: Set<string> = new Set();
   private globalQualityIds: Set<string> = new Set();
   private isValidating: boolean = false;
@@ -27,194 +29,31 @@ export class DendryProjectValidator {
   }
 
   private async _parseAndExtractLocalIds(document: vscode.TextDocument): Promise<vscode.Diagnostic[]> {
-    const fileUri = document.uri;
+    const diagnostics: vscode.Diagnostic[] = [];
+    const { ast, errors } = parseText(document.getText(), document.uri.path);
+    for (const error of errors) {
+      const line = Math.min(Math.max(0, error.line), document.lineCount - 1);
+      diagnostics.push(new vscode.Diagnostic(
+        new vscode.Range(line, 0, line, document.lineAt(line).text.length),
+        `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error,
+      ));
+    }
+    if (errors.length) {
+      this.fileData.delete(this.keyFor(document.uri));
+      this.parseDiagnostics.set(this.keyFor(document.uri), { uri: document.uri, diagnostics });
+      return diagnostics;
+    }
+    this.parseDiagnostics.delete(this.keyFor(document.uri));
     const localSceneIds = new Set<string>();
     const localQualityIds = new Set<string>();
-    const diagnostics: vscode.Diagnostic[] = [];
-
-    try {
-      const { ast, errors } = parseText(document.getText(), fileUri.path);
-      const text = document.getText();
-      
-      errors.forEach((error: any) => {
-        const token = error.token;
-        const range = new vscode.Range(token.startLine - 1, token.startColumn - 1, token.endLine, token.endColumn);
-        diagnostics.push(new vscode.Diagnostic(range, `Parser Error: ${error.message}`, vscode.DiagnosticSeverity.Error));
-      });
-
-      if ( errors.length > 0) {
-        this.fileData.delete(this.keyFor(fileUri));
-        return diagnostics;
-      }
-
-      const seenIds = new Set<string>();
-      const idToLine = new Map<string, number>();
-
-      // First pass: collect explicit scene declarations from properties
-      for (const node of ast.nodes) {
-        const id = node.properties.get('id');
-        if (id) {
-          if (seenIds.has(id)) {
-            // Now text is available here
-            const lines = text.split(/\r?\n/);
-            const sceneDeclarationRange = new vscode.Range(
-              node.range.start.line,
-              0,
-              node.range.start.line,
-              lines[node.range.start.line]?.length || 0
-            );
-            
-            diagnostics.push(
-              new vscode.Diagnostic(
-                sceneDeclarationRange, 
-                `Duplicate ID "${id}" found in this file (first defined on line ${(idToLine.get(id) || 0) + 1})`, 
-                vscode.DiagnosticSeverity.Error
-              )
-            );
-          }
-          
-          if (!seenIds.has(id)) {
-            seenIds.add(id);
-            idToLine.set(id, node.range.start.line);
-          }
-          
-          if (node.type === 'scene') {
-            localSceneIds.add(id);
-          } else if (node.type === 'quality') {
-            localQualityIds.add(id);
-          }
-        }
-      }
-
-      // Second pass: extract scene IDs from scene markers at the START OF LINES only
-      const lines = text.split(/\r?\n/);
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        // Only match scene at the START of a line (scene declarations, not references)
-        const match = line.match(/^@([a-zA-Z0-9_][\w-]*)(?:\s|:|$)/); // Added boundary check
-        if (match) {
-          const sceneId = match[1];
-          if (!seenIds.has(sceneId)) {
-            localSceneIds.add(sceneId);
-            seenIds.add(sceneId);
-          }
-        }
-      }
-
-      
-      // Extract scene ID from filename (e.g., "scene_id.scene.dry" -> "scene_id")
-      const fileName = fileUri.path.split(/[/\\]/).pop() || '';
-      const fileBasedSceneId = fileName.replace(/\.scene\.dry$/, '');
-      
-      // Add the filename-based scene ID if valid
-      if (fileBasedSceneId && fileBasedSceneId !== fileName && !seenIds.has(fileBasedSceneId)) {
-          localSceneIds.add(fileBasedSceneId);
-          seenIds.add(fileBasedSceneId);
-      }
-      
-      // Check for reserved scene ID "jumpScene"
-      if (seenIds.has('jumpScene') || seenIds.has("backSpecialScene") || seenIds.has("backScene")) {
-          const lines = text.split(/\r?\n/);
-          for (let i = 0; i < lines.length; i++) {
-              const line = lines[i].trim();
-              const match = line.match(/^@(jumpScene)(?:\s|:|$)/);
-              if (match) {
-                  const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"jumpScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-                  break;
-              }
-              const matchBackSpecialScene = line.match(/^@(backSpecialScene)(?:\s|:|$)/);
-              if (matchBackSpecialScene) {
-                  const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-                  break;
-              }
-              const matchBackScene = line.match(/^@(backScene)(?:\s|:|$)/);
-              if (matchBackScene) {
-                  const reservedIdRange = new vscode.Range(i, 0, i, lines[i].length);
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"backScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-                  break;
-              }
-          }
-          // Also check in nodes
-          for (const node of ast.nodes) {
-              const id = node.properties.get('id');
-              if (id === 'jumpScene') {
-                  const nodeLines = text.split(/\r?\n/);
-                  const reservedIdRange = new vscode.Range(
-                      node.range.start.line,
-                      0,
-                      node.range.start.line,
-                      nodeLines[node.range.start.line]?.length || 0
-                  );
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"jumpScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-              } else if (id === "backSpecialScene") {
-                  const nodeLines = text.split(/\r?\n/);
-                  const reservedIdRange = new vscode.Range(
-                      node.range.start.line,  
-                      0,
-                      node.range.start.line,
-                      nodeLines[node.range.start.line]?.length || 0
-                  );
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"backSpecialScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-              } else if (id === "backScene") {
-                  const nodeLines = text.split(/\r?\n/);
-                  const reservedIdRange = new vscode.Range(
-                      node.range.start.line,  
-                      0,
-                      node.range.start.line,
-                      nodeLines[node.range.start.line]?.length || 0
-                  );
-                  diagnostics.push(
-                      new vscode.Diagnostic(
-                          reservedIdRange,
-                          `"backScene" is a reserved scene ID and cannot be used. Choose a different ID.`,
-                          vscode.DiagnosticSeverity.Error
-                      )
-                  );
-              }
-          }
-      }
-
-      this.fileData.set(this.keyFor(fileUri), { uri: fileUri, ast, localSceneIds, localQualityIds });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const range = new vscode.Range(0, 0, 0, 1);
-      const diagnostic = new vscode.Diagnostic(range, `Error parsing file: ${message}`, vscode.DiagnosticSeverity.Error);
-      diagnostics.push(diagnostic);
-      this.fileData.delete(this.keyFor(fileUri));
+    // The parser owns declaration syntax and source context. Never rescan raw
+    // lines: an @name inside JavaScript or prose is not a scene declaration.
+    for (const node of ast.nodes) {
+      const id = node.properties.get('id');
+      if (node.type === 'scene' && id) localSceneIds.add(id);
+      if (node.type === 'quality' && id) localQualityIds.add(id);
     }
-
+    this.fileData.set(this.keyFor(document.uri), { uri: document.uri, ast, localSceneIds, localQualityIds });
     return diagnostics;
   }
 
@@ -233,6 +72,9 @@ export class DendryProjectValidator {
         if (!currentWorkspaceFileKeys.has(cachedKey)) {
           this.fileData.delete(cachedKey);
         }
+      }
+      for (const key of this.parseDiagnostics.keys()) {
+        if (!currentWorkspaceFileKeys.has(key)) this.parseDiagnostics.delete(key);
       }
 
       // 2. Parse/re-parse changed file or new files
@@ -269,106 +111,40 @@ export class DendryProjectValidator {
         }
       }
 
-      // 3. Check for duplicate filename-based scene IDs and quality IDs across files
-      const fileNameToUri: Map<string, vscode.Uri> = new Map();
-      const globalQualityIdToUri: Map<string, vscode.Uri> = new Map();
+      for (const { uri, diagnostics } of this.parseDiagnostics.values()) {
+        finalDiagnostics.set(uri, [...diagnostics]);
+      }
 
-      // Helper to create diagnostic range for scene line
-      const createSceneDeclarationRange = async (uri: vscode.Uri, sceneId: string): Promise<vscode.Range | null> => {
-        let doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === uri.toString());
-        let text: string;
-        
-        if (doc) {
-          text = doc.getText();
-        } else {
-          // File not open - read from filesystem
-          try {
-            const uint8 = await vscode.workspace.fs.readFile(uri);
-            text = new TextDecoder().decode(uint8);
-          } catch (error) {
-            return null;
-          }
-        }
-        
-        const lines = text.split(/\r?\n/);
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (line.startsWith(`@${sceneId}`) && (line === `@${sceneId}` || lines[sceneId.length] === ' ')) {
-            return new vscode.Range(i, 0, i, lines[i].length);
-          }
-        }
-        return null;
+      // 3. Recheck declarations on every pass, including cached files. Absolute
+      // IDs can collide between a dotted filename and a section in another file.
+      type Definition = { uri: vscode.Uri; node: DendryNode };
+      const sceneDefinitions = new Map<string, Definition[]>();
+      const qualityDefinitions = new Map<string, Definition[]>();
+      const addDiagnostic = (definition: Definition, message: string) => {
+        const items = finalDiagnostics.get(definition.uri) || [];
+        const point = definition.node.range.start;
+        items.push(new vscode.Diagnostic(new vscode.Range(point, point), message, vscode.DiagnosticSeverity.Error));
+        finalDiagnostics.set(definition.uri, items);
       };
-
-      // Check for duplicate filenames (e.g., two files both named "myScene.scene.dry")
       for (const data of this.fileData.values()) {
-        const fileUri = data.uri;
-        // Extract filename without .scene.dry extension
-        const pathParts = fileUri.path.split(/[/\\]/);
-        const fullFileName = pathParts.pop();
-        const fileName = fullFileName?.replace('.scene.dry', '');
-
-        if (fileName && fileName !== fullFileName) { // Only check .scene.dry files
-          const existingUri = fileNameToUri.get(fileName);
-          // Compare by `.path` (logical file identity), not `.toString()`: a file
-          // is only a genuine duplicate of another if they live at different
-          // paths. Guarding on `.path` makes a file flagging itself impossible
-          // even if two divergent URI representations of it ever slip through.
-          if (existingUri && existingUri.path !== fileUri.path) {
-            // Duplicate filename found
-            let currentDiags = finalDiagnostics.get(fileUri) || [];
-            currentDiags.push(new vscode.Diagnostic(
-              new vscode.Range(0, 0, 0, 0),
-              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${existingUri.path}`,
-              vscode.DiagnosticSeverity.Error
-            ));
-            finalDiagnostics.set(fileUri, currentDiags);
-            
-            // Also add diagnostic to existing file
-            let existingDiags = finalDiagnostics.get(existingUri) || [];
-            existingDiags.push(new vscode.Diagnostic(
-              new vscode.Range(0, 0, 0, 0),
-              `Duplicate file name "${fileName}.scene.dry". Another file with this name exists at ${fileUri.path}`,
-              vscode.DiagnosticSeverity.Error
-            ));
-            finalDiagnostics.set(existingUri, existingDiags);
-          } else {
-            fileNameToUri.set(fileName, fileUri);
+        for (const node of data.ast.nodes) {
+          const id = node.properties.get('id');
+          if (!id || (node.type !== 'scene' && node.type !== 'quality')) continue;
+          const definitions = node.type === 'scene' ? sceneDefinitions : qualityDefinitions;
+          const entries = definitions.get(id) || [];
+          entries.push({ uri: data.uri, node });
+          definitions.set(id, entries);
+          if (node.type === 'scene' && BUILTIN_SCENE_IDS.has(id)) {
+            addDiagnostic({ uri: data.uri, node }, `"${id}" is a reserved scene ID and cannot be defined.`);
           }
         }
       }
-
-      // Check for duplicate quality IDs across files (qualities must be unique globally)
-      for (const data of this.fileData.values()) {
-        const fileUri = data.uri;
-        for (const id of data.localQualityIds) {
-          const existingUri = globalQualityIdToUri.get(id);
-          if (existingUri && existingUri.path !== fileUri.path) {
-            // Add diagnostic to existing file
-            let existingDiags = finalDiagnostics.get(existingUri) || [];
-            const existingRange = await createSceneDeclarationRange(existingUri, id);
-            if (existingRange) {
-                existingDiags.push(new vscode.Diagnostic(
-                existingRange,
-                `Duplicate quality ID "${id}" also found in ${fileUri.path.split(/[/\\]/).pop()}`,
-                vscode.DiagnosticSeverity.Error
-              ));
-              finalDiagnostics.set(existingUri, existingDiags);
-            }
-            
-            // Add diagnostic to current file
-            let currentDiags = finalDiagnostics.get(fileUri) || [];
-            const currentRange = await createSceneDeclarationRange(fileUri, id);
-            if (currentRange) {
-              currentDiags.push(new vscode.Diagnostic(
-                currentRange,
-                `Duplicate quality ID "${id}" also found in ${existingUri.path.split(/[/\\]/).pop()}`,
-                vscode.DiagnosticSeverity.Error
-              ));
-              finalDiagnostics.set(fileUri, currentDiags);
-            }
-          } else {
-            globalQualityIdToUri.set(id, fileUri);
+      for (const [kind, definitions] of [['scene', sceneDefinitions], ['quality', qualityDefinitions]] as const) {
+        for (const [id, entries] of definitions) {
+          if (entries.length < 2) continue;
+          for (const entry of entries) {
+            const other = entries.find(candidate => candidate !== entry)!;
+            addDiagnostic(entry, `Duplicate ${kind} ID "${id}" also defined at ${other.uri.path}:${other.node.range.start.line + 1}`);
           }
         }
       }

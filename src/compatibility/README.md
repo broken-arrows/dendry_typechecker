@@ -30,6 +30,25 @@ Use `npm run test:compat -- --testNamePattern=root` for the root cases and
 `npm run test:compat -- --testNamePattern=blank-separates-properties` for the
 blank separator. Remaining audit cases still fail normally.
 
+After namespace resolution and choice parsing: **62 checks, 54 passing and 8
+remaining audit failures**. The recording now contains 47 upstream compiler cases
+and seven raw-parser checks. Focused regressions cover root source positions and
+retention of duplicate, reserved-name and malformed-section diagnostics across
+validation passes. Commands for the repaired areas:
+
+```sh
+npm run test:compat -- --testNamePattern=namespace-
+npm run test:compat -- --testNamePattern=choice-
+npm run test:compat -- src/compatibility/scene-references.compat.ts
+```
+
+Namespace cases cover local/global lookup, dotted and hyphenated IDs, parent/self
+forms, built-ins, file/section collisions and false declarations inside JavaScript.
+Choice cases cover property attachment and spelling, valid/invalid schema fields,
+numeric coercion, conditions, continuations, option block context, title/subtitle
+conditions and containing-scene lookup. General magic/shorthand parity, other
+reference-property contracts and required target-title checks remain separate work.
+
 ## Boundaries and assertions
 
 The user agreed to `parseText(text, filename)` and

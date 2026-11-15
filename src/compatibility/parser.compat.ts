@@ -27,7 +27,7 @@ describe('parsing preserves upstream source semantics', () => {
         expect(choices[0].properties.get('id')).toBe(option.id);
         expect(choices[0].properties.get('title')).toBe(option.title);
         expect(choices[0].properties.get('choose-if')).toBe(option.chooseIf);
-        expect(String(choices[0].properties.get('order'))).toBe(option.order);
+        expect(choices[0].properties.get('order')).toBe(option.order);
       } else {
         const ids = ast.nodes.filter(node => node.type === 'scene').map(node => node.properties.get('id'));
         for (const section of expected.sections!) expect(ids).toContain(section.id);

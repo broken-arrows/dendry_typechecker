@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ABSOLUTE_SCENE_ID, RELATIVE_SCENE_ID, sceneIdFromPath } from './scene-ids';
 
 // ----------------- AST -----------------
 export interface DendryNode {
@@ -14,6 +15,8 @@ export interface DendryNode {
   range: vscode.Range;
   contentRange?: vscode.Range;
   declarationType?: 'explicit' | 'implicit';
+  parentSceneId?: string;
+  propertyRanges?: Map<string, vscode.Range>;
 }
 
 export interface DendryAST {
@@ -33,6 +36,7 @@ class DendryHandParser {
   private currentLine: number = 0;
   private nodes: DendryNode[] = [];
   private metadata: DendryAST['metadata'] = {};
+  private errors: { message: string; line: number }[] = [];
 
   constructor(private text: string, private fileName: string) {
     this.lines = text.split(/\r?\n/);
@@ -41,6 +45,10 @@ class DendryHandParser {
   parse(): { ast: DendryAST; errors: any[] } {
     
     try {
+      const rootId = sceneIdFromPath(this.fileName);
+      if (rootId !== undefined && !ABSOLUTE_SCENE_ID.test(rootId)) {
+        this.errors.push({ message: `Invalid filename-derived scene ID '${rootId}'.`, line: 0 });
+      }
       // Phase 1: Parse metadata at the top
       this.parseMetadata();
 
@@ -66,12 +74,12 @@ class DendryHandParser {
       this.metadata.fileName = this.fileName;
       return {
         ast: { nodes: this.nodes, metadata: this.metadata },
-        errors: []
+        errors: this.errors
       };
     } catch (error: any) {
       return {
         ast: { nodes: this.nodes, metadata: this.metadata },
-        errors: [{ message: error.message, line: this.currentLine }]
+        errors: [...this.errors, { message: error.message, line: this.currentLine }]
       };
     }
   }
@@ -102,32 +110,15 @@ class DendryHandParser {
   }
 
   private parseRootSection() {
-    const contentLines: string[] = [];
-    const contentStart = this.currentLine;
-
-    while (this.currentLine < this.lines.length) {
-      const line = this.lines[this.currentLine];
-
-      // Stop at first explicit scene
-      if (this.isSceneMarker(line) || this.isDivider(line)) {
-        break;
-      }
-
-      if (this.isChoice(line)) {
-        this.parseChoice();
-      } else {
-        contentLines.push(line);
-        this.currentLine++;
-      }
-    }
+    const body = this.parseBody(sceneIdFromPath(this.fileName));
 
     // Scene files have a filename-derived implicit scene before their sections.
-    const fileName = this.fileName.split(/[/\\]/).pop() || '';
-    if (!fileName.endsWith('.scene.dry')) return;
+    const rootId = sceneIdFromPath(this.fileName);
+    if (rootId === undefined) return;
 
     const properties = new Map<string, any>(Object.entries(this.metadata));
-    properties.set('id', fileName.replace(/\.scene\.dry$/, ''));
-    const content = contentLines.join('\n');
+    properties.set('id', rootId);
+    const content = body.content;
     // parseText appends a newline sentinel; source ranges must stop at the
     // original document's last line, including for empty/property-only roots.
     const lastSourceLine = Math.max(0, this.lines.length - 2);
@@ -138,11 +129,11 @@ class DendryHandParser {
       declarationType: 'implicit',
       properties,
       content,
-      interpolations: this.parseInterpolations(content, contentStart),
+      interpolations: this.parseInterpolations(content, body.startLine),
       range: new vscode.Range(0, 0, endLine, endCharacter),
-      contentRange: contentStart > endLine
+      contentRange: body.startLine > endLine
         ? new vscode.Range(endLine, endCharacter, endLine, endCharacter)
-        : new vscode.Range(contentStart, 0, endLine, endCharacter),
+        : this.bodyRange(body.startLine, body.endLine),
     });
   }
 
@@ -150,16 +141,18 @@ class DendryHandParser {
     const startLine = this.currentLine;
     const line = this.lines[this.currentLine];
     
-    const match = line.match(/^@(\w+)?(?::(.*))?$/);
-    const sceneId = match?.[1]?.trim() || '';
-    const title = match?.[2]?.trim() || '';
+    const localId = line.slice(1).trim();
+    const rootId = sceneIdFromPath(this.fileName);
+    if (!ABSOLUTE_SCENE_ID.test(localId)) {
+      this.errors.push({ message: `Invalid scene section declaration '${line}'.`, line: startLine });
+    } else if (localId === rootId) {
+      this.errors.push({ message: `Section cannot reuse the file ID '${rootId}'.`, line: startLine });
+    }
+    const sceneId = rootId ? `${rootId}.${localId}` : localId;
 
     const properties = new Map<string, any>();
     if (sceneId) {
       properties.set('id', sceneId);
-    }
-    if (title) {
-      properties.set('title', title);
     }
 
     this.currentLine++;
@@ -168,7 +161,11 @@ class DendryHandParser {
     while (this.currentLine < this.lines.length) {
       const line = this.lines[this.currentLine];
 
-      if (line.trim() === '' || this.isComment(line)) {
+      if (line.trim() === '') {
+        this.currentLine++;
+        break;
+      }
+      if (this.isComment(line)) {
         this.currentLine++;
         continue;
       }
@@ -182,25 +179,9 @@ class DendryHandParser {
       }
     }
 
-    const contentLines: string[] = [];
-    const contentStart = this.currentLine;
-    while (this.currentLine < this.lines.length) {
-      const line = this.lines[this.currentLine];
-
-      // Stop at next scene or divider
-      if (this.isSceneMarker(line) || this.isDivider(line)) {
-        break;
-      }
-
-      if (this.isChoice(line)) {
-        this.parseChoice();
-      } else {
-        contentLines.push(line);
-        this.currentLine++;
-      }
-    }
-    const content = contentLines.join('\n');
-    const contentInterpolations = this.parseInterpolations(content, contentStart);
+    const body = this.parseBody(sceneId);
+    const content = body.content;
+    const contentInterpolations = this.parseInterpolations(content, body.startLine);
 
     // Also collect interpolations from property values
     const propertyInterpolations: DendryNode['interpolations'] = [];
@@ -232,7 +213,8 @@ class DendryHandParser {
         properties,
         content,
         interpolations: allInterpolations,
-        range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0)
+        range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0),
+        contentRange: this.bodyRange(body.startLine, body.endLine),
     });
 
   }
@@ -251,46 +233,109 @@ class DendryHandParser {
 }
 
 
-  private parseChoice() {
-    const lineNum = this.currentLine;
-    const line = this.lines[this.currentLine];
-    
-    // Find where the actual content starts (after "-" with optional space)
-    const dashIndex = line.indexOf('-');
-    
-    // Start position is after the dash
-    let contentStart = dashIndex + 1;
-    
-    // Skip exactly one space if present (but only one, to preserve indentation in content)
-    if (contentStart < line.length && line[contentStart] === ' ') {
-      contentStart++;
+  private parseBody(parentSceneId?: string): { content: string; startLine: number; endLine: number } {
+    const startLine = this.currentLine;
+    const content: string[] = [];
+    let separated = true;
+    let inOptions = false;
+    let afterOptions = false;
+    let choice: DendryNode | undefined;
+    const targets = new Set<string>();
+    let endLine = startLine - 1;
+    while (this.currentLine < this.lines.length) {
+      const line = this.lines[this.currentLine];
+      if (this.isSceneMarker(line) || this.isDivider(line)) break;
+      if (line.startsWith('#')) {
+        if (!inOptions && !afterOptions) content.push('');
+        this.currentLine++;
+        continue;
+      }
+      if (!line.trim()) {
+        if (inOptions) { inOptions = false; afterOptions = true; }
+        if (!afterOptions) { content.push(line); endLine = this.currentLine; }
+        separated = true;
+        this.currentLine++;
+        continue;
+      }
+      if (afterOptions) {
+        this.errors.push({ message: 'Found content after an options block.', line: this.currentLine++ });
+        continue;
+      }
+      if (separated && /^-(?!-)/.test(line)) inOptions = true;
+      if (inOptions) {
+        if (!line.startsWith('-')) {
+          this.errors.push({ message: 'Hyphens are required in an option block.', line: this.currentLine++ });
+        } else {
+          choice = this.parseChoice(parentSceneId, choice, targets);
+        }
+      } else {
+        content.push(line);
+        endLine = this.currentLine++;
+        separated = false;
+      }
     }
-    
-    // Extract content from after "- " or "-"
-    const content = line.substring(contentStart);
-    
-    // Parse interpolations from the content
-    const interpolations = this.parseInterpolations(content, lineNum);
-    
-    // Adjust all interpolation ranges to account for the "- " or "-" prefix
-    interpolations.forEach(interp => {
-      interp.range = new vscode.Range(
-        interp.range.start.line,
-        interp.range.start.character + contentStart,
-        interp.range.end.line,
-        interp.range.end.character + contentStart
-      );
-    });
-    
-    this.nodes.push({
-      type: 'choice',
-      properties: new Map(),
-      content: content.trim(), // Trim for the content property
-      interpolations: interpolations,
-      range: new vscode.Range(lineNum, 0, lineNum, line.length)
-    });
-    
-    this.currentLine++;
+    return { content: content.join('\n'), startLine, endLine };
+  }
+
+  private bodyRange(startLine: number, endLine: number): vscode.Range {
+    const lastLine = Math.max(0, this.lines.length - 2);
+    const end = Math.min(Math.max(0, endLine), lastLine);
+    if (startLine > endLine) {
+      const point = Math.min(startLine, lastLine);
+      const column = startLine > lastLine ? this.lines[point].length : 0;
+      return new vscode.Range(point, column, point, column);
+    }
+    return new vscode.Range(Math.min(startLine, end), 0, end, this.lines[end].length);
+  }
+
+  private parseChoice(parentSceneId: string | undefined, previous: DendryNode | undefined, targets: Set<string>): DendryNode | undefined {
+    const lineNum = this.currentLine;
+    const line = this.lines[lineNum];
+    const raw = line.slice(1).trim();
+    // Reuse upstream-style continuation/magic collection for the entire option
+    // declaration. The synthetic key is only used to collect its value.
+    const collected = this.parsePropertyLine(`option: ${raw}`, lineNum);
+    const endLine = collected.endLine;
+    this.currentLine = endLine + 1;
+    const content = String(collected.value);
+    const match = content.match(/^([@#][^\s:]+)(?:\s*:\s*([\s\S]*))?$/);
+    if (match && (match[1][0] === '#' ? /^#[\w-]+$/.test(match[1]) : RELATIVE_SCENE_ID.test(match[1].slice(1)))) {
+      if (targets.has(match[1])) this.errors.push({ message: `Option with id/tag '${match[1]}' already specified.`, line: lineNum });
+      targets.add(match[1]);
+      const properties = new Map<string, any>([['id', match[1]]]);
+      if (match[2]) properties.set('title', match[2]);
+      const declarationRange = new vscode.Range(lineNum, 0, endLine, this.lines[endLine].length);
+      const node: DendryNode = {
+        type: 'choice', parentSceneId, properties, content,
+        propertyRanges: match[2] ? new Map([['title', declarationRange]]) : new Map(),
+        interpolations: this.parseInterpolations(this.lines.slice(lineNum, endLine + 1).join('\n'), lineNum),
+        range: declarationRange,
+      };
+      this.nodes.push(node);
+      return node;
+    }
+    const propertyMatch = raw.match(/^([A-Za-z][A-Za-z_ -]*[A-Za-z])\s*:/);
+    if (!propertyMatch) {
+      this.errors.push({ message: 'Invalid property or option definition.', line: lineNum });
+      return previous;
+    }
+    const property = this.parsePropertyLine(raw, lineNum);
+    const key = normalizePropertyName(property.key);
+    if (['id', 'sections', 'content', 'options'].includes(key)) {
+      this.errors.push({ message: `Property '${key}' is a reserved name.`, line: lineNum });
+    } else if (!previous) {
+      this.errors.push({ message: 'Property found in options before an option is defined.', line: lineNum });
+    } else if (previous.properties.has(key)) {
+      this.errors.push({ message: `Choice property '${key}' is already defined.`, line: lineNum });
+    } else {
+      previous.properties.set(key, property.value);
+      previous.propertyRanges!.set(key, new vscode.Range(lineNum, 0, property.endLine, this.lines[property.endLine].length));
+      previous.range = new vscode.Range(previous.range.start.line, 0, property.endLine, this.lines[property.endLine].length);
+      if (['title', 'subtitle', 'unavailable-subtitle'].includes(key)) {
+        previous.interpolations.push(...this.parseInterpolations(this.lines.slice(lineNum, property.endLine + 1).join('\n'), lineNum));
+      }
+    }
+    return previous;
   }
 
 
@@ -451,7 +496,7 @@ class DendryHandParser {
   }
 
   private isSceneMarker(line: string): boolean {
-    return /^@\w*/.test(line.trim());
+    return line.startsWith('@');
   }
 
   private isChoice(line: string): boolean {
@@ -472,6 +517,17 @@ class DendryHandParser {
 }
 
 // ----------------- MAGIC-BLOCK STATE HELPERS -----------------
+
+// Retain kebab-case keys in this extension's AST while accepting upstream's
+// camel/Pascal case, space, underscore and hyphen property spellings.
+export function normalizePropertyName(name: string): string {
+  const camelCase = /^[a-z]+(?:[A-Z][a-z]+)*$/;
+  if (!camelCase.test(name)) {
+    const initialLower = name[0].toLowerCase() + name.slice(1);
+    name = camelCase.test(initialLower) ? initialLower : name.toLowerCase().replace(/[_ -]+(.)/g, (_, letter: string) => letter.toUpperCase());
+  }
+  return name.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase());
+}
 
 // True when a line *ends* inside a `{! ... !}` magic block, given the
 // state when the line started. Mirrors `dry.js:108 endsInMagic`.

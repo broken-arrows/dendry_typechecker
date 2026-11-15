@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "d38de1cdd3f5c2935be6762da6ff72bb7221657caf8a6dbfaf019ee6c0fba2bc",
+    "corpusSha256": "8d0ca480a3c991c697f419f9db9ef536d0de7f87891c2e8f7472d8e04e36180b",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -212,6 +212,253 @@
     "qdisplay-malformed-number": {
       "ok": false,
       "error": "Unknown range declaration: (1.2.3..4) Low"
+    },
+    "namespace-local-target": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.room",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "namespace-global-fallback": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.room",
+        "jumpScene",
+        "outside",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "namespace-parent-and-self": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.one",
+        "chapter.two",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "namespace-absolute-skips-local": {
+      "ok": false,
+      "error": "Couldn't find an id matching \".room\" in \"chapter\"."
+    },
+    "namespace-hyphenated-target": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.side-room",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "namespace-missing-hyphenated-target": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"never-existed\" in \"root\"."
+    },
+    "namespace-repeated-local-name": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "one",
+        "one.room",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "two",
+        "two.room"
+      ],
+      "qualityIds": []
+    },
+    "namespace-qualified-collision": {
+      "ok": false,
+      "error": "Duplicate scenes with id \"a.b\" found."
+    },
+    "namespace-local-builtin-name": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.prevScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "namespace-builtin-collision": {
+      "ok": false,
+      "error": "Duplicate scenes with id \"returnScene\" found."
+    },
+    "namespace-invented-builtin": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"backScene\" in \"root\"."
+    },
+    "namespace-invalid-declaration": {
+      "ok": false,
+      "error": "chapter.scene.dry line 3: Malformed id \"side: Inline title\" (use letters, numbers, _ and - only)."
+    },
+    "namespace-phantom-template-scene": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"ghost\" in \"root\"."
+    },
+    "choice-all-fields": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "choice-unknown-property": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Unknown properties: \"onChoose\" (root.scene.dry line 6)."
+    },
+    "choice-orphan-property": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Property found in options before an option is defined."
+    },
+    "choice-duplicate-property": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Property \"order\" is already defined."
+    },
+    "choice-duplicate-target": {
+      "ok": false,
+      "error": "root.scene.dry line 6: Option with id/tag \"@root\" already specified."
+    },
+    "choice-invalid-number": {
+      "ok": false,
+      "error": "root.scene.dry line 6: \"nope\" is not a valid whole number."
+    },
+    "choice-invalid-expression": {
+      "ok": false,
+      "error": "root.scene.dry line 6: No valid way to parse this content: score +"
+    },
+    "choice-normalized-property": {
+      "ok": false,
+      "error": "root.scene.dry line 6: No valid way to parse this content: score ="
+    },
+    "choice-continued-title": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "options": [
+          {
+            "id": "@root",
+            "title": "Again and again"
+          }
+        ],
+        "content": "Text"
+      }
+    },
+    "choice-dash-prose": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "content": "Text\n- plain prose"
+      }
+    },
+    "choice-horizontal-rule": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "content": "Text\n\n---\n\nMore text"
+      }
+    },
+    "choice-after-options": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Found content after an options block."
+    },
+    "choice-relative-context": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.one",
+        "root.one.local",
+        "root.two"
+      ],
+      "qualityIds": []
+    },
+    "choice-tag-properties": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score ="
+    },
+    "choice-invalid-title-condition": {
+      "ok": false,
+      "error": "No valid way to parse this content: score = "
+    },
+    "choice-invalid-subtitle-condition": {
+      "ok": false,
+      "error": "No valid way to parse this content: score = "
     }
   }
 }
