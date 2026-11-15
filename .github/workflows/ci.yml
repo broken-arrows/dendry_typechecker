@@ -7,7 +7,8 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    # The locked Playwright browser installer does not support Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -35,3 +36,20 @@ jobs:
             exit 1
           fi
           echo "Web bundle is clean."
+
+  compatibility:
+    name: Upstream alignment tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check upstream alignment
+        run: npm run test:compat
