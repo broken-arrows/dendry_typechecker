@@ -147,6 +147,7 @@
     "package": "npm test && node esbuild.js --production",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
+    "test:compat": "vitest run --config vitest.compat.config.ts",
     "test:watch": "vitest",
     "open-in-web": "vscode-test-web --quality=stable --extensionDevelopmentPath=. ."
   },

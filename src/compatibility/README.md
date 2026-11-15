@@ -1,0 +1,99 @@
+# Upstream compatibility baseline
+
+Run from the repository root:
+
+```sh
+npm run test:compat
+npm run test:compat -- --testNamePattern=root-content
+npm test
+npm run check-types
+```
+
+`test:compat` is deliberately red while the audited defects are being repaired.
+It runs ordinary assertions, exits nonzero on mismatches, and does not skip or
+mark known defects as expected failures. It is currently separate from `npm test`,
+CI and packaging so the baseline does not block unrelated changes. Once the
+compatibility suite is green, include it in the normal CI gate. A green helper
+suite alone does **not** establish compiler compatibility.
+
+Initial results (2026-11-15): **21 checks, 16 failing and 5 passing**. The corpus
+has 17 complete compiler cases, four of which also check the parser's public
+output. The existing helper suite has 19 passing tests. Select a failing behavior,
+implement its fix, and rerun the targeted compatibility test plus regressions.
+
+After the first root-scene fix: **27 checks, 14 failing and 13 passing**. Root
+IDs/prose, property-shaped root prose after the blank separator, and malformed
+root body conditions now have passing coverage. Five focused root regressions
+also cover section separation, full/dotted filenames, empty/property-only roots,
+property-only JavaScript string literals and last-line interpolation positions.
+Use `npm run test:compat -- --testNamePattern=root` for the root cases and
+`npm run test:compat -- --testNamePattern=blank-separates-properties` for the
+blank separator. Remaining audit cases still fail normally.
+
+## Boundaries and assertions
+
+The user agreed to `parseText(text, filename)` and
+`DendryProjectValidator.validateProject(files)` as the public boundaries.
+`vscode-host.ts` supplies only host values, configuration defaults and in-memory
+documents. All extension language code runs normally. Tests do not inspect
+private project caches or call private validators.
+
+`corpus.json` defines shared valid `info.dry` and root inputs. A case replaces
+defaults by filename and adds its other files. Every case documents its source.
+Project tests compare acceptance with upstream compilation: accepted projects
+must have no errors; rejected projects must have an error on the relevant file
+about the expected subject. Optional authoring warnings are permitted. Exact
+compiler messages are evidence, not the extension's required wording. IO or
+host-stand-in exceptions must not count as successful rejection diagnostics.
+
+Parser checks use the upstream raw parser's independently recorded content,
+option properties and qualified section IDs. This prevents silence caused by
+discarded content or disconnected validation from looking like full support.
+Current acceptance of `quality-string-initial`, for example, does not establish
+quality support: its missing-name counterpart must also report an error.
+
+The suite does not yet cover real VS Code discovery/activation, editor events,
+incremental caching, general diagnostic ranges, highlighting or browser execution. It is
+a small starting corpus, not a test for every audit finding.
+
+The standalone root missing-display regression preserves an existing extension
+diagnostic. The reference compiler accepts an unknown formatter name, so this
+case is deliberately outside the compiler acceptance corpus.
+
+## Reference and regeneration
+
+Reference: [aucchen/dendrynexus at
+2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7](https://github.com/aucchen/dendrynexus/tree/2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7),
+the 2026-11-15 audit revision. Minimal inputs are adapted from its MIT-licensed
+parser tests and the local audit probes; source references are attached to each
+case. No upstream runtime or dependencies are bundled in this test suite.
+
+Normal tests run offline from the committed recordings. They need neither the
+ignored audit directory nor an upstream checkout, and they verify that the
+recording matches the corpus hash. JSON file LF/CRLF differences are normalized;
+the source strings inside JSON are preserved.
+
+To re-execute upstream and **verify** the recording using the local audit tree:
+
+```sh
+node src/compatibility/record-upstream.cjs docs/compat-audit/dendrynexus-2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7 docs/compat-audit/runtime/node_modules
+```
+
+The two path arguments may instead point to another copy of that exact upstream
+revision and a `node_modules` directory containing **lodash 3.10.1** and
+**async 1.5.2**. They are only needed for reference verification/regeneration.
+The recorder verifies source hashes against the recording and dependency versions,
+then runs the real full compiler in one isolated process per case. This isolation
+handles upstream asynchronous throws and repeated callbacks on invalid files.
+The worker also calls upstream's raw parser for the selected parser cases.
+
+After adding or changing a case, regenerate explicitly:
+
+```sh
+node src/compatibility/record-upstream.cjs <upstream-root> <dependency-node_modules> --write
+```
+
+Inspect the corpus and recording changes together. Do not regenerate expectations
+from extension output or weaken assertions to make the baseline green. Source
+changes to the pinned engine require a deliberate reference update; the recorder
+refuses a different source hash even with `--write`.

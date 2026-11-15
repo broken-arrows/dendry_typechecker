@@ -1,0 +1,217 @@
+{
+  "reference": {
+    "repository": "https://github.com/aucchen/dendrynexus",
+    "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
+    "corpusSha256": "d38de1cdd3f5c2935be6762da6ff72bb7221657caf8a6dbfaf019ee6c0fba2bc",
+    "dependencyVersions": {
+      "lodash": "3.10.1",
+      "async": "1.5.2"
+    },
+    "sourceSha256": {
+      "package.json": "7cae04b6e5d8c041483c682ea29032cf53189467767541815b945c6620a61498",
+      "lib/engine.js": "0c827fd6d64cf6e0df10c41cce65dd9b6c8fb0145d08c0a29d0e5856f2c4604e",
+      "lib/parsers/compiler.js": "db71d7f241e2f821f0909193dee0114fffda17c4ff26cb42a71effffdf87adc3",
+      "lib/parsers/content.js": "51c91eeb87b8ba38af6d3d727a151f8bd02c408445d1da8cdb5002454923e5a6",
+      "lib/parsers/dry.js": "1c6b3929c37697f9d93a770e02cddb4c69b5723a12f8533f00723a81344cbc09",
+      "lib/parsers/gp.js": "6d6c63c278233d6a9e9ccb462bcc3614349d5afc44fbc442bd9d1b100c1e4fdb",
+      "lib/parsers/info.js": "c50c3ac858cdad654b867ace03732fcdbfb04c0fdf970cb8b82993de3ba9058a",
+      "lib/parsers/logic.js": "c89ce703ecdb927052cc48b3c67223ad12f6e9783a273134078921a38886982d",
+      "lib/parsers/make.js": "82d2456be5c4579df21ea8a16e858b32d389264de266cca59bfbcdb4ff61aa98",
+      "lib/parsers/qdcontent.js": "0ba6ec96315023fe928bbb1855aa6ffb8ede7024efd3cf46c44b430e863043cd",
+      "lib/parsers/qdisplay.js": "d1df32650ecd3d49344dec8fb4b30f91826f39becb2d775333846244ef0a39f1",
+      "lib/parsers/quality.js": "3961ac098b1e38bea19589c28c33fd92c63396878244943e0dfa6d6530634856",
+      "lib/parsers/scene.js": "37cc2400c0a657a01004967ebf2d7f8b5f053ff0c1a18ed48aaaf542439cdec3",
+      "lib/parsers/validators.js": "84821410692a549f7244444c970ad08b1cc348a4cb1c47cd5e47f1d4416a7e21"
+    }
+  },
+  "cases": {
+    "root-content": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "content": "Root prose."
+      }
+    },
+    "root-body-invalid-condition": {
+      "ok": false,
+      "error": "No valid way to parse this content: score = "
+    },
+    "blank-separates-properties": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "content": "subtitle: actually prose"
+      }
+    },
+    "choice-properties": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "root",
+        "type": "scene",
+        "title": "Root",
+        "options": [
+          {
+            "id": "@root",
+            "title": "Again",
+            "chooseIf": "score > 0",
+            "order": "2"
+          }
+        ],
+        "content": "Text"
+      }
+    },
+    "choice-invalid-predicate": {
+      "ok": false,
+      "error": "root.scene.dry line 6: No valid way to parse this content: score ="
+    },
+    "quality-string-initial": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "mood"
+      ]
+    },
+    "quality-missing-name": {
+      "ok": false,
+      "error": "mood.quality.dry: Required property \"name\" missing."
+    },
+    "info-missing-author": {
+      "ok": false,
+      "error": "info.dry: Required property \"author\" missing."
+    },
+    "boolean-yes": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "boolean-invalid": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"garbage\" is not a valid yes/no value."
+    },
+    "max-visits-zero": {
+      "ok": false,
+      "error": "root.scene.dry line 2: 0 is not in range 1+."
+    },
+    "dotted-section-reference": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter.deep",
+        "chapter.deep.inner.part",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "chapter.deep",
+        "type": "scene",
+        "title": "Chapter",
+        "sections": [
+          {
+            "id": "chapter.deep.inner.part",
+            "title": "Inner",
+            "goTo": ".root",
+            "content": "Inner prose."
+          }
+        ],
+        "content": ""
+      }
+    },
+    "unrelated-section-not-global": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"one\" in \"root\"."
+    },
+    "builtin-prev-scene": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "option-missing-title": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "magic-return": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-alternate-range": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-malformed-number": {
+      "ok": false,
+      "error": "Unknown range declaration: (1.2.3..4) Low"
+    }
+  }
+}

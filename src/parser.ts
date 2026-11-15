@@ -12,6 +12,7 @@ export interface DendryNode {
     fullText?: string;
   }[];
   range: vscode.Range;
+  contentRange?: vscode.Range;
   declarationType?: 'explicit' | 'implicit';
 }
 
@@ -80,7 +81,11 @@ class DendryHandParser {
       const line = this.lines[this.currentLine];
 
       // Stop at first non-metadata line
-      if (line.trim() === '' || this.isComment(line)) {
+      if (line.trim() === '') {
+        this.currentLine++;
+        break;
+      }
+      if (this.isComment(line)) {
         this.currentLine++;
         continue;
       }
@@ -115,6 +120,30 @@ class DendryHandParser {
         this.currentLine++;
       }
     }
+
+    // Scene files have a filename-derived implicit scene before their sections.
+    const fileName = this.fileName.split(/[/\\]/).pop() || '';
+    if (!fileName.endsWith('.scene.dry')) return;
+
+    const properties = new Map<string, any>(Object.entries(this.metadata));
+    properties.set('id', fileName.replace(/\.scene\.dry$/, ''));
+    const content = contentLines.join('\n');
+    // parseText appends a newline sentinel; source ranges must stop at the
+    // original document's last line, including for empty/property-only roots.
+    const lastSourceLine = Math.max(0, this.lines.length - 2);
+    const endLine = Math.min(Math.max(0, this.currentLine - 1), lastSourceLine);
+    const endCharacter = this.currentLine === 0 ? 0 : this.lines[endLine].length;
+    this.nodes.unshift({
+      type: 'scene',
+      declarationType: 'implicit',
+      properties,
+      content,
+      interpolations: this.parseInterpolations(content, contentStart),
+      range: new vscode.Range(0, 0, endLine, endCharacter),
+      contentRange: contentStart > endLine
+        ? new vscode.Range(endLine, endCharacter, endLine, endCharacter)
+        : new vscode.Range(contentStart, 0, endLine, endCharacter),
+    });
   }
 
   private parseScene() {

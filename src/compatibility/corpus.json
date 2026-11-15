@@ -1,0 +1,138 @@
+{
+  "defaults": [
+    { "name": "info.dry", "contents": "title: Compatibility\nauthor: Compatibility\nfirst-scene: root\n" },
+    { "name": "root.scene.dry", "contents": "title: Root\n\nRoot prose.\n" }
+  ],
+  "cases": [
+    {
+      "id": "root-content",
+      "description": "preserves a filename-derived root scene and its prose",
+      "source": "upstream test/test_parsers_scene.js: should parse content",
+      "files": [],
+      "parser": { "file": "root.scene.dry", "check": "root-content" }
+    },
+    {
+      "id": "root-body-invalid-condition",
+      "description": "reports an invalid conditional in the last root body line",
+      "source": "audit probe root-body-discarded (F03)",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\n[? if score = : Broken ?]" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "predicate|condition|logic|parse|syntax", "line": 2, "count": 1 }
+    },
+    {
+      "id": "blank-separates-properties",
+      "description": "preserves property-shaped prose after the blank separator",
+      "source": "audit probe blank-separates-properties (F04)",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nsubtitle: actually prose\n" }],
+      "parser": { "file": "root.scene.dry", "check": "root-content" }
+    },
+    {
+      "id": "choice-properties",
+      "description": "attaches option properties to the preceding choice",
+      "source": "upstream lib/parsers/dry.js: handleOptionLine; appendix item 4",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score > 0\n- order: 2\n" }],
+      "parser": { "file": "root.scene.dry", "check": "choice-properties" }
+    },
+    {
+      "id": "choice-invalid-predicate",
+      "description": "reports an invalid predicate attached to a choice",
+      "source": "audit probe choice-property-block; appendix item 4",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- choose-if: score =\n" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "predicate|condition|logic|parse|syntax" }
+    },
+    {
+      "id": "quality-string-initial",
+      "description": "accepts a quality with a string initial value",
+      "source": "upstream test/test_parsers_quality.js: should parse initial string value; appendix items 1, 8",
+      "files": [{ "name": "mood.quality.dry", "contents": "name: Mood\ninitial: hopeful\n" }]
+    },
+    {
+      "id": "quality-missing-name",
+      "description": "requires a name in a real quality file",
+      "source": "upstream lib/parsers/quality.js: qualitySchema; appendix items 1, 8",
+      "files": [{ "name": "mood.quality.dry", "contents": "initial: hopeful\n" }],
+      "diagnostic": { "file": "mood.quality.dry", "pattern": "name" }
+    },
+    {
+      "id": "info-missing-author",
+      "description": "requires an author in info.dry",
+      "source": "upstream lib/parsers/info.js: infoSchema; appendix item 2",
+      "files": [{ "name": "info.dry", "contents": "title: Compatibility\nfirst-scene: root\n" }],
+      "diagnostic": { "file": "info.dry", "pattern": "author" }
+    },
+    {
+      "id": "boolean-yes",
+      "description": "accepts yes as a scene boolean",
+      "source": "audit probe boolean-yes; appendix item 6",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nnew-page: yes\n\nText\n" }]
+    },
+    {
+      "id": "boolean-invalid",
+      "description": "reports an invalid boolean value (existing diagnostic control)",
+      "source": "upstream lib/parsers/validators.js: validateBoolean; appendix item 6",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nnew-page: garbage\n\nText\n" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "new.?page", "count": 1 }
+    },
+    {
+      "id": "max-visits-zero",
+      "description": "rejects a max-visits value below one",
+      "source": "audit probe max-visits-zero; appendix item 7",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nmax-visits: 0\n\nText\n" }],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "max.?visits" }
+    },
+    {
+      "id": "dotted-section-reference",
+      "description": "resolves a section qualified by a dotted filename",
+      "source": "full compiler probe dotted-section-absolute-reference; appendix item 12",
+      "files": [
+        { "name": "chapter.deep.scene.dry", "contents": "title: Chapter\n\n@inner.part\ntitle: Inner\ngo-to: .root\n\nInner prose.\n" },
+        { "name": "root.scene.dry", "contents": "title: Root\ngo-to: chapter.deep.inner.part\n\nRoot prose.\n" }
+      ],
+      "parser": { "file": "chapter.deep.scene.dry", "check": "section-ids" }
+    },
+    {
+      "id": "unrelated-section-not-global",
+      "description": "does not resolve a short section name from an unrelated file",
+      "source": "full compiler probe unrelated-short-section-not-global; appendix item 12",
+      "files": [
+        { "name": "chapter.scene.dry", "contents": "title: Chapter\n\n@one\ntitle: One\n\nText\n" },
+        { "name": "root.scene.dry", "contents": "title: Root\ngo-to: one\n\nText\n" }
+      ],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "one" }
+    },
+    {
+      "id": "builtin-prev-scene",
+      "description": "accepts the real prevScene built-in destination",
+      "source": "full compiler probe builtin-goto-prevScene; appendix item 13",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\ngo-to: prevScene\n\nText\n" }]
+    },
+    {
+      "id": "option-missing-title",
+      "description": "requires an option title when its target has none",
+      "source": "full compiler probe direct-option-missing-title; appendix item 14",
+      "files": [
+        { "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @target\n" },
+        { "name": "target.scene.dry", "contents": "\nTarget prose.\n" }
+      ],
+      "diagnostic": { "file": "root.scene.dry", "pattern": "title" }
+    },
+    {
+      "id": "magic-return",
+      "description": "accepts a returning JavaScript predicate using the state binding",
+      "source": "audit probe magic-multiline-return; engine.makeFunctionFromSource; appendix item 20",
+      "files": [{ "name": "root.scene.dry", "contents": "title: Root\nview-if: {!\nreturn state.qualities.score > 0;\n!}\n\nText\n" }]
+    },
+    {
+      "id": "qdisplay-alternate-range",
+      "description": "accepts the upstream hyphen range separator",
+      "source": "upstream test/test_parsers_qdisplay.js: range fixture (1-5); appendix item 17",
+      "files": [{ "name": "rating.qdisplay.dry", "contents": "\n(1-5) Low\n" }]
+    },
+    {
+      "id": "qdisplay-malformed-number",
+      "description": "rejects a malformed numeric endpoint in a QDisplay range",
+      "source": "audit probe qdisplay-malformed-number; appendix item 17",
+      "files": [{ "name": "rating.qdisplay.dry", "contents": "\n(1.2.3..4) Low\n" }],
+      "diagnostic": { "file": "rating.qdisplay.dry", "pattern": "range|number|format|declaration" }
+    }
+  ]
+}

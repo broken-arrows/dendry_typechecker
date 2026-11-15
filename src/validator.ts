@@ -275,6 +275,13 @@ export class DendryValidator {
   private validateScene(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
 
+    // Root properties are still checked by validateMetadata. Validate their
+    // newly preserved body without duplicating property diagnostics here.
+    if (node.declarationType === 'implicit') {
+      if (node.content.trim()) this.validateSceneContent(node, document, diagnostics);
+      return diagnostics;
+    }
+
     // Check for standalone "@" (no scene ID)
     const sceneLine = document.lineAt(node.range.start.line).text.trim();
     if (sceneLine === '@' || sceneLine.match(/^@\s*$/)) {
@@ -411,8 +418,8 @@ export class DendryValidator {
 
   private validateSceneContent(node: DendryNode, document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {
       // Get all content from the scene (between properties and next scene/end)
-      const startLine = node.range.start.line;
-      const endLine = node.range.end.line;
+      const startLine = node.contentRange?.start.line ?? node.range.start.line;
+      const endLine = node.contentRange ? node.contentRange.end.line + 1 : node.range.end.line;
 
     for (let i = startLine; i < endLine; i++) {
         const lineText = document.lineAt(i).text;
