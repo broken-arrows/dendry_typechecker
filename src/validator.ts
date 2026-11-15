@@ -3,7 +3,7 @@ import { DendryAST, DendryNode, normalizePropertyName } from './parser';
 import { checkScript, Finding, FindingSeverity } from './js-check';
 import { convertCondition, convertAction, ConversionResult } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
-import { BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
+import { ABSOLUTE_SCENE_ID, BUILTIN_SCENE_IDS, RELATIVE_SCENE_ID, sceneIdFromPath, sceneReferenceCandidates } from './scene-ids';
 
 type FileData = {
   uri: vscode.Uri;
@@ -63,7 +63,7 @@ export class DendryValidator {
     'achievement'
   ]);
 
-  private readonly QUALITY_PROPERTIES = new Set(['id', 'name', 'initial', 'min', 'max', 'signal']);
+  private readonly QUALITY_PROPERTIES = new Set(['id', 'type', 'name', 'initial', 'min', 'max', 'signal', 'is-valid', 'default-display']);
 
   private readonly CHOICE_PROPERTIES = new Set([
     'id',
@@ -110,7 +110,9 @@ export class DendryValidator {
     const firstSectionLine = Math.min(Infinity, ...ast.nodes
       .filter(node => node.type === 'scene' && node.declarationType === 'explicit')
       .map(node => node.range.start.line));
-    diagnostics.push(...this.validateMetadata(ast.metadata, document, firstSectionLine));
+    if (!ast.nodes.some(node => node.type === 'quality' || node.type === 'info')) {
+      diagnostics.push(...this.validateMetadata(ast.metadata, document, firstSectionLine));
+    }
 
     for (const node of ast.nodes) {
       this.contextSceneId = node.type === 'scene' ? node.properties.get('id') || rootId : node.parentSceneId || rootId;
@@ -278,6 +280,8 @@ export class DendryValidator {
         return this.validateScene(node, document);
       case 'quality':
         return this.validateQuality(node, document);
+      case 'info':
+        return this.validateInfo(node, document);
       case 'choice':
         return this.validateChoice(node, document);
       default:
@@ -478,53 +482,88 @@ export class DendryValidator {
 
   private validateQuality(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-
-    if (!node.properties.has('id')) {
-      diagnostics.push(
-        this.createDiagnostic(node.range, 'Quality must have an "id" property', vscode.DiagnosticSeverity.Error)
-      );
+    if (!/^[A-Za-z][\-A-Za-z0-9_]*$/.test(String(node.properties.get('id') || ''))) {
+      diagnostics.push(this.createDiagnostic(node.range, 'Invalid filename-derived quality name.', vscode.DiagnosticSeverity.Error));
     }
-
+    if (!node.properties.has('name')) {
+      diagnostics.push(this.createDiagnostic(node.range, 'Required quality property "name" missing.', vscode.DiagnosticSeverity.Error));
+    }
     for (const [key, value] of node.properties.entries()) {
+      const range = this.findRangeForProperty(document, node.propertyRanges?.get(key) || node.range, key);
       if (!this.QUALITY_PROPERTIES.has(key)) {
-        diagnostics.push(
-          this.createDiagnostic(
-            node.range,
-            `Unknown quality property: "${key}"`,
-            this.strictMode ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning
-          )
-        );
+        diagnostics.push(this.createDiagnostic(range, `Unknown quality property: "${key}"`, vscode.DiagnosticSeverity.Error));
       }
-
-      if (key === 'initial' || key === 'min' || key === 'max') {
-        const r = this.findRangeForProperty(document, node.range, key);
-        this.validateNumber(value, r, key, diagnostics);
+      if ((key === 'min' || key === 'max') && Number.isNaN(parseFloat(String(value)))) {
+        diagnostics.push(this.createDiagnostic(range, `Quality property '${key}' must be a number.`, vscode.DiagnosticSeverity.Error));
+      }
+      if (key === 'default-display' && !/^[A-Za-z][\-A-Za-z0-9_]*$/.test(String(value).trim())) {
+        diagnostics.push(this.createDiagnostic(range, 'Quality default-display must be a quality-name-shaped formatter ID.', vscode.DiagnosticSeverity.Error));
+      }
+      if (key === 'is-valid') {
+        const source = document.getText(node.propertyRanges?.get(key) || range);
+        const raw = source.slice(source.indexOf(':') + 1).trim();
+        if (raw.includes('{!') || raw.includes('!}')) {
+          if (!/^\{![\s\S]*!\}$/.test(raw)) diagnostics.push(this.createDiagnostic(
+            range, 'Magic in an is-valid predicate must have no surrounding content.', vscode.DiagnosticSeverity.Error,
+          ));
+          else diagnostics.push(...checkScript(String(value), {
+            functionBody: true, checkUndefined: true,
+            extraGlobals: ['state', 'Q', 'arguments', ...this.extraLibraries],
+            undefinedSeverity: this.strictMode ? 'warning' : 'hint',
+          }).map(finding => this.findingToDiagnostic(finding, range)));
+        } else diagnostics.push(...this.validateAsShorthand(String(value), range, false));
       }
     }
+    // initial accepts numbers, booleans and strings. Upstream does not reject
+    // out-of-range initial values or contradictory bounds; clamping is runtime behavior.
+    if (node.content.trim()) this.validateSceneContent(node, document, diagnostics);
+    return diagnostics;
+  }
 
-    // Cross-property checks
-    const min = Number(node.properties.get('min'));
-    const max = Number(node.properties.get('max'));
-    const initial = Number(node.properties.get('initial'));
-
-    if (!isNaN(min) && !isNaN(max) && min > max) {
-      diagnostics.push(
-        this.createDiagnostic(node.range, 'Quality "min" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error)
-      );
+  private validateInfo(node: DendryNode, document: vscode.TextDocument): vscode.Diagnostic[] {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const fields = new Set(['id', 'type', 'title', 'author', 'ifid', 'first-scene', 'root-scene',
+      'animate', 'scene-signal', 'quality-signal', 'display-sidebar', 'display-stats', 'display-options', 'sidebar-stats']);
+    for (const required of ['title', 'author']) {
+      if (!node.properties.has(required)) diagnostics.push(this.createDiagnostic(
+        node.range, `Required info property "${required}" missing.`, vscode.DiagnosticSeverity.Error,
+      ));
     }
-
-    if (!isNaN(initial) && !isNaN(min) && initial < min) {
-      diagnostics.push(
-        this.createDiagnostic(node.range, 'Quality "initial" value cannot be less than "min" value', vscode.DiagnosticSeverity.Error)
-      );
+    for (const [key, value] of node.properties) {
+      const range = this.findRangeForProperty(document, node.propertyRanges?.get(key) || node.range, key);
+      if (!fields.has(key)) diagnostics.push(this.createDiagnostic(range, `Unknown info property: "${key}"`, vscode.DiagnosticSeverity.Error));
+      if (key === 'type' && String(value).trim() !== 'info') {
+        diagnostics.push(this.createDiagnostic(range, 'Info file type must equal "info".', vscode.DiagnosticSeverity.Error));
+      }
+      if (['animate', 'display-sidebar', 'display-stats', 'display-options'].includes(key)) {
+        const boolean = String(value).trim().toLowerCase();
+        if (!/^(yes|true|t|y|ok|no|false|f|n)$/.test(boolean) && Number.isNaN(parseInt(boolean))) {
+          diagnostics.push(this.createDiagnostic(range, `Info property '${key}' must be a valid yes/no value.`, vscode.DiagnosticSeverity.Error));
+        }
+      }
+      if (key === 'sidebar-stats') {
+        // This is upstream's tag-list syntax (including its A-z character range),
+        // not a declaration-only quality lookup: dynamic Q entries remain legal.
+        for (const tag of String(value).split(/[\s;,]+/).filter(Boolean)) {
+          if (!/^#?([0-9a-zA-z_-]+)$/.test(tag)) diagnostics.push(this.createDiagnostic(
+            range, `Invalid sidebar-stats tag '${tag}'.`, vscode.DiagnosticSeverity.Error,
+          ));
+        }
+      }
+      if (key === 'first-scene' || key === 'root-scene') {
+        const target = String(value).trim().replace(/^@/, '');
+        if (!ABSOLUTE_SCENE_ID.test(target)) diagnostics.push(this.createDiagnostic(
+          range, `Info property '${key}' must contain one absolute scene ID.`, vscode.DiagnosticSeverity.Error,
+        ));
+        else if (!this.sceneIds.has(target)) diagnostics.push(this.createDiagnostic(
+          range, `Info ${key} refers to undefined scene '${target}'. The engine cannot use this startup/root target.`,
+          vscode.DiagnosticSeverity.Warning,
+        ));
+      }
     }
-
-    if (!isNaN(initial) && !isNaN(max) && initial > max) {
-      diagnostics.push(
-        this.createDiagnostic(node.range, 'Quality "initial" value cannot be greater than "max" value', vscode.DiagnosticSeverity.Error)
-      );
+    if (!node.properties.has('first-scene') && !node.properties.has('root-scene') && !this.sceneIds.has('root')) {
+      diagnostics.push(this.createDiagnostic(node.range, "The default startup scene 'root' does not exist.", vscode.DiagnosticSeverity.Warning));
     }
-
     return diagnostics;
   }
 

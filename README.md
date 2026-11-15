@@ -5,7 +5,7 @@ A Visual Studio Code extension providing type checking and validation for Dendry
 ## Features
 
 - **Syntax Highlighting**: Supporting Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
-- **Real-time Validation**: Validates your `.scene.dry` and `.qdisplay.dry` files as you type.
+- **Real-time Validation**: Validates `.scene.dry`, `.quality.dry`, `.qdisplay.dry` and `info.dry` files as you type.
 - **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
 - **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
@@ -68,7 +68,7 @@ The extension will:
 
 ## Usage
 
-1. Open your project, or any `.scene.dry`/`.qdisplay.dry` file in VSCode.
+1. Open your project, or any `.scene.dry`, `.quality.dry`, `.qdisplay.dry` or `info.dry` file in VSCode.
 2. The extension automatically activates and validates your files.
 3. Errors and warnings will appear in the "Problems" panel.
 4. Hover over the underlined code to see detailed error messages.

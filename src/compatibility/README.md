@@ -49,6 +49,26 @@ numeric coercion, conditions, continuations, option block context, title/subtitl
 conditions and containing-scene lookup. General magic/shorthand parity, other
 reference-property contracts and required target-title checks remain separate work.
 
+After quality and info support: **101 checks, 95 passing and 6 remaining audit
+failures**. There are 79 recorded compiler cases, nine parser checks, five root
+regressions, three diagnostic-retention checks and five new-file integration
+checks. Both new file kinds have passing schema/parser cases; integration checks
+cover separate scene/quality namespaces, duplicate quality IDs across folders,
+incremental schema diagnostics, deletion cleanup and the default startup target.
+
+```sh
+npm run test:compat -- --testNamePattern=quality-
+npm run test:compat -- --testNamePattern=info-
+npm run test:compat -- src/compatibility/file-types.compat.ts
+```
+
+Compiler-accepted missing info startup/root targets use a separate `warning`
+expectation in the corpus. This keeps authoring diagnostics distinct from
+compiler rejection. Quality values outside bounds, strings/booleans in `initial`,
+numeric-prefix bounds and undeclared default-display references remain accepted.
+Quality `is-valid` uses source-aware magic dispatch and function-body return
+support; general scene magic/shorthand and rich-content grammar work is still open.
+
 ## Boundaries and assertions
 
 The user agreed to `parseText(text, filename)` and

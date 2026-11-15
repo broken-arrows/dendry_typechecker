@@ -34,6 +34,13 @@ describe('project diagnostics match pinned upstream compilation', () => {
         if (expected.line !== undefined) expect(matching.map(item => item.line)).toContain(expected.line);
         if (expected.count !== undefined) expect(matching).toHaveLength(expected.count);
       }
+      if (testCase.warning) {
+        const warning = testCase.warning;
+        const matches = diagnostics.filter(item => item.file === warning.file &&
+          item.severity === DiagnosticSeverity.Warning && new RegExp(warning.pattern, 'i').test(item.message));
+        expect(matches, JSON.stringify(diagnostics, null, 2)).not.toEqual([]);
+        if (warning.line !== undefined) expect(matches.map(item => item.line)).toContain(warning.line);
+      }
     });
   }
 });

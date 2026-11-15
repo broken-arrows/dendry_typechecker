@@ -11,6 +11,26 @@
   ],
   "cases": [
     {
+      "id": "quality-multiline-magic",
+      "description": "recognizes returning multiline JavaScript in is-valid",
+      "source": "pinned upstream quality.js isValid and validators.js makeCompile",
+      "files": [{ "name": "health.quality.dry", "contents": "name: Health\nis-valid: {!\nreturn state.qualities.health > 0;\n!}\n" }]
+    },
+    {
+      "id": "quality-invalid-magic",
+      "description": "reports an invalid JavaScript predicate on its actual body line",
+      "source": "pinned upstream quality.js isValid and validators.js makeCompile",
+      "files": [{ "name": "health.quality.dry", "contents": "name: Health\nis-valid: {!\nreturn +;\n!}\n" }],
+      "diagnostic": { "file": "health.quality.dry", "pattern": "JavaScript|parse|syntax", "line": 2 }
+    },
+    {
+      "id": "quality-mixed-predicate",
+      "description": "rejects mixed shorthand and JavaScript in is-valid",
+      "source": "pinned upstream quality.js isValid and validators.js makeCompile",
+      "files": [{ "name": "health.quality.dry", "contents": "name: Health\nis-valid: health > 0 {! return true; !}\n" }],
+      "diagnostic": { "file": "health.quality.dry", "pattern": "Magic|surrounding", "line": 1 }
+    },
+    {
       "id": "root-content",
       "description": "preserves a filename-derived root scene and its prose",
       "source": "upstream test/test_parsers_scene.js: should parse content",
@@ -674,15 +694,454 @@
       "id": "choice-invalid-title-condition",
       "description": "validates an inline conditional in an option title",
       "source": "pinned upstream scene.js option title uses validateLineContent",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: [? if score = : Broken ?]\n" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "logic|parse|syntax|predicate", "line": 4, "count": 1 }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: [? if score = : Broken ?]\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 4,
+        "count": 1
+      }
     },
     {
       "id": "choice-invalid-subtitle-condition",
       "description": "validates an inline conditional in an attached subtitle",
       "source": "pinned upstream scene.js option subtitle uses validateLineContent",
-      "files": [{ "name": "root.scene.dry", "contents": "title: Root\n\nText\n\n- @root: Again\n- subtitle: [? if score = : Broken ?]\n" }],
-      "diagnostic": { "file": "root.scene.dry", "pattern": "logic|parse|syntax|predicate", "line": 5, "count": 1 }
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nText\n\n- @root: Again\n- subtitle: [? if score = : Broken ?]\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "root.scene.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 5,
+        "count": 1
+      }
+    },
+    {
+      "id": "quality-all-fields",
+      "description": "parses a named quality, its predicate, formatter, signal and description",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "#comment\nName: Health\nInitial: true\nMin: 0\nMax: 10\nIs Valid: health >= 0\nDefault Display: missing-display\nSignal: ui:update\n\nHelp text.\n===\nMore help.\n"
+        }
+      ],
+      "parser": {
+        "file": "health.quality.dry",
+        "check": "quality-file"
+      }
+    },
+    {
+      "id": "quality-boolean-false",
+      "description": "accepts a boolean initial value",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\ninitial: FALSE\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-numeric-initial",
+      "description": "accepts a fractional initial value",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\ninitial: 2.5\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-clamped-initial",
+      "description": "accepts an initial value that runtime will clamp",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\ninitial: 30\nmin: 0\nmax: 10\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-string-with-bounds",
+      "description": "does not force a bounded quality initial value to be numeric",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\ninitial: hopeful\nmin: 0\nmax: 10\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-reversed-bounds",
+      "description": "does not invent a compiler error for contradictory quality bounds",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nmin: 10\nmax: 0\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-float-prefix",
+      "description": "matches upstream parseFloat on quality bounds",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nmin: 0.5tail\nmax: 10tail\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-invalid-bound",
+      "description": "rejects a nonnumeric quality bound",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nmin: nope\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "min|number",
+        "line": 1
+      }
+    },
+    {
+      "id": "quality-empty-bound",
+      "description": "rejects an empty quality bound",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nmax:\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "max|number",
+        "line": 1
+      }
+    },
+    {
+      "id": "quality-invalid-id",
+      "description": "validates the filename-derived quality name",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "bad.name.quality.dry",
+          "contents": "name: Health\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "bad.name.quality.dry",
+        "pattern": "quality.*name|quality.*id"
+      }
+    },
+    {
+      "id": "quality-unknown-field",
+      "description": "rejects unknown quality fields",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nunknown-field: yes\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "unknown-field",
+        "line": 1
+      }
+    },
+    {
+      "id": "quality-duplicate-field",
+      "description": "rejects equivalent quality property spellings as duplicates",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nDefault Display: one\ndefault_display: two\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "default-display.*already|duplicate",
+        "line": 2
+      }
+    },
+    {
+      "id": "quality-invalid-display-name",
+      "description": "checks formatter name syntax without requiring a formatter declaration",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\ndefault-display: bad.name\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "default-display",
+        "line": 1
+      }
+    },
+    {
+      "id": "quality-invalid-predicate",
+      "description": "validates an is-valid shorthand predicate",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nis-valid: health =\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 1
+      }
+    },
+    {
+      "id": "quality-magic-predicate",
+      "description": "accepts a returning JavaScript is-valid predicate",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\nis-valid: {! return state.qualities.health >= 0; !}\n"
+        }
+      ]
+    },
+    {
+      "id": "quality-description-condition",
+      "description": "checks a conditional in a quality description",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\n\n[? if health = : Broken ?]"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "logic|parse|syntax|predicate",
+        "line": 2
+      }
+    },
+    {
+      "id": "quality-sections-invalid",
+      "description": "rejects sections in a quality declaration",
+      "source": "pinned upstream quality.js schema, dry.js header rules and validators.js coercion; audit items 1/8",
+      "files": [
+        {
+          "name": "health.quality.dry",
+          "contents": "name: Health\n\n@extra\n\nText\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "health.quality.dry",
+        "pattern": "section",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-all-fields",
+      "description": "recognizes game metadata, flags, signals, sidebar stats and opaque body text",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "#comment\nTitle: Game\nAuthor: Author\nType: info\nIfid: opaque-id\nFirst Scene: @root\nRoot Scene: root\nAnimate: YES\nScene Signal: scene:changed\nQuality Signal: quality:changed\nDisplay Sidebar: 1\nDisplay Stats: no\nDisplay Options: ok\nSidebar Stats: #health; mood, dynamic_quality\n\n[? deliberately opaque body ?]\n"
+        }
+      ],
+      "parser": {
+        "file": "info.dry",
+        "check": "info-file"
+      }
+    },
+    {
+      "id": "info-missing-title",
+      "description": "requires a game title",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "author: Author\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "title"
+      }
+    },
+    {
+      "id": "info-unknown-field",
+      "description": "rejects unknown info fields",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nunknown-field: yes\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "unknown-field",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-invalid-boolean",
+      "description": "rejects an invalid animation flag",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nanimate: maybe\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "animate",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-numeric-boolean",
+      "description": "accepts upstream numeric-prefix boolean coercion",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\ndisplay-stats: 12tail\n"
+        }
+      ]
+    },
+    {
+      "id": "info-invalid-sidebar-list",
+      "description": "validates sidebar-stats list syntax",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nsidebar-stats: health!\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "sidebar-stats",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-invalid-start-id",
+      "description": "requires one absolute-shaped first-scene ID",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nfirst-scene: .root\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "first-scene",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-dotted-start",
+      "description": "accepts a dotted absolute startup target",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nfirst-scene: chapter.room\nroot-scene: root\n"
+        },
+        {
+          "name": "chapter.scene.dry",
+          "contents": "title: Chapter\n\n@room\ntitle: Room\n\nText\n"
+        }
+      ]
+    },
+    {
+      "id": "info-missing-start-target",
+      "description": "warns about a compiler-accepted missing startup target",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nfirst-scene: missing\n"
+        }
+      ],
+      "warning": {
+        "file": "info.dry",
+        "pattern": "first-scene.*missing",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-missing-root-target",
+      "description": "warns about a compiler-accepted missing root target",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nroot-scene: missing\n"
+        }
+      ],
+      "warning": {
+        "file": "info.dry",
+        "pattern": "root-scene.*missing",
+        "line": 2
+      }
+    },
+    {
+      "id": "info-duplicate-field",
+      "description": "rejects equivalent metadata property spellings as duplicates",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\nFirst Scene: root\nfirst_scene: root\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "first-scene.*already|duplicate",
+        "line": 3
+      }
+    },
+    {
+      "id": "info-invalid-type",
+      "description": "validates an explicitly supplied info type",
+      "source": "pinned upstream info.js schema, validators.js ID/boolean/tag-list contracts and engine startup defaults; audit item 2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: Game\nauthor: Author\ntype: scene\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "info.dry",
+        "pattern": "type",
+        "line": 2
+      }
     }
   ]
 }

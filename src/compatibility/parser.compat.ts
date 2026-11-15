@@ -28,9 +28,30 @@ describe('parsing preserves upstream source semantics', () => {
         expect(choices[0].properties.get('title')).toBe(option.title);
         expect(choices[0].properties.get('choose-if')).toBe(option.chooseIf);
         expect(choices[0].properties.get('order')).toBe(option.order);
-      } else {
+      } else if (request.check === 'section-ids') {
         const ids = ast.nodes.filter(node => node.type === 'scene').map(node => node.properties.get('id'));
         for (const section of expected.sections!) expect(ids).toContain(section.id);
+      } else {
+        const kind = request.check === 'quality-file' ? 'quality' : 'info';
+        expect(ast.nodes).toHaveLength(1);
+        const node = ast.nodes[0];
+        expect(node.type).toBe(kind);
+        expect(node.properties.get('id')).toBe(expected.id);
+        expect(node.content.trim()).toBe(expected.content?.trim() || '');
+        if (kind === 'quality') {
+          expect(node.properties.get('name')).toBe(expected.name);
+          expect(node.properties.get('initial')).toBe(expected.initial);
+          expect(node.properties.get('min')).toBe(expected.min);
+          expect(node.properties.get('max')).toBe(expected.max);
+          expect(node.properties.get('is-valid')).toBe(expected.isValid);
+          expect(node.properties.get('default-display')).toBe(expected.defaultDisplay);
+          expect(node.properties.get('signal')).toBe(expected.signal);
+        } else {
+          expect(node.properties.get('title')).toBe(expected.title);
+          expect(node.properties.get('author')).toBe(expected.author);
+          expect(node.properties.get('first-scene')).toBe(expected.firstScene);
+          expect(node.properties.get('root-scene')).toBe(expected.rootScene);
+        }
       }
     });
   }

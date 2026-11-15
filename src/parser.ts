@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { ABSOLUTE_SCENE_ID, RELATIVE_SCENE_ID, sceneIdFromPath } from './scene-ids';
+import { dendryFileKind } from './file-kinds';
 
 // ----------------- AST -----------------
 export interface DendryNode {
-  type: 'scene' | 'choice' | 'divider' | 'quality';
+  type: 'scene' | 'choice' | 'divider' | 'quality' | 'info';
   properties: Map<string, any>;
   content: string;
   interpolations: {
@@ -45,6 +46,12 @@ class DendryHandParser {
   parse(): { ast: DendryAST; errors: any[] } {
     
     try {
+      const kind = dendryFileKind(this.fileName);
+      if (kind === 'quality' || kind === 'info') {
+        this.parseStandalone(kind);
+        this.metadata.fileName = this.fileName;
+        return { ast: { nodes: this.nodes, metadata: this.metadata }, errors: this.errors };
+      }
       const rootId = sceneIdFromPath(this.fileName);
       if (rootId !== undefined && !ABSOLUTE_SCENE_ID.test(rootId)) {
         this.errors.push({ message: `Invalid filename-derived scene ID '${rootId}'.`, line: 0 });
@@ -107,6 +114,53 @@ class DendryHandParser {
         break;
       }
     }
+  }
+
+  private parseStandalone(kind: 'quality' | 'info'): void {
+    const filename = this.fileName.split(/[/\\]/).pop() || '';
+    const id = kind === 'quality' ? filename.slice(0, -'.quality.dry'.length) : 'info';
+    const properties = new Map<string, any>([['id', id]]);
+    if (kind === 'quality') properties.set('type', 'quality');
+    const propertyRanges = new Map<string, vscode.Range>();
+    while (this.currentLine < this.lines.length) {
+      const lineNum = this.currentLine;
+      const line = this.lines[lineNum];
+      if (!line.trim()) { this.currentLine++; break; }
+      if (line.startsWith('#')) { this.currentLine++; continue; }
+      if (!/^\s*[A-Za-z][A-Za-z_ -]*[A-Za-z]\s*:/.test(line)) {
+        this.errors.push({ message: 'Invalid property definition. A blank line must separate properties and body content.', line: lineNum });
+        this.currentLine++;
+        continue;
+      }
+      const property = this.parsePropertyLine(line, lineNum);
+      const key = normalizePropertyName(property.key);
+      if (['id', 'sections', 'content', 'options'].includes(key)) {
+        this.errors.push({ message: `Property '${key}' is a reserved name.`, line: lineNum });
+      } else if (properties.has(key)) {
+        this.errors.push({ message: `Property '${key}' is already defined.`, line: lineNum });
+      } else {
+        properties.set(key, property.value);
+        this.metadata[key] = property.value;
+        propertyRanges.set(key, new vscode.Range(lineNum, 0, property.endLine, this.lines[property.endLine].length));
+      }
+      this.currentLine = property.endLine + 1;
+    }
+    const firstBodyNode = this.nodes.length;
+    const body = this.parseBody(undefined, false);
+    const options = this.nodes.splice(firstBodyNode);
+    if (options.length) this.errors.push({ message: `Options are not supported in ${kind} files.`, line: options[0].range.start.line });
+    if (this.currentLine < this.lines.length) {
+      this.errors.push({ message: `Sections are not supported in ${kind} files.`, line: this.currentLine });
+    }
+    const lastLine = Math.max(0, this.lines.length - 2);
+    this.nodes.push({
+      type: kind, properties, propertyRanges, content: body.content,
+      range: new vscode.Range(0, 0, lastLine, this.lines[lastLine].length),
+      contentRange: this.bodyRange(body.startLine, body.endLine),
+      // info body is opaque in the upstream schema; quality descriptions are rich content.
+      interpolations: kind === 'quality' ? this.parseInterpolations(body.content, body.startLine) : [],
+    });
+    this.currentLine = this.lines.length;
   }
 
   private parseRootSection() {
@@ -233,7 +287,7 @@ class DendryHandParser {
 }
 
 
-  private parseBody(parentSceneId?: string): { content: string; startLine: number; endLine: number } {
+  private parseBody(parentSceneId?: string, stopAtDivider = true): { content: string; startLine: number; endLine: number } {
     const startLine = this.currentLine;
     const content: string[] = [];
     let separated = true;
@@ -244,7 +298,7 @@ class DendryHandParser {
     let endLine = startLine - 1;
     while (this.currentLine < this.lines.length) {
       const line = this.lines[this.currentLine];
-      if (this.isSceneMarker(line) || this.isDivider(line)) break;
+      if (this.isSceneMarker(line) || (stopAtDivider && this.isDivider(line))) break;
       if (line.startsWith('#')) {
         if (!inOptions && !afterOptions) content.push('');
         this.currentLine++;

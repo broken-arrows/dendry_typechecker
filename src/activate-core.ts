@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { DendryProjectValidator } from './project-validator';
+import { DENDRY_FILE_GLOBS, dendryFileKind } from './file-kinds';
 
 let diagnosticCollection: vscode.DiagnosticCollection;
 let projectValidator: DendryProjectValidator;
@@ -71,7 +72,7 @@ export function activateCore(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.workspace.onDidDeleteFiles(event => {
-            if (event.files.some(file => file.path.endsWith('.scene.dry') || file.path.endsWith('.qdisplay.dry'))) {
+            if (event.files.some(file => dendryFileKind(file.path) !== undefined)) {
                 outputChannel.appendLine('Delete detected');
                 debouncedValidateProject();
             }
@@ -140,19 +141,11 @@ async function validateProject(changedFileUri?: vscode.Uri) {
             ? `{${excludePatterns.join(',')}}`
             : excludePatterns[0] || undefined;
 
-        const sceneFilesPromise = vscode.workspace.findFiles(
-            '**/*.scene.dry',
-            excludePattern
-        );
-        const qdisplayFilesPromise = vscode.workspace.findFiles(
-            '**/*.qdisplay.dry',
-            excludePattern
-        );
+        const dendryFiles = (await Promise.all(DENDRY_FILE_GLOBS.map(pattern =>
+            vscode.workspace.findFiles(pattern, excludePattern)
+        ))).flat();
 
-        const [sceneFiles, qdisplayFiles] = await Promise.all([sceneFilesPromise, qdisplayFilesPromise]);
-        const dendryFiles = [...sceneFiles, ...qdisplayFiles];
-
-        outputChannel.appendLine(`Found ${dendryFiles.length} Dendry files (${sceneFiles.length} scenes, ${qdisplayFiles.length} qdisplays)`);
+        outputChannel.appendLine(`Found ${dendryFiles.length} Dendry files`);
 
         const currentDiagnostics = await projectValidator.validateProject(dendryFiles, changedFileUri);
 

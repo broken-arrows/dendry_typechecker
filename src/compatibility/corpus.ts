@@ -9,11 +9,22 @@ export interface CompatibilityCase {
   source: string;
   files: SourceFile[];
   diagnostic?: { file: string; pattern: string; line?: number; count?: number };
-  parser?: { file: string; check: 'root-content' | 'choice-properties' | 'section-ids' };
+  warning?: { file: string; pattern: string; line?: number };
+  parser?: { file: string; check: 'root-content' | 'choice-properties' | 'section-ids' | 'quality-file' | 'info-file' };
 }
 interface RawScene {
   id: string;
   title?: string;
+  name?: string;
+  initial?: string;
+  min?: string;
+  max?: string;
+  isValid?: string;
+  defaultDisplay?: string;
+  signal?: string;
+  author?: string;
+  firstScene?: string;
+  rootScene?: string;
   content?: string;
   options?: { id: string; title?: string; chooseIf?: string; order?: string }[];
   sections?: { id: string }[];

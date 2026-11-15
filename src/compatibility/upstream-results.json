@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "8d0ca480a3c991c697f419f9db9ef536d0de7f87891c2e8f7472d8e04e36180b",
+    "corpusSha256": "1a5c20ce2ee942db6354095f7dfc1b8e0412d2f092f89c73977ec73ead944ca6",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -25,6 +25,28 @@
     }
   },
   "cases": {
+    "quality-multiline-magic": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-invalid-magic": {
+      "ok": false,
+      "error": "health.quality.dry line 4: Unexpected token ';'"
+    },
+    "quality-mixed-predicate": {
+      "ok": false,
+      "error": "health.quality.dry line 2: Magic in a predicate must have no other content surrounding it."
+    },
     "root-content": {
       "ok": true,
       "sceneIds": [
@@ -459,6 +481,273 @@
     "choice-invalid-subtitle-condition": {
       "ok": false,
       "error": "No valid way to parse this content: score = "
+    },
+    "quality-all-fields": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ],
+      "parsed": {
+        "id": "health",
+        "type": "quality",
+        "name": "Health",
+        "initial": "true",
+        "min": "0",
+        "max": "10",
+        "isValid": "health >= 0",
+        "defaultDisplay": "missing-display",
+        "signal": "ui:update",
+        "content": "Help text.\n===\nMore help."
+      }
+    },
+    "quality-boolean-false": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-numeric-initial": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-clamped-initial": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-string-with-bounds": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-reversed-bounds": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-float-prefix": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-invalid-bound": {
+      "ok": false,
+      "error": "health.quality.dry line 2: \"nope\" is not a valid number."
+    },
+    "quality-empty-bound": {
+      "ok": false,
+      "error": "health.quality.dry line 2: \"\" is not a valid number."
+    },
+    "quality-invalid-id": {
+      "ok": false,
+      "error": "bad.name.quality.dry filename: \"bad.name\" is not a valid quality name."
+    },
+    "quality-unknown-field": {
+      "ok": false,
+      "error": "health.quality.dry: Unknown properties: \"unknownField\" (health.quality.dry line 2)."
+    },
+    "quality-duplicate-field": {
+      "ok": false,
+      "error": "health.quality.dry line 3: Property \"defaultDisplay\" is already defined."
+    },
+    "quality-invalid-display-name": {
+      "ok": false,
+      "error": "health.quality.dry line 2: \"bad.name\" is not a valid quality name."
+    },
+    "quality-invalid-predicate": {
+      "ok": false,
+      "error": "health.quality.dry line 2: No valid way to parse this content: health ="
+    },
+    "quality-magic-predicate": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [
+        "health"
+      ]
+    },
+    "quality-description-condition": {
+      "ok": false,
+      "error": "No valid way to parse this content: health = "
+    },
+    "quality-sections-invalid": {
+      "ok": false,
+      "error": "health.quality.dry: Unknown properties: \"sections\"."
+    },
+    "info-all-fields": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": [],
+      "parsed": {
+        "id": "info",
+        "title": "Game",
+        "author": "Author",
+        "type": "info",
+        "ifid": "opaque-id",
+        "firstScene": "@root",
+        "rootScene": "root",
+        "animate": "YES",
+        "sceneSignal": "scene:changed",
+        "qualitySignal": "quality:changed",
+        "displaySidebar": "1",
+        "displayStats": "no",
+        "displayOptions": "ok",
+        "sidebarStats": "#health; mood, dynamic_quality",
+        "content": "[? deliberately opaque body ?]"
+      }
+    },
+    "info-missing-title": {
+      "ok": false,
+      "error": "info.dry: Required property \"title\" missing."
+    },
+    "info-unknown-field": {
+      "ok": false,
+      "error": "info.dry: Unknown properties: \"unknownField\" (info.dry line 3)."
+    },
+    "info-invalid-boolean": {
+      "ok": false,
+      "error": "info.dry line 3: \"maybe\" is not a valid yes/no value."
+    },
+    "info-numeric-boolean": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "info-invalid-sidebar-list": {
+      "ok": false,
+      "error": "info.dry line 3: Tag 1 \"health!\" is not valid."
+    },
+    "info-invalid-start-id": {
+      "ok": false,
+      "error": "info.dry line 3: \".root\" is not a valid id."
+    },
+    "info-dotted-start": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "chapter",
+        "chapter.room",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "info-missing-start-target": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "info-missing-root-target": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "info-duplicate-field": {
+      "ok": false,
+      "error": "info.dry line 4: Property \"firstScene\" is already defined."
+    },
+    "info-invalid-type": {
+      "ok": false,
+      "error": "info.dry line 3: File type must equal \"info\", \"scene\" found instead."
     }
   }
 }

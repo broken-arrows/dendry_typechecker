@@ -14,12 +14,13 @@ export interface ParseResult {
 
 // Parses source as a script. Returns the AST on success, or a normalized
 // error with 0-based line/column positions on failure.
-export function parseScript(source: string): ParseResult {
+export function parseScript(source: string, functionBody = false): ParseResult {
   try {
     const ast = acorn.parse(source, {
       ecmaVersion: 2022,
       sourceType: 'script',
       locations: true,
+      allowReturnOutsideFunction: functionBody,
     });
     return { ast: ast as unknown as acorn.Node, error: null };
   } catch (err: any) {

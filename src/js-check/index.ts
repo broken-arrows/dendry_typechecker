@@ -26,6 +26,8 @@ export interface Finding {
 }
 
 export interface JsCheckOptions {
+  // Embedded engine predicates are function bodies and may return values.
+  functionBody?: boolean;
   // Extra identifiers to treat as defined (qualities, scenes, user libs).
   extraGlobals?: Iterable<string>;
   // Whether to flag bare identifiers that don't resolve to a global or
@@ -48,7 +50,7 @@ export function checkScript(source: string, opts: JsCheckOptions = {}): Finding[
     for (const g of opts.extraGlobals) known.add(g);
   }
 
-  const { ast, error } = parseScript(source);
+  const { ast, error } = parseScript(source, opts.functionBody);
 
   if (error) {
     findings.push({

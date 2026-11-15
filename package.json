@@ -3,7 +3,7 @@
   "displayName": "DendryNexus",
   "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
@@ -21,6 +21,8 @@
   "activationEvents": [
     "onLanguage:dendry",
     "workspaceContains:**/*.scene.dry",
+    "workspaceContains:**/*.quality.dry",
+    "workspaceContains:**/info.dry",
     "workspaceContains:**/*.qdisplay.dry",
     "onStartupFinished"
   ],
@@ -37,8 +39,10 @@
         ],
         "extensions": [
           ".scene.dry",
+          ".quality.dry",
           ".qdisplay.dry"
         ],
+        "filenames": ["info.dry"],
         "configuration": "./language-configuration.json"
       }
     ],
