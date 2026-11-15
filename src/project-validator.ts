@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import { parseText, DendryAST, DendryNode } from './parser';
 import { BUILTIN_SCENE_IDS } from './scene-ids';
 import { DendryValidator } from './validator';
+import { qdisplayIdFromPath } from './qdisplay';
 
 export class DendryProjectValidator {
   private validator = new DendryValidator();
-  private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; localQualityIds: Set<string>; }> = new Map();
+  private fileData: Map<string, { uri: vscode.Uri; ast: DendryAST; localSceneIds: Set<string>; }> = new Map();
   private parseDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
-  private globalSceneIds: Set<string> = new Set();
-  private globalQualityIds: Set<string> = new Set();
+  private qdisplayDiagnostics = new Map<string, { uri: vscode.Uri; diagnostics: vscode.Diagnostic[] }>();
   private isValidating: boolean = false;
   private lastResults: Map<vscode.Uri, vscode.Diagnostic[]> | null = null;
 
@@ -45,15 +45,13 @@ export class DendryProjectValidator {
     }
     this.parseDiagnostics.delete(this.keyFor(document.uri));
     const localSceneIds = new Set<string>();
-    const localQualityIds = new Set<string>();
     // The parser owns declaration syntax and source context. Never rescan raw
     // lines: an @name inside JavaScript or prose is not a scene declaration.
     for (const node of ast.nodes) {
       const id = node.properties.get('id');
       if (node.type === 'scene' && id) localSceneIds.add(id);
-      if (node.type === 'quality' && id) localQualityIds.add(id);
     }
-    this.fileData.set(this.keyFor(document.uri), { uri: document.uri, ast, localSceneIds, localQualityIds });
+    this.fileData.set(this.keyFor(document.uri), { uri: document.uri, ast, localSceneIds });
     return diagnostics;
   }
 
@@ -76,13 +74,16 @@ export class DendryProjectValidator {
       for (const key of this.parseDiagnostics.keys()) {
         if (!currentWorkspaceFileKeys.has(key)) this.parseDiagnostics.delete(key);
       }
+      for (const key of this.qdisplayDiagnostics.keys()) {
+        if (!currentWorkspaceFileKeys.has(key)) this.qdisplayDiagnostics.delete(key);
+      }
 
       // 2. Parse/re-parse changed file or new files
       let filesToParse: vscode.Uri[] = [];
       if (changedFileUri) {
         filesToParse.push(changedFileUri);
       } else {
-        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)));
+        filesToParse = workspaceFiles.filter(uri => !this.fileData.has(this.keyFor(uri)) && !this.qdisplayDiagnostics.has(this.keyFor(uri)));
       }
 
       for (const fileUri of filesToParse) {
@@ -99,10 +100,7 @@ export class DendryProjectValidator {
         }
 
         if (fileUri.path.endsWith('.qdisplay.dry')) {
-            const qdisplayDiags = this.validator.validateQDisplayFile(document);
-            if (qdisplayDiags.length > 0) {
-                finalDiagnostics.set(fileUri, qdisplayDiags);
-            }
+          this.qdisplayDiagnostics.set(this.keyFor(fileUri), { uri: fileUri, diagnostics: this.validator.validateQDisplayFile(document) });
         } else {
             const parsingDiags = await this._parseAndExtractLocalIds(document);
             if (parsingDiags.length > 0) {
@@ -114,6 +112,28 @@ export class DendryProjectValidator {
       for (const { uri, diagnostics } of this.parseDiagnostics.values()) {
         finalDiagnostics.set(uri, [...diagnostics]);
       }
+      for (const { uri, diagnostics } of this.qdisplayDiagnostics.values()) {
+        if (diagnostics.length) finalDiagnostics.set(uri, [...diagnostics]);
+      }
+      const displays = new Map<string, vscode.Uri[]>();
+      for (const uri of workspaceFiles) {
+        const id = qdisplayIdFromPath(uri.path);
+        if (id === undefined) continue;
+        const entries = displays.get(id) || [];
+        if (!entries.some(entry => this.keyFor(entry) === this.keyFor(uri))) entries.push(uri);
+        displays.set(id, entries);
+      }
+      for (const [id, entries] of displays) {
+        if (entries.length < 2) continue;
+        for (const uri of entries) {
+          const other = entries.find(entry => entry !== uri)!;
+          const diagnostics = finalDiagnostics.get(uri) || [];
+          diagnostics.push(new vscode.Diagnostic(new vscode.Range(0, 0, 0, 0),
+            `Duplicate QDisplay ID '${id}' also defined at ${other.path}.`, vscode.DiagnosticSeverity.Warning));
+          finalDiagnostics.set(uri, diagnostics);
+        }
+      }
+      const qdisplayFiles = [...displays.keys()];
 
       // 3. Recheck declarations on every pass, including cached files. Absolute
       // IDs can collide between a dotted filename and a section in another file.
@@ -149,15 +169,7 @@ export class DendryProjectValidator {
         }
       }
 
-      // 4. Rebuild global IDs from all cached file data
-      this.globalSceneIds.clear();
-      this.globalQualityIds.clear();
-      this.fileData.forEach(data => {
-        data.localSceneIds.forEach(id => this.globalSceneIds.add(id));
-        data.localQualityIds.forEach(id => this.globalQualityIds.add(id));
-      });
-
-      // 5. Validate all files in cache against updated global IDs
+      // Validate cached ASTs against the complete project index.
       for (const data of this.fileData.values()) {
           const fileUri = data.uri;
           // ONLY skip if there were PARSING errors (not just any diagnostics)
@@ -176,12 +188,7 @@ export class DendryProjectValidator {
               continue;
           }
           
-          const qdisplayFiles = workspaceFiles
-            .filter(file => file.path.endsWith('.qdisplay.dry'))
-            .map(file => file.path.split(/[/\\]/).pop()?.replace('.qdisplay.dry', '') || '');
-
           let document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === fileUri.toString());
-          let useRaw = false;
           if (!document) {
               try {
                 const uint8 = await vscode.workspace.fs.readFile(fileUri);
@@ -206,7 +213,6 @@ export class DendryProjectValidator {
                   },
                   uri: fileUri
                 } as vscode.TextDocument;
-                useRaw = true;
               } catch (error) {
                   const message = error instanceof Error ? error.message : String(error);
                   const range = new vscode.Range(0, 0, 0, 1);
@@ -216,18 +222,9 @@ export class DendryProjectValidator {
           }
 
           try {
-              if (fileUri.path.endsWith('.qdisplay.dry')) {
-                  const qdisplayDiags = this.validator.validateQDisplayFile(document);
-                  if (qdisplayDiags.length > 0) {
-                      const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
-                      finalDiagnostics.set(fileUri, [...existingDiagnostics, ...qdisplayDiags]);
-                  }
-              } else {
-                  const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData, qdisplayFiles);
-                  if (validationDiagnostics.length > 0) {
-                      const existingDiagnostics = finalDiagnostics.get(fileUri) || [];
-                      finalDiagnostics.set(fileUri, [...existingDiagnostics, ...validationDiagnostics]);
-                  }
+              const validationDiagnostics = this.validator.validate(data.ast, document, this.fileData, qdisplayFiles);
+              if (validationDiagnostics.length > 0) {
+                finalDiagnostics.set(fileUri, [...existingDiags, ...validationDiagnostics]);
               }
           } catch (error) {
               const message = error instanceof Error ? error.message : String(error);

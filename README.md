@@ -1,13 +1,15 @@
 # Dendry Type Checker for VSCode
 
-A Visual Studio Code extension providing type checking and validation for DendryNexys interactive fiction files. Now fully released!
+A Visual Studio Code extension providing type checking and validation for DendryNexus interactive fiction files. Now fully released!
 
 ## Features
 
 - **Syntax Highlighting**: Supporting Dendry/DendryNexus' unique syntax, and for JS, HTML, and supported MD-like expressions when relevant.
 - **Real-time Validation**: Validates `.scene.dry`, `.quality.dry`, `.qdisplay.dry` and `info.dry` files as you type.
 - **Duplicate ID Detection**: Detects when a scene `id` is used more than once across your entire project.
-- **JavaScript Validation**: Parses embedded JavaScript (in `on-arrival`, `view-if`, etc.) to find and validate references to scenes (`S.`) and qualities (`Q.`).
+- **JavaScript Validation**: Checks executable property blocks for syntax and undefined identifiers, with function-body `return`, lexical scopes, real `state`/`Q` bindings and original source positions.
+- **Dendry Logic Validation**: Parses actions, predicates and arithmetic expressions, including conditional actions, hyphenated names and visit counts.
+- **QDisplay Validation**: Supports range separators, decimal/open/reversed bounds, comments and continuations.
 - **Reference Validation**: Ensures that all references to scenes in properties like `go-to` point to scenes that actually exist in your project.
 - **Variable Casting Validation**: Validates `[+ var +]` and `[+ var : qdisplay +]` syntax within text, as well as referenced `qdisplay` existence.
 - **Basic Debugging Support**: Support for F5-run to easily test your DendryNexus project directly from VSCode. _(Desktop only — see "Web support" below.)_
@@ -20,7 +22,7 @@ This extension is published as both a desktop and a **web** extension from a sin
 ## Configuration
 
 - `dendry.validation.enable`: Enable/disable validation (default: `true`).
-- `dendry.validation.strict`: Enable/disable strict validation mode (default: `false`). For the time being, this only disables warnings regarding repeated scene properties.
+- `dendry.validation.strict`: Raise undefined JavaScript identifier findings from hints to warnings (default: `false`).
 - `dendry.validation.exclude`: Glob patterns for files/folders to exclude from DendryNexus validation.
 - `dendry.validation.jsLibraries`: An array of strings representing additional global JavaScript variables that should be recognized during validation (default: `["d3"]`). This is useful when your project uses external JavaScript libraries that introduce global variables.
 - `dendry.debug.buildCommand`: Command to build the DendryNexus project (default: `npm run dendrynexus make-html -- --pretty`).
@@ -62,9 +64,29 @@ The extension will:
 
 - Provide proper syntax highlighting.
 - Validate scene property names and types.
-- Check JavaScript syntax when relevant, both on scene qualities (e.g. on-arrival) and in-line conditionals.
+- Check executable property JavaScript and extracted inline conditions in their respective languages.
 - Ensure referenced scenes and subscenes exist.
-- Check for valid varible insertion in text, as well as for valid qdisplay casting (e.g. does a file named `foo.qdisplay.dry` exist?)
+- Check simple variable/display inserts, including custom display files and built-in formatters.
+
+Full rich-content extraction, nested/multiline conditionals, arbitrary insert
+expressions and QDisplay output traversal remain incomplete. Ordinary body
+`{! ... !}` blocks are opaque HTML upstream. JavaScript member/engine API types
+are not checked. Missing custom display references are authoring diagnostics;
+upstream compilation accepts them.
+
+## Development checks
+
+```sh
+npm run check-types
+npm test
+npm run test:compat
+npm run package
+```
+
+CI runs unit and compatibility checks. The compatibility suite runs offline
+against independently recorded results from a pinned upstream compiler. See
+[the compatibility guide](src/compatibility/README.md) for coverage, limits and
+reference regeneration.
 
 ## Usage
 

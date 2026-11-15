@@ -1,171 +1,50 @@
-# Upstream compatibility baseline
+# Upstream compatibility tests
 
 Run from the repository root:
 
 ```sh
-npm run test:compat
-npm run test:compat -- --testNamePattern=root-content
-npm test
 npm run check-types
+npm test
+npm run test:compat
+npm run package
 ```
 
-`test:compat` is deliberately red while the audited defects are being repaired.
-It runs ordinary assertions, exits nonzero on mismatches, and does not skip or
-mark known defects as expected failures. It is currently separate from `npm test`,
-CI and packaging so the baseline does not block unrelated changes. Once the
-compatibility suite is green, include it in the normal CI gate. A green helper
-suite alone does **not** establish compiler compatibility.
+The compatibility suite is an offline CI gate. It uses ordinary assertions;
+no expected-failure annotations or skips hide defects. A green helper suite
+alone does not establish compiler compatibility.
 
-Initial results (2026-11-15): **21 checks, 16 failing and 5 passing**. The corpus
-has 17 complete compiler cases, four of which also check the parser's public
-output. The existing helper suite has 19 passing tests. Select a failing behavior,
-implement its fix, and rerun the targeted compatibility test plus regressions.
+The corpus contains 1368 independently recorded compiler cases. Together with
+parser and project regressions, the suite has 1510 checks. The helper suite has
+82 checks. These totals describe the QDisplay repair on 2026-11-15; they are not
+proof that every language construct or editor behavior is covered.
 
-After the first root-scene fix: **27 checks, 14 failing and 13 passing**. Root
-IDs/prose, property-shaped root prose after the blank separator, and malformed
-root body conditions now have passing coverage. Five focused root regressions
-also cover section separation, full/dotted filenames, empty/property-only roots,
-property-only JavaScript string literals and last-line interpolation positions.
-Use `npm run test:compat -- --testNamePattern=root` for the root cases and
-`npm run test:compat -- --testNamePattern=blank-separates-properties` for the
-blank separator. Remaining audit cases still fail normally.
+Coverage includes root/section/choice structure, quality/info schemas, contextual
+scene references, target titles, numeric/boolean coercion, executable property
+JavaScript, shorthand grammar/visit dependencies and QDisplay structure.
+QDisplay cases cover ranges, comments, continuations, filenames, reserved IDs
+and built-in references; project regressions check retained/cleared diagnostics
+and duplicate-ID warnings. Source positions, configuration and incremental edits
+are exercised through the public boundaries below.
 
-After namespace resolution and choice parsing: **62 checks, 54 passing and 8
-remaining audit failures**. The recording now contains 47 upstream compiler cases
-and seven raw-parser checks. Focused regressions cover root source positions and
-retention of duplicate, reserved-name and malformed-section diagnostics across
-validation passes. Commands for the repaired areas:
-
-```sh
-npm run test:compat -- --testNamePattern=namespace-
-npm run test:compat -- --testNamePattern=choice-
-npm run test:compat -- src/compatibility/scene-references.compat.ts
-```
-
-Namespace cases cover local/global lookup, dotted and hyphenated IDs, parent/self
-forms, built-ins, file/section collisions and false declarations inside JavaScript.
-Choice cases cover property attachment and spelling, valid/invalid schema fields,
-numeric coercion, conditions, continuations, option block context, title/subtitle
-conditions and containing-scene lookup. General magic/shorthand parity, other
-reference-property contracts and required target-title checks remain separate work.
-
-After quality and info support: **101 checks, 95 passing and 6 remaining audit
-failures**. There are 79 recorded compiler cases, nine parser checks, five root
-regressions, three diagnostic-retention checks and five new-file integration
-checks. Both new file kinds have passing schema/parser cases; integration checks
-cover separate scene/quality namespaces, duplicate quality IDs across folders,
-incremental schema diagnostics, deletion cleanup and the default startup target.
-
-```sh
-npm run test:compat -- --testNamePattern=quality-
-npm run test:compat -- --testNamePattern=info-
-npm run test:compat -- src/compatibility/file-types.compat.ts
-```
-
-Compiler-accepted missing info startup/root targets use a separate `warning`
-expectation in the corpus. This keeps authoring diagnostics distinct from
-compiler rejection. Quality values outside bounds, strings/booleans in `initial`,
-numeric-prefix bounds and undeclared default-display references remain accepted.
-Quality `is-valid` uses source-aware magic dispatch and function-body return
-support; general scene magic/shorthand and rich-content grammar work is still open.
-
-After shared scene-schema validation: **317 checks, 313 passing and 4 remaining
-audit failures**. The recording contains 285 upstream compiler cases, including
-206 paired root/section schema cases. Ten additional regressions cover source
-ranges, single diagnostics, magic/prose boundaries, normalized headers, tags and
-incremental retention. The remaining failures are required option/target titles,
-scene magic `return` and two QDisplay cases.
-
-```sh
-npm run test:compat -- --testNamePattern=scene-schema-
-npm run test:compat -- src/compatibility/scene-schema.compat.ts
-```
-
-The schema cases cover the formerly missing fields, boolean aliases, integer/
-float coercion, visit bounds and cross-property checks, difficulty quality values,
-expressions, sprites, tags, unknown/reserved/duplicate headers, and scalar values
-that must not be unwrapped as magic. The full suite remains deliberately red for
-the four open failures. Reference results were regenerated by executing the
-pinned compiler; ordinary tests remain offline.
-
-After stat-check and reference/control-flow alignment: **521 checks, 517 passing
-and the same 4 audit failures**. The recording contains 479 compiler cases, with
-194 new paired control-flow cases; ten additional regressions verify exact call
-lookup, contextual jumps, dynamic qualities, source maps through continuation/
-semicolon joins, and warning/error transitions when both check results are set.
-The new cases all pass. The four failures remain titles, general scene magic
-return and two QDisplay cases.
-
-```sh
-npm run test:compat -- --testNamePattern=control-
-npm run test:compat -- src/compatibility/control-flow.compat.ts
-```
-
-Compiler-accepted unresolved call, singleton check-result and go-sub targets use
-warning expectations. Linked unresolved go-to/jump/paired-check targets are
-compiler errors. Dynamic qualities stay legal without declarations. Destination
-magic supports returning bodies; other magic/shorthand limitations remain open.
-
-After required title checks and diagnostic wording: **643 checks, 640 passing and
-3 remaining audit failures**. There are 589 recorded compiler cases, including
-110 new paired title cases, plus twelve new title/UX regressions. The old missing
-option-title failure now passes. Remaining failures are general scene magic
-return and two QDisplay cases.
-
-```sh
-npm run test:compat -- --testNamePattern=titles-
-npm run test:compat -- src/compatibility/choice-titles.compat.ts
-```
-
-Title cases cover explicit/fallback/empty/dynamic titles, local shadowing, the
-resolved prevScene exception, tagged targets and predicates. Regressions cover
-choice ranges, missing-target cascade suppression, cross-file title updates and
-concise Dendry-logic wording. Diagnostic regex changes track wording only; the
-recording was regenerated by executing the pinned compiler. Hyphenated quality
-references in dynamic titles use upstream name syntax.
-
-After shared property-JavaScript checking: **933 checks, 931 passing and 2
-remaining QDisplay failures**. The recording now contains 848 compiler cases,
-including 259 new JavaScript cases. Thirty-one public-boundary regressions verify
-delimiter-based dispatch, source positions beside both delimiters, LF/CRLF,
-continuation folding, independent action blocks, bindings, configuration and
-incremental diagnostic refresh. The general scene-return baseline now passes.
-The helper suite has 52 passing tests, including 33 new scope/function-context
-tests. No expected-failure or skip annotations hide the QDisplay defects.
-
-```sh
-npm run test:compat -- --testNamePattern=javascript-
-npm run test:compat -- src/compatibility/javascript.compat.ts
-npm test -- src/js-check/index.test.ts
-```
-
-Scene/choice predicates and expressions, scene actions, quality predicates and
-destination predicates use one source-mapped JavaScript adapter and one checker.
-It models the engine's function parameters, directives, return/new.target and
-lexical scopes. Unknown identifiers remain hints/warnings; dynamic quality
-members do not require declarations. This does not establish rich-content or
-shorthand grammar parity, an engine API/type model, or editor-host integration.
-
-After shorthand grammar and visit dependencies: **1346 checks, 1344 passing and
-the same 2 QDisplay failures**. The recording contains 1237 compiler cases,
-including 389 new shorthand cases. Twenty-four public-boundary regressions cover
-mapped tokens through continuation/mixed chunks, local resolution, tracking
-derivation, warning/error policies, opaque JS and incremental tracking changes.
-The helper suite has 78 passing checks, including 34 grammar checks replacing
-the old eight approximation tests.
+Focused commands:
 
 ```sh
 npm run test:compat -- --testNamePattern=shorthand-
-npm run test:compat -- src/compatibility/shorthand.compat.ts
-npm test -- src/dendry-logic/shorthand.test.ts
+npm run test:compat -- src/compatibility/javascript.compat.ts
+npm run test:compat -- src/compatibility/qdisplay.compat.ts
+npm test -- src/qdisplay.test.ts
 ```
 
-Actions, predicates and arithmetic expressions have explicit pinned grammars.
-Dynamic qualities/functions are legal. Visit dependencies are errors only in
-the compiler's linking passes; unlinked expression/quality/go-sub/go-to-ref
-fields get authoring warnings. Linked source also scans quoted @IDs as upstream
-does. Full rich-content extraction and the existing QDisplay defects remain
-open. Ordinary tests require no upstream checkout, probe dependencies or network.
+Compiler errors and authoring warnings are distinct. Dynamic qualities/functions
+are legal; unlinked visit fields and missing startup/call targets warn. Custom
+missing-display diagnostics and duplicate-display warnings are authoring policy.
+Built-in formatters need no file. Overlap and source order are legal QDisplay
+semantics, with the first inclusive matching range selected at runtime.
+
+Full rich-content extraction/output traversal, engine API/member types and real
+VS Code activation/events/highlighting remain outside the established coverage.
+The preserved audit findings and dated developer diary record earlier red
+baselines; they do not describe the current implementation status.
 
 ## Boundaries and assertions
 
@@ -189,9 +68,9 @@ discarded content or disconnected validation from looking like full support.
 Current acceptance of `quality-string-initial`, for example, does not establish
 quality support: its missing-name counterpart must also report an error.
 
-The suite does not yet cover real VS Code discovery/activation, editor events,
-incremental caching, general diagnostic ranges, highlighting or browser execution. It is
-a small starting corpus, not a test for every audit finding.
+The host stand-in tests project logic, selected incremental transitions and source
+positions. It does not establish real VS Code discovery/activation, editor events,
+highlighting or browser execution, and it does not cover every audit finding.
 
 The standalone root missing-display regression preserves an existing extension
 diagnostic. The reference compiler accepts an unknown formatter name, so this
@@ -223,6 +102,12 @@ The recorder verifies source hashes against the recording and dependency version
 then runs the real full compiler in one isolated process per case. This isolation
 handles upstream asynchronous throws and repeated callbacks on invalid files.
 The worker also calls upstream's raw parser for the selected parser cases.
+
+Fixture paths use portable forward slashes. The worker translates them to the
+host separator before invoking upstream, matching its native filesystem inputs.
+This is required for nested paths on Windows because dry.js strips only the
+native separator. The duplicate-QDisplay fixture retains both folder-qualified
+workspace files and independently verifies compiler acceptance plus warnings.
 
 After adding or changing a case, regenerate explicitly:
 

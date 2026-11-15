@@ -18307,6 +18307,1579 @@
         "file": "root.scene.dry",
         "pattern": "logic|scene|visit|condition|expression|predicate"
       }
+    },
+    {
+      "id": "qdisplay-structure-0",
+      "description": "rating.qdisplay.dry:  / (-) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-1",
+      "description": "rating.qdisplay.dry:  / (-2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-2",
+      "description": "rating.qdisplay.dry:  / (--.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(--.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-3",
+      "description": "rating.qdisplay.dry:  / (0-) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0-) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-4",
+      "description": "rating.qdisplay.dry:  / (0-2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0-2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-5",
+      "description": "rating.qdisplay.dry:  / (0--.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0--.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-6",
+      "description": "rating.qdisplay.dry:  / (-1-) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1-) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-7",
+      "description": "rating.qdisplay.dry:  / (-1-2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1-2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-8",
+      "description": "rating.qdisplay.dry:  / (-1--.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1--.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-9",
+      "description": "rating.qdisplay.dry:  / (.5-) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5-) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-10",
+      "description": "rating.qdisplay.dry:  / (.5-2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5-2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-11",
+      "description": "rating.qdisplay.dry:  / (.5--.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5--.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-12",
+      "description": "rating.qdisplay.dry:  / (3-) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3-) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-13",
+      "description": "rating.qdisplay.dry:  / (3-2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3-2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-14",
+      "description": "rating.qdisplay.dry:  / (3--.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3--.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-15",
+      "description": "rating.qdisplay.dry:  / (to) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(to) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-16",
+      "description": "rating.qdisplay.dry:  / (to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-17",
+      "description": "rating.qdisplay.dry:  / (to-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(to-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-18",
+      "description": "rating.qdisplay.dry:  / (0to) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0to) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-19",
+      "description": "rating.qdisplay.dry:  / (0to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-20",
+      "description": "rating.qdisplay.dry:  / (0to-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0to-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-21",
+      "description": "rating.qdisplay.dry:  / (-1to) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1to) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-22",
+      "description": "rating.qdisplay.dry:  / (-1to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-23",
+      "description": "rating.qdisplay.dry:  / (-1to-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1to-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-24",
+      "description": "rating.qdisplay.dry:  / (.5to) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5to) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-25",
+      "description": "rating.qdisplay.dry:  / (.5to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-26",
+      "description": "rating.qdisplay.dry:  / (.5to-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5to-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-27",
+      "description": "rating.qdisplay.dry:  / (3to) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3to) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-28",
+      "description": "rating.qdisplay.dry:  / (3to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-29",
+      "description": "rating.qdisplay.dry:  / (3to-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3to-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-30",
+      "description": "rating.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-31",
+      "description": "rating.qdisplay.dry:  / (..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-32",
+      "description": "rating.qdisplay.dry:  / (..-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-33",
+      "description": "rating.qdisplay.dry:  / (0..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-34",
+      "description": "rating.qdisplay.dry:  / (0..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0..2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-35",
+      "description": "rating.qdisplay.dry:  / (0..-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0..-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-36",
+      "description": "rating.qdisplay.dry:  / (-1..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-37",
+      "description": "rating.qdisplay.dry:  / (-1..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1..2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-38",
+      "description": "rating.qdisplay.dry:  / (-1..-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1..-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-39",
+      "description": "rating.qdisplay.dry:  / (.5..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-40",
+      "description": "rating.qdisplay.dry:  / (.5..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5..2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-41",
+      "description": "rating.qdisplay.dry:  / (.5..-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5..-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-42",
+      "description": "rating.qdisplay.dry:  / (3..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-43",
+      "description": "rating.qdisplay.dry:  / (3..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3..2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-44",
+      "description": "rating.qdisplay.dry:  / (3..-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3..-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-45",
+      "description": "rating.qdisplay.dry:  / (+) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(+) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-46",
+      "description": "rating.qdisplay.dry:  / (+2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(+2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-47",
+      "description": "rating.qdisplay.dry:  / (+-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(+-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-48",
+      "description": "rating.qdisplay.dry:  / (0+) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0+) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-49",
+      "description": "rating.qdisplay.dry:  / (0+2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0+2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-50",
+      "description": "rating.qdisplay.dry:  / (0+-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0+-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-51",
+      "description": "rating.qdisplay.dry:  / (-1+) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1+) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-52",
+      "description": "rating.qdisplay.dry:  / (-1+2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1+2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-53",
+      "description": "rating.qdisplay.dry:  / (-1+-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1+-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-54",
+      "description": "rating.qdisplay.dry:  / (.5+) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5+) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-55",
+      "description": "rating.qdisplay.dry:  / (.5+2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5+2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-56",
+      "description": "rating.qdisplay.dry:  / (.5+-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5+-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-57",
+      "description": "rating.qdisplay.dry:  / (3+) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3+) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-58",
+      "description": "rating.qdisplay.dry:  / (3+2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3+2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-59",
+      "description": "rating.qdisplay.dry:  / (3+-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3+-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-60",
+      "description": "rating.qdisplay.dry:  / (,) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(,) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-61",
+      "description": "rating.qdisplay.dry:  / (,2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(,2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-62",
+      "description": "rating.qdisplay.dry:  / (,-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(,-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-63",
+      "description": "rating.qdisplay.dry:  / (0,) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0,) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-64",
+      "description": "rating.qdisplay.dry:  / (0,2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0,2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-65",
+      "description": "rating.qdisplay.dry:  / (0,-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(0,-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-66",
+      "description": "rating.qdisplay.dry:  / (-1,) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1,) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-67",
+      "description": "rating.qdisplay.dry:  / (-1,2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1,2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-68",
+      "description": "rating.qdisplay.dry:  / (-1,-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(-1,-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-69",
+      "description": "rating.qdisplay.dry:  / (.5,) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5,) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-70",
+      "description": "rating.qdisplay.dry:  / (.5,2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5,2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-71",
+      "description": "rating.qdisplay.dry:  / (.5,-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(.5,-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-72",
+      "description": "rating.qdisplay.dry:  / (3,) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3,) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-73",
+      "description": "rating.qdisplay.dry:  / (3,2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3,2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-74",
+      "description": "rating.qdisplay.dry:  / (3,-.5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(3,-.5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-75",
+      "description": "rating.qdisplay.dry:  / (1.2.3..4) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1.2.3..4) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-76",
+      "description": "rating.qdisplay.dry:  / (1e3..4) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1e3..4) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-77",
+      "description": "rating.qdisplay.dry:  / (1..4..5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1..4..5) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-78",
+      "description": "rating.qdisplay.dry:  / (1...4) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1...4) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-79",
+      "description": "rating.qdisplay.dry:  / (1--5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1--5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-80",
+      "description": "rating.qdisplay.dry:  / (1 .. 4 garbage) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1 .. 4 garbage) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-81",
+      "description": "rating.qdisplay.dry:  / (+1..4) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(+1..4) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-82",
+      "description": "rating.qdisplay.dry:  / (1...5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1...5) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-83",
+      "description": "rating.qdisplay.dry:  / (1...-5) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1...-5) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-84",
+      "description": "rating.qdisplay.dry:  / (1.to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1.to2) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-85",
+      "description": "rating.qdisplay.dry:  / ( 1..2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n( 1..2) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-86",
+      "description": "rating.qdisplay.dry:  / (1 .. 2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1 .. 2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-87",
+      "description": "rating.qdisplay.dry:  / (1 TO 2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1 TO 2) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-88",
+      "description": "rating.qdisplay.dry:  / (1To2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1To2) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-89",
+      "description": "rating.qdisplay.dry:  / (1to2) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1to2) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-90",
+      "description": "rating.qdisplay.dry:  / (1.0..2.0) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1.0..2.0) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-91",
+      "description": "rating.qdisplay.dry:  / (1...) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1...) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-92",
+      "description": "rating.qdisplay.dry: ",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": ""
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-93",
+      "description": "rating.qdisplay.dry:  / ",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-94",
+      "description": "rating.qdisplay.dry: #comment / ",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "#comment\n"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-95",
+      "description": "rating.qdisplay.dry: #comment /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "#comment\n\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-96",
+      "description": "rating.qdisplay.dry: #comment / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "#comment\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-97",
+      "description": "rating.qdisplay.dry:  / (..)",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..)"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-98",
+      "description": "rating.qdisplay.dry:  / (..)   ",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..)   "
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-99",
+      "description": "rating.qdisplay.dry:  / (1..2) First /  / (3..4) Second",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1..2) First\n\n(3..4) Second"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-100",
+      "description": "rating.qdisplay.dry:  / (1..2) First /  / ",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1..2) First\n\n"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-101",
+      "description": "rating.qdisplay.dry:  / (1..2) First / #comment / (3..4) Second",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1..2) First\n#comment\n(3..4) Second"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-102",
+      "description": "rating.qdisplay.dry:  /   (1..2) Indented",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n  (1..2) Indented"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-103",
+      "description": "rating.qdisplay.dry:  / (1..2) First /   (3..4) continuation",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(1..2) First\n  (3..4) continuation"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-104",
+      "description": "rating.qdisplay.dry:  / (..) /   continuation",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..)\n  continuation"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-105",
+      "description": "rating.qdisplay.dry:  / (..) First /     ignored [? invalid conditional ?]",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..) First\n    ignored [? invalid conditional ?]"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-106",
+      "description": "rating.qdisplay.dry:  / (..) Fallback / (1..2) Overlap / (2..3) Shared endpoint",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..) Fallback\n(1..2) Overlap\n(2..3) Shared endpoint"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-107",
+      "description": "rating.qdisplay.dry: type: qdisplay /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "type: qdisplay\n\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-108",
+      "description": "rating.qdisplay.dry: Type: qdisplay /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "Type: qdisplay\n\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-109",
+      "description": "rating.qdisplay.dry: unknown: value /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "unknown: value\n\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-110",
+      "description": "rating.qdisplay.dry: content: Text /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "content: Text\n\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-111",
+      "description": "rating.qdisplay.dry:  / (..) Text /  / @part /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..) Text\n\n@part\n\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-112",
+      "description": "rating.qdisplay.dry:  / (..) Text /  / - @root: Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n(..) Text\n\n- @root: Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "rating.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-113",
+      "description": "rating.qdisplay.dry:  / #comment /  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\n#comment\n\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-114",
+      "description": "rating.qdisplay.dry: \r / (1-5) Low\r /   continuation\r / (5..1) Reversed",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "rating.qdisplay.dry",
+          "contents": "\r\n(1-5) Low\r\n  continuation\r\n(5..1) Reversed"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-115",
+      "description": "cardinal.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "cardinal.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "cardinal.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-116",
+      "description": "ordinal.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "ordinal.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "ordinal.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-117",
+      "description": "number.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "number.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "number.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-118",
+      "description": "fudge.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "fudge.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "fudge.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-119",
+      "description": "_bad.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "_bad.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "_bad.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-120",
+      "description": "bad.name.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "bad.name.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "bad.name.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-121",
+      "description": "0bad.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "0bad.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": "0bad.qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-122",
+      "description": "good-name.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "good-name.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-123",
+      "description": "good_name.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "good_name.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-124",
+      "description": "Cardinal.qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": "Cardinal.qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-125",
+      "description": ".qdisplay.dry:  / (..) Text",
+      "source": "pinned dry.js, qdisplay.js schema and qdcontent.js range compiler; independently executed full compiler",
+      "files": [
+        {
+          "name": ".qdisplay.dry",
+          "contents": "\n(..) Text"
+        }
+      ],
+      "diagnostic": {
+        "file": ".qdisplay.dry",
+        "pattern": "QDisplay|range|property|name|content|section"
+      }
+    },
+    {
+      "id": "qdisplay-structure-builtin-cardinal",
+      "description": "built-in cardinal requires no file",
+      "source": "pinned engine.js formatter lookup and content.js insert grammar",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: [+ score : cardinal +]\n\n[+ score : cardinal +]"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-builtin-ordinal",
+      "description": "built-in ordinal requires no file",
+      "source": "pinned engine.js formatter lookup and content.js insert grammar",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: [+ score : ordinal +]\n\n[+ score : ordinal +]"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-builtin-number",
+      "description": "built-in number requires no file",
+      "source": "pinned engine.js formatter lookup and content.js insert grammar",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: [+ score : number +]\n\n[+ score : number +]"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-builtin-fudge",
+      "description": "built-in fudge requires no file",
+      "source": "pinned engine.js formatter lookup and content.js insert grammar",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: [+ score : fudge +]\n\n[+ score : fudge +]"
+        }
+      ]
+    },
+    {
+      "id": "qdisplay-structure-duplicate",
+      "description": "duplicate QDisplay IDs are compiler-accepted with authoring warnings",
+      "source": "pinned compiler.js _addQDisplayToQDisplays; worker normalizes portable fixture paths to native separators for dry.js",
+      "files": [
+        {
+          "name": "one/rating.qdisplay.dry",
+          "contents": "\n(..) One"
+        },
+        {
+          "name": "two/rating.qdisplay.dry",
+          "contents": "\n(..) Two"
+        }
+      ],
+      "warning": {
+        "file": "one/rating.qdisplay.dry",
+        "pattern": "Duplicate QDisplay"
+      }
     }
   ]
 }

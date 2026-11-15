@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { BUILTIN_QDISPLAYS, parseQDisplay } from './qdisplay';
 import { DendryAST, DendryNode, normalizePropertyName } from './parser';
 import { checkScript, FindingSeverity } from './js-check';
 import { SCENE_SCHEMA } from './scene-schema';
@@ -11,7 +12,6 @@ type FileData = {
   uri: vscode.Uri;
   ast: DendryAST;
   localSceneIds: Set<string>;
-  localQualityIds: Set<string>;
 };
 
 export class DendryValidator {
@@ -19,11 +19,9 @@ export class DendryValidator {
   private strictMode: boolean;
   private extraLibraries: string[];
   private sceneIds: Set<string> = new Set();
-  private qualityIds: Set<string> = new Set();
   private sceneNodes = new Map<string, DendryNode>();
   private taggedScenes = new Map<string, DendryNode[]>();
   private qdisplayFiles: Set<string> = new Set();
-  private _allFileData: Map<string, FileData> = new Map();
 
   private readonly QUALITY_PROPERTIES = new Set(['id', 'type', 'name', 'initial', 'min', 'max', 'signal', 'is-valid', 'default-display']);
 
@@ -53,17 +51,14 @@ export class DendryValidator {
     qdisplayFiles: string[]
   ): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    this._allFileData = allFileData;
     this.qdisplayFiles = new Set(qdisplayFiles);
 
     // rebuild global IDs
     this.sceneIds.clear();
-    this.qualityIds.clear();
     this.sceneNodes.clear();
     this.taggedScenes.clear();
     allFileData.forEach(d => {
       d.localSceneIds.forEach(id => this.sceneIds.add(id.trim()));
-      d.localQualityIds.forEach(id => this.qualityIds.add(id.trim()));
       for (const node of d.ast.nodes) {
         if (node.type !== 'scene') continue;
         this.sceneNodes.set(node.properties.get('id'), node);
@@ -92,84 +87,12 @@ export class DendryValidator {
   }
 
   public validateQDisplayFile(document: vscode.TextDocument): vscode.Diagnostic[] {
-    const diagnostics: vscode.Diagnostic[] = [];
-    const text = document.getText();
-    const lines = text.split(/\r?\n/);
-
-    // 1. Check for empty first line
-    if (lines.length > 0 && lines[0].trim() !== '') {
-        diagnostics.push(
-            this.createDiagnostic(
-                new vscode.Range(0, 0, 0, lines[0].length),
-                '`.qdisplay.dry` files must start with an empty line.',
-                vscode.DiagnosticSeverity.Error
-            )
-        );
-    }
-
-    const rangeRegex = /^\(([\d.-]*)\.\.([\d.-]*)\)\s*(.*)/;
-    let previousEnd: number | null = null;
-
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === '' || trimmedLine.startsWith('#')) {
-            continue;
-        }
-
-        const match = trimmedLine.match(rangeRegex);
-
-        if (!match) {
-            diagnostics.push(
-                this.createDiagnostic(
-                    new vscode.Range(i, 0, i, line.length),
-                    'Invalid format. Expected `(start..end) text` or `(..end) text` or `(start..) text`.',
-                    vscode.DiagnosticSeverity.Error
-                )
-            );
-            continue;
-        }
-
-        const [, startStr, endStr, html] = match;
-        const start = startStr === '' ? -Infinity : parseFloat(startStr);
-        const end = endStr === '' ? Infinity : parseFloat(endStr);
-
-        if (isNaN(start) || isNaN(end)) {
-            diagnostics.push(
-                this.createDiagnostic(
-                    new vscode.Range(i, 0, i, line.length),
-                    'Invalid range values. Start and end must be numbers.',
-                    vscode.DiagnosticSeverity.Error
-                )
-            );
-            continue;
-        }
-
-        if (start > end) {
-            diagnostics.push(
-                this.createDiagnostic(
-                    new vscode.Range(i, 0, i, line.length),
-                    'Start of range must be less than end of range.',
-                    vscode.DiagnosticSeverity.Error
-                )
-            );
-        }
-
-        if (previousEnd !== null && start < previousEnd) {
-            diagnostics.push(
-                this.createDiagnostic(
-                    new vscode.Range(i, 0, i, line.length),
-                    'Overlapping or out-of-order ranges are not allowed.',
-                    vscode.DiagnosticSeverity.Warning
-                )
-            );
-        }
-
-        previousEnd = end;
-    }
-
-    return diagnostics;
+    return parseQDisplay(document.getText(), document.uri.path).issues.map(issue => {
+      const start = issue.source.position(0);
+      const end = issue.source.position(issue.source.text.length);
+      return this.createDiagnostic(new vscode.Range(start.line, start.character, end.line, end.character),
+        issue.message, vscode.DiagnosticSeverity.Error);
+    });
   }
 
   private validateInterpolations(interpolations: DendryNode['interpolations'], diagnostics: vscode.Diagnostic[]): void {
@@ -198,7 +121,7 @@ export class DendryValidator {
               vscode.DiagnosticSeverity.Error
             )
           );
-        } else if (!this.qdisplayFiles.has(interpolation.qdisplay)) {
+        } else if (!BUILTIN_QDISPLAYS.has(interpolation.qdisplay) && !this.qdisplayFiles.has(interpolation.qdisplay)) {
           // Use the fullText to find the exact position of the qdisplay identifier
           const fullText = interpolation.fullText || '';
           const qdisplayIndex = fullText.lastIndexOf(interpolation.qdisplay);

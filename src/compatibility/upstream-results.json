@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "e8d90bfc1c5ce9efd779b6f6d354b6bab2775517c0c21c53e0a48a9aea81082a",
+    "corpusSha256": "066c44fd5dcacabf96667e250525423538ef29dc2d55cbfbe08ad5fecd66273b",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -10756,6 +10756,1330 @@
     "shorthand-root-on-arrival-quoted-visit-untracked": {
       "ok": false,
       "error": "Function refers to visit count of scene \"target\" which has count-visits-max undefined."
+    },
+    "qdisplay-structure-0": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-1": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-2": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-3": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-4": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-5": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-6": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-7": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-8": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-9": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-10": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-11": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-12": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-13": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-14": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-15": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-16": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-17": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-18": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-19": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-20": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-21": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-22": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-23": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-24": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-25": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-26": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-27": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-28": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-29": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-30": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-31": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-32": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-33": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-34": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-35": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-36": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-37": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-38": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-39": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-40": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-41": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-42": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-43": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-44": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-45": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-46": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-47": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-48": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-49": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-50": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-51": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-52": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-53": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-54": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-55": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-56": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-57": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-58": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-59": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-60": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-61": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-62": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-63": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-64": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-65": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-66": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-67": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-68": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-69": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-70": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-71": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-72": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-73": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-74": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-75": {
+      "ok": false,
+      "error": "Unknown range declaration: (1.2.3..4) Text"
+    },
+    "qdisplay-structure-76": {
+      "ok": false,
+      "error": "Unknown range declaration: (1e3..4) Text"
+    },
+    "qdisplay-structure-77": {
+      "ok": false,
+      "error": "Unknown range declaration: (1..4..5) Text"
+    },
+    "qdisplay-structure-78": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-79": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-80": {
+      "ok": false,
+      "error": "Unknown range declaration: (1 .. 4 garbage) Text"
+    },
+    "qdisplay-structure-81": {
+      "ok": false,
+      "error": "Unknown range declaration: (+1..4) Text"
+    },
+    "qdisplay-structure-82": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-83": {
+      "ok": false,
+      "error": "Unknown range declaration: (1...-5) Text"
+    },
+    "qdisplay-structure-84": {
+      "ok": false,
+      "error": "Unknown range declaration: (1.to2) Text"
+    },
+    "qdisplay-structure-85": {
+      "ok": false,
+      "error": "Unknown range declaration: ( 1..2) Text"
+    },
+    "qdisplay-structure-86": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-87": {
+      "ok": false,
+      "error": "Unknown range declaration: (1 TO 2) Text"
+    },
+    "qdisplay-structure-88": {
+      "ok": false,
+      "error": "Unknown range declaration: (1To2) Text"
+    },
+    "qdisplay-structure-89": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-90": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-91": {
+      "ok": false,
+      "error": "Unknown range declaration: (1...) Text"
+    },
+    "qdisplay-structure-92": {
+      "ok": false,
+      "error": "Unknown range declaration: "
+    },
+    "qdisplay-structure-93": {
+      "ok": false,
+      "error": "Unknown range declaration: "
+    },
+    "qdisplay-structure-94": {
+      "ok": false,
+      "error": "Unknown range declaration: "
+    },
+    "qdisplay-structure-95": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-96": {
+      "ok": false,
+      "error": "rating.qdisplay.dry line 2: Invalid property definition."
+    },
+    "qdisplay-structure-97": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-98": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-99": {
+      "ok": false,
+      "error": "Unknown range declaration: "
+    },
+    "qdisplay-structure-100": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-101": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-102": {
+      "ok": false,
+      "error": "Unknown range declaration:   (1..2) Indented"
+    },
+    "qdisplay-structure-103": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-104": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-105": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-106": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-107": {
+      "ok": false,
+      "error": "rating.qdisplay.dry line 1: Property \"type\" is already defined."
+    },
+    "qdisplay-structure-108": {
+      "ok": false,
+      "error": "rating.qdisplay.dry line 1: Property \"type\" is already defined."
+    },
+    "qdisplay-structure-109": {
+      "ok": false,
+      "error": "rating.qdisplay.dry: Unknown properties: \"unknown\" (rating.qdisplay.dry line 1)."
+    },
+    "qdisplay-structure-110": {
+      "ok": false,
+      "error": "rating.qdisplay.dry line 1: Property \"content\" is a reserved name."
+    },
+    "qdisplay-structure-111": {
+      "ok": false,
+      "error": "rating.qdisplay.dry: Unknown properties: \"sections\"."
+    },
+    "qdisplay-structure-112": {
+      "ok": false,
+      "error": "rating.qdisplay.dry: Unknown properties: \"options\"."
+    },
+    "qdisplay-structure-113": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-114": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-115": {
+      "ok": false,
+      "error": "cardinal.qdisplay.dry filename: \"cardinal\" is a reserved Quality display."
+    },
+    "qdisplay-structure-116": {
+      "ok": false,
+      "error": "ordinal.qdisplay.dry filename: \"ordinal\" is a reserved Quality display."
+    },
+    "qdisplay-structure-117": {
+      "ok": false,
+      "error": "number.qdisplay.dry filename: \"number\" is a reserved Quality display."
+    },
+    "qdisplay-structure-118": {
+      "ok": false,
+      "error": "fudge.qdisplay.dry filename: \"fudge\" is a reserved Quality display."
+    },
+    "qdisplay-structure-119": {
+      "ok": false,
+      "error": "_bad.qdisplay.dry filename: \"_bad\" is not a valid quality name."
+    },
+    "qdisplay-structure-120": {
+      "ok": false,
+      "error": "bad.name.qdisplay.dry filename: \"bad.name\" is not a valid quality name."
+    },
+    "qdisplay-structure-121": {
+      "ok": false,
+      "error": "0bad.qdisplay.dry filename: \"0bad\" is not a valid quality name."
+    },
+    "qdisplay-structure-122": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-123": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-124": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-125": {
+      "ok": false,
+      "error": "Cannot extract id or type from filename."
+    },
+    "qdisplay-structure-builtin-cardinal": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-builtin-ordinal": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-builtin-number": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-builtin-fudge": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "qdisplay-structure-duplicate": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
     }
   }
 }

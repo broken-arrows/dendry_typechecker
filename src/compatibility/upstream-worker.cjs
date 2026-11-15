@@ -14,6 +14,9 @@ for (const [name, expected] of Object.entries({ lodash: '3.10.1', async: '1.5.2'
 }
 const compiler = require(path.join(input.upstream, 'lib/parsers/compiler.js'));
 const dry = require(path.join(input.upstream, 'lib/parsers/dry.js'));
+// Fixtures use portable workspace paths. The upstream dry parser strips only
+// process.platform's native separator, as its filesystem loader supplies it.
+const nativeName = name => name.replace(/\//g, path.sep);
 console.log = () => {};
 let parsed;
 function finish(result) {
@@ -24,13 +27,13 @@ process.on('uncaughtException', error => finish({ ok: false, error: error.messag
 
 if (input.parserFile) {
   const file = input.files.find(file => file.name === input.parserFile);
-  dry.parseFromContent(file.name, file.contents, (error, result) => {
+  dry.parseFromContent(nativeName(file.name), file.contents, (error, result) => {
     if (error) throw error;
     // Keep the upstream public raw AST, stripping only source metadata.
     parsed = JSON.parse(JSON.stringify(result, (key, value) => key === '$metadata' ? undefined : value));
   });
 }
-compiler.compileGame(input.files, (error, game) => {
+compiler.compileGame(input.files.map(file => ({ ...file, name: nativeName(file.name) })), (error, game) => {
   if (error) return finish({ ok: false, error: error.message });
   finish({
     ok: true,
