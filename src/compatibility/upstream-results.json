@@ -2,7 +2,7 @@
   "reference": {
     "repository": "https://github.com/aucchen/dendrynexus",
     "revision": "2df80695cbe29743b4d9a1a43f5d9b36eaaac0b7",
-    "corpusSha256": "1a5c20ce2ee942db6354095f7dfc1b8e0412d2f092f89c73977ec73ead944ca6",
+    "corpusSha256": "bbb2d6c6f74f1bc3532d14d2ad96eeaf8c20d0de65ed97c6f2ae2f2206c1b23c",
     "dependencyVersions": {
       "lodash": "3.10.1",
       "async": "1.5.2"
@@ -748,6 +748,4227 @@
     "info-invalid-type": {
       "ok": false,
       "error": "info.dry line 3: File type must equal \"info\", \"scene\" found instead."
+    },
+    "scene-schema-opaque-fields-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-opaque-fields-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-difficulty-values-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-difficulty-values-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-difficulty-empty-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-difficulty-empty-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-YES-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-YES-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-true-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-true-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-T-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-T-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-y-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-y-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-Ok-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-Ok-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-NO-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-NO-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-false-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-false-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-F-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-F-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-n-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-n-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-1-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-1-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-0-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-0-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-_2x-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-_2x-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-1_9-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-1_9-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-0x10-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-boolean-0x10-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-invalid-new-page-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-new-page-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-game-over-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-game-over-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-set-root-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-set-root-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-top-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-top-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-special-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-special-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-deck-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-deck-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-pinned-card-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-pinned-card-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-card-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-card-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-hand-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-invalid-is-hand-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"maybe\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-infinity-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-infinity-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! yes !}\" is not a valid yes/no value."
+    },
+    "scene-schema-boolean-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! yes !}\" is not a valid yes/no value."
+    },
+    "scene-schema-integer-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! 2 !}\" is not a valid whole number."
+    },
+    "scene-schema-integer-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! 2 !}\" is not a valid whole number."
+    },
+    "scene-schema-float-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! 2 !}\" is not a valid number."
+    },
+    "scene-schema-float-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! 2 !}\" is not a valid number."
+    },
+    "scene-schema-visits-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! 2 !}\" is not a valid whole number."
+    },
+    "scene-schema-visits-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! 2 !}\" is not a valid whole number."
+    },
+    "scene-schema-integers-12x-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-12x-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-1_9-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-1_9-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-_2-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-_2-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-0-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-0-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-0x10-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-0x10-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-2e3-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-integers-2e3-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-empty-order-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-empty-order-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-infinite-order-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-infinite-order-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-empty-priority-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-empty-priority-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-infinite-priority-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-infinite-priority-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-empty-min-choices-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-empty-min-choices-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-infinite-min-choices-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-infinite-min-choices-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-empty-max-choices-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-empty-max-choices-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-infinite-max-choices-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-infinite-max-choices-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-empty-max-cards-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-empty-max-cards-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-infinite-max-cards-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-infinite-max-cards-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-frequency-1_2x-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-frequency-1_2x-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-frequency-_2_5-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-frequency-_2_5-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-frequency-Infinity-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-frequency-Infinity-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-empty-frequency-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid number."
+    },
+    "scene-schema-empty-frequency-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid number."
+    },
+    "scene-schema-invalid-frequency-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"text\" is not a valid number."
+    },
+    "scene-schema-invalid-frequency-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"text\" is not a valid number."
+    },
+    "scene-schema-prefix-max-visits-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-prefix-max-visits-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-fraction-max-visits-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-fraction-max-visits-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-invalid-max-visits-0-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-0-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-_1-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: -1 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-_1-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: -1 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-0_9-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-0_9-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-max-visits-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-invalid-max-visits-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-invalid-max-visits-Infinity-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-invalid-max-visits-Infinity-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-prefix-count-visits-max-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-prefix-count-visits-max-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-fraction-count-visits-max-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-fraction-count-visits-max-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-invalid-count-visits-max-0-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-0-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-_1-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: -1 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-_1-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: -1 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-0_9-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-0_9-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: 0 is not in range 1+."
+    },
+    "scene-schema-invalid-count-visits-max-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid whole number."
+    },
+    "scene-schema-invalid-count-visits-max-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid whole number."
+    },
+    "scene-schema-invalid-count-visits-max-Infinity-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-invalid-count-visits-max-Infinity-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Infinity\" is not a valid whole number."
+    },
+    "scene-schema-visit-counts-equal-after-coercion-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-visit-counts-equal-after-coercion-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-visit-counts-higher-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-visit-counts-higher-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-visit-counts-lower-root": {
+      "ok": false,
+      "error": "root.scene.dry: Cannot have count-visits-max (root.scene.dry line 3) set lower than max-visits (root.scene.dry line 2)."
+    },
+    "scene-schema-visit-counts-lower-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Cannot have count-visits-max (root.scene.dry line 8) set lower than max-visits (root.scene.dry line 7)."
+    },
+    "scene-schema-visit-counts-before-dynamic-override-root": {
+      "ok": false,
+      "error": "root.scene.dry: Cannot have count-visits-max (root.scene.dry line 3) set lower than max-visits (root.scene.dry line 2)."
+    },
+    "scene-schema-visit-counts-before-dynamic-override-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Cannot have count-visits-max (root.scene.dry line 8) set lower than max-visits (root.scene.dry line 7)."
+    },
+    "scene-schema-dynamic-visit-expression-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-dynamic-visit-expression-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-dynamic-visit-invalid-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: No valid way to parse this content: score +"
+    },
+    "scene-schema-dynamic-visit-invalid-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score +"
+    },
+    "scene-schema-dynamic-frequency-invalid-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: No valid way to parse this content: score +"
+    },
+    "scene-schema-dynamic-frequency-invalid-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: score +"
+    },
+    "scene-schema-dynamic-frequency-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: No valid way to parse this content: "
+    },
+    "scene-schema-dynamic-frequency-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: No valid way to parse this content: "
+    },
+    "scene-schema-dynamic-frequency-mixed-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Magic in an expression must have no other content surrounding it."
+    },
+    "scene-schema-dynamic-frequency-mixed-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Magic in an expression must have no other content surrounding it."
+    },
+    "scene-schema-dynamic-frequency-js-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-dynamic-frequency-js-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-dynamic-frequency-invalid-js-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Unexpected token '='"
+    },
+    "scene-schema-dynamic-frequency-invalid-js-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Unexpected token '='"
+    },
+    "scene-schema-sprites-none-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-none-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-pairs-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-pairs-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-permissive-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-permissive-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-sprites-missing-colon-root": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'trim')"
+    },
+    "scene-schema-sprites-missing-colon-section": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'trim')"
+    },
+    "scene-schema-sprites-trailing-comma-root": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'trim')"
+    },
+    "scene-schema-sprites-trailing-comma-section": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'trim')"
+    },
+    "scene-schema-tags-list-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-tags-list-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-tags-invalid-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Tag 1 \"invalid.tag\" is not valid."
+    },
+    "scene-schema-tags-invalid-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Tag 1 \"invalid.tag\" is not valid."
+    },
+    "scene-schema-goto-ref-quality-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-goto-ref-quality-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-goto-ref-invalid-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score + luck\" is not a valid quality name."
+    },
+    "scene-schema-goto-ref-invalid-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score + luck\" is not a valid quality name."
+    },
+    "scene-schema-goto-ref-invalid-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: score >"
+    },
+    "scene-schema-goto-ref-invalid-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: No valid way to parse this content: score >"
+    },
+    "scene-schema-goto-ref-magic-predicate-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-goto-ref-magic-predicate-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-start-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-start-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-end-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-go-sub-end-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-unknown-root": {
+      "ok": false,
+      "error": "root.scene.dry: Unknown properties: \"madeUpField\" (root.scene.dry line 2)."
+    },
+    "scene-schema-unknown-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Unknown properties: \"madeUpField\" (root.scene.dry line 7)."
+    },
+    "scene-schema-normalized-fields-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-normalized-fields-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-duplicate-normalized-field-root": {
+      "ok": false,
+      "error": "root.scene.dry line 3: Property \"newPage\" is already defined."
+    },
+    "scene-schema-duplicate-normalized-field-section": {
+      "ok": false,
+      "error": "root.scene.dry line 8: Property \"newPage\" is already defined."
+    },
+    "scene-schema-reserved-id-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Property \"id\" is a reserved name."
+    },
+    "scene-schema-reserved-id-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Property \"id\" is a reserved name."
+    },
+    "scene-schema-reserved-content-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Property \"content\" is a reserved name."
+    },
+    "scene-schema-reserved-content-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Property \"content\" is a reserved name."
+    },
+    "scene-schema-reserved-options-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Property \"options\" is a reserved name."
+    },
+    "scene-schema-reserved-options-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Property \"options\" is a reserved name."
+    },
+    "scene-schema-reserved-sections-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Property \"sections\" is a reserved name."
+    },
+    "scene-schema-reserved-sections-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: Property \"sections\" is a reserved name."
+    },
+    "scene-schema-type-header-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: Property \"type\" is already defined."
+    },
+    "scene-schema-type-header-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Unknown properties: \"type\" (root.scene.dry line 7)."
+    },
+    "scene-schema-property-shaped-prose-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-property-shaped-prose-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-magic-labels-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-magic-labels-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part"
+      ],
+      "qualityIds": []
+    },
+    "scene-schema-invalid-header-title-condition-root": {
+      "ok": false,
+      "error": "No valid way to parse this content: score = "
+    },
+    "scene-schema-invalid-header-title-condition-section": {
+      "ok": false,
+      "error": "No valid way to parse this content: score = "
+    },
+    "control-quality-name-strength-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-strength-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-strength-test-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-strength-test-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-dynamic_2-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-dynamic_2-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-TRUE-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-quality-name-TRUE-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-invalid-quality-expression-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"strength + luck\" is not a valid quality name."
+    },
+    "control-invalid-quality-expression-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"strength + luck\" is not a valid quality name."
+    },
+    "control-invalid-quality-prefixed-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"Q.strength\" is not a valid quality name."
+    },
+    "control-invalid-quality-prefixed-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"Q.strength\" is not a valid quality name."
+    },
+    "control-invalid-quality-number-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"12\" is not a valid quality name."
+    },
+    "control-invalid-quality-number-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"12\" is not a valid quality name."
+    },
+    "control-invalid-quality-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid quality name."
+    },
+    "control-invalid-quality-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid quality name."
+    },
+    "control-invalid-quality-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! strength !}\" is not a valid quality name."
+    },
+    "control-invalid-quality-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! strength !}\" is not a valid quality name."
+    },
+    "control-invalid-quality-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"strength > 0\" is not a valid quality name."
+    },
+    "control-invalid-quality-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"strength > 0\" is not a valid quality name."
+    },
+    "control-invalid-quality-list-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"strength; luck\" is not a valid quality name."
+    },
+    "control-invalid-quality-list-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"strength; luck\" is not a valid quality name."
+    },
+    "control-difficulty-values-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-difficulty-values-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-single-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-single-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-at-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-at-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-invalid-clauses-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target; root\" is not a valid id."
+    },
+    "control-call-invalid-clauses-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target; root\" is not a valid id."
+    },
+    "control-call-invalid-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target if flag\" is not a valid id."
+    },
+    "control-call-invalid-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target if flag\" is not a valid id."
+    },
+    "control-call-invalid-assignment-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"score = 1\" is not a valid id."
+    },
+    "control-call-invalid-assignment-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"score = 1\" is not a valid id."
+    },
+    "control-call-invalid-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! target !}\" is not a valid id."
+    },
+    "control-call-invalid-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! target !}\" is not a valid id."
+    },
+    "control-call-invalid-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid id."
+    },
+    "control-call-invalid-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid id."
+    },
+    "control-set-jump-single-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-set-jump-single-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-set-jump-at-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-set-jump-at-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-set-jump-invalid-clauses-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target; root\" is not a valid id."
+    },
+    "control-set-jump-invalid-clauses-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target; root\" is not a valid id."
+    },
+    "control-set-jump-invalid-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target if flag\" is not a valid id."
+    },
+    "control-set-jump-invalid-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target if flag\" is not a valid id."
+    },
+    "control-set-jump-invalid-assignment-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"score = 1\" is not a valid id."
+    },
+    "control-set-jump-invalid-assignment-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"score = 1\" is not a valid id."
+    },
+    "control-set-jump-invalid-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! target !}\" is not a valid id."
+    },
+    "control-set-jump-invalid-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! target !}\" is not a valid id."
+    },
+    "control-set-jump-invalid-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid id."
+    },
+    "control-set-jump-invalid-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid id."
+    },
+    "control-check-success-go-to-single-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-success-go-to-single-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-success-go-to-at-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-success-go-to-at-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-success-go-to-invalid-clauses-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target; root\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-clauses-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target; root\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target if flag\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target if flag\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-assignment-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"score = 1\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-assignment-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"score = 1\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! target !}\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! target !}\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid relative id."
+    },
+    "control-check-success-go-to-invalid-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-single-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-failure-go-to-single-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-failure-go-to-at-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-failure-go-to-at-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-check-failure-go-to-invalid-clauses-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target; root\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-clauses-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target; root\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"target if flag\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"target if flag\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-assignment-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"score = 1\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-assignment-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"score = 1\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-magic-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"{! target !}\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-magic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"{! target !}\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"\" is not a valid relative id."
+    },
+    "control-check-failure-go-to-invalid-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"\" is not a valid relative id."
+    },
+    "control-call-relative-.target-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \".target\" is not a valid id."
+    },
+    "control-call-relative-.target-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \".target\" is not a valid id."
+    },
+    "control-call-relative-.-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \".\" is not a valid id."
+    },
+    "control-call-relative-.-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \".\" is not a valid id."
+    },
+    "control-call-relative-..target-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"..target\" is not a valid id."
+    },
+    "control-call-relative-..target-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"..target\" is not a valid id."
+    },
+    "control-set-jump-relative-.target-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \".target\" is not a valid id."
+    },
+    "control-set-jump-relative-.target-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \".target\" is not a valid id."
+    },
+    "control-set-jump-relative-.-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \".\" is not a valid id."
+    },
+    "control-set-jump-relative-.-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \".\" is not a valid id."
+    },
+    "control-set-jump-relative-..target-root": {
+      "ok": false,
+      "error": "root.scene.dry line 2: \"..target\" is not a valid id."
+    },
+    "control-set-jump-relative-..target-section": {
+      "ok": false,
+      "error": "root.scene.dry line 7: \"..target\" is not a valid id."
+    },
+    "control-call-exact-section-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-exact-section-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-local-name-not-qualified-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-local-name-not-qualified-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-builtin-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-call-builtin-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-jump-local-name-qualified-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-jump-local-name-qualified-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-jump-missing-root": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root\"."
+    },
+    "control-jump-missing-section": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root.part\"."
+    },
+    "control-checks-relative-pair-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-relative-pair-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-self-pair-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-self-pair-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-local-pair-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-local-pair-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.nested",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-pair-missing-root": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root\"."
+    },
+    "control-checks-pair-missing-section": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root.part\"."
+    },
+    "control-checks-success-alone-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-success-alone-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-failure-alone-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-checks-failure-alone-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-clauses-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-clauses-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-tabs-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-tabs-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-continuation-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-continuation-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-predicate-continuation-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-predicate-continuation-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-dotted-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-dotted-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-self-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-self-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-hyphen-missing-root": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"missing-target\" in \"root\"."
+    },
+    "control-goto-hyphen-missing-section": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"missing-target\" in \"root.part\"."
+    },
+    "control-goto-invalid-assignment-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score = 1\" is not a valid relative id."
+    },
+    "control-goto-invalid-assignment-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score = 1\" is not a valid relative id."
+    },
+    "control-goto-invalid-arithmetic-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score + 1\" is not a valid relative id."
+    },
+    "control-goto-invalid-arithmetic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score + 1\" is not a valid relative id."
+    },
+    "control-goto-invalid-leading-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-leading-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-trailing-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-trailing-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-middle-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-middle-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-empty-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-empty-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"\" is not a valid relative id."
+    },
+    "control-goto-invalid-noPredicate-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"target if\" is not a valid relative id."
+    },
+    "control-goto-invalid-noPredicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"target if\" is not a valid relative id."
+    },
+    "control-goto-invalid-inventedElse-root": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: flag else root"
+    },
+    "control-goto-invalid-inventedElse-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: No valid way to parse this content: flag else root"
+    },
+    "control-goto-invalid-uppercaseIf-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"target IF flag\" is not a valid relative id."
+    },
+    "control-goto-invalid-uppercaseIf-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"target IF flag\" is not a valid relative id."
+    },
+    "control-goto-invalid-wholeMagic-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"{! target !}\" is not a valid relative id."
+    },
+    "control-goto-invalid-wholeMagic-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"{! target !}\" is not a valid relative id."
+    },
+    "control-goto-magic-return-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-return-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-semis-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-semis-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-multiline-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-multiline-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-string-semis-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-string-semis-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-empty-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-empty-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-magic-bad-root": {
+      "ok": false,
+      "error": "root.scene.dry: Unexpected token '='"
+    },
+    "control-goto-magic-bad-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Unexpected token '='"
+    },
+    "control-goto-magic-multiline-bad-root": {
+      "ok": false,
+      "error": "root.scene.dry: Unexpected token '='"
+    },
+    "control-goto-magic-multiline-bad-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Unexpected token '='"
+    },
+    "control-goto-mixed-predicate-root": {
+      "ok": false,
+      "error": "root.scene.dry: Magic in a predicate must have no other content surrounding it."
+    },
+    "control-goto-mixed-predicate-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: Magic in a predicate must have no other content surrounding it."
+    },
+    "control-goto-invalid-condition-root": {
+      "ok": false,
+      "error": "root.scene.dry: No valid way to parse this content: flag >"
+    },
+    "control-goto-invalid-condition-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: No valid way to parse this content: flag >"
+    },
+    "control-goto-ref-clauses-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-clauses-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-magic-return-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-magic-return-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-tabs-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-tabs-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-goto-ref-trailing-semi-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"\" is not a valid quality name."
+    },
+    "control-goto-ref-trailing-semi-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"\" is not a valid quality name."
+    },
+    "control-go-sub-magic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-magic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-invalid-action-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-invalid-action-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-start-magic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-start-magic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-start-invalid-action-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-start-invalid-action-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-start-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-start-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-end-magic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-end-magic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-end-invalid-action-root": {
+      "ok": false,
+      "error": "root.scene.dry: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-end-invalid-action-section": {
+      "ok": false,
+      "error": "root.scene.dry line 5: \"score = 1\" is not a valid relative id."
+    },
+    "control-go-sub-end-missing-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "control-go-sub-end-missing-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-missing-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-missing-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-inline-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-inline-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-property-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-property-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-source-title-does-not-count-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-source-title-does-not-count-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-subtitle-does-not-count-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-subtitle-does-not-count-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-subtitle-does-not-count-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-subtitle-does-not-count-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-hidden-option-still-needs-title-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-hidden-option-still-needs-title-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-unavailable-option-still-needs-title-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-unavailable-option-still-needs-title-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-empty-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-empty-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-empty-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-empty-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-whitespace-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-whitespace-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-whitespace-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-option-whitespace-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-target-text-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-text-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-text-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-text-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-emptyLogic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-emptyLogic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-emptyLogic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-emptyLogic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-returningLogic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-returningLogic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-returningLogic-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-returningLogic-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-interpolation-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-interpolation-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-interpolation-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-interpolation-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-conditional-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-conditional-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-conditional-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-conditional-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-emptyMarkup-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-target-emptyMarkup-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-emptyMarkup-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-option-emptyMarkup-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-empty-inline-title-root": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-empty-inline-title-section": {
+      "ok": false,
+      "error": "Option refers to scene \"target\", but neither option nor scene have a title."
+    },
+    "titles-empty-option-falls-back-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-empty-option-falls-back-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-empty-target-overridden-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-empty-target-overridden-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-local-target-no-title-root": {
+      "ok": false,
+      "error": "Option refers to scene \"root.local\", but neither option nor scene have a title."
+    },
+    "titles-local-target-no-title-section": {
+      "ok": false,
+      "error": "Option refers to scene \"root.local\", but neither option nor scene have a title."
+    },
+    "titles-local-target-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.local",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-local-target-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.local",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-local-shadowing-root": {
+      "ok": false,
+      "error": "Option refers to scene \"root.local\", but neither option nor scene have a title."
+    },
+    "titles-local-shadowing-section": {
+      "ok": false,
+      "error": "Option refers to scene \"root.local\", but neither option nor scene have a title."
+    },
+    "titles-missing-target-no-title-cascade-root": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root\"."
+    },
+    "titles-missing-target-no-title-cascade-section": {
+      "ok": false,
+      "error": "Couldn't find an id matching \"absent\" in \"root.part\"."
+    },
+    "titles-goto-does-not-require-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-goto-does-not-require-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevScene-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevScene-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevScene-explicit-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevScene-explicit-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevTopScene-root": {
+      "ok": false,
+      "error": "Option refers to scene \"prevTopScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-prevTopScene-section": {
+      "ok": false,
+      "error": "Option refers to scene \"prevTopScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-prevTopScene-explicit-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-prevTopScene-explicit-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-jumpScene-root": {
+      "ok": false,
+      "error": "Option refers to scene \"jumpScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-jumpScene-section": {
+      "ok": false,
+      "error": "Option refers to scene \"jumpScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-jumpScene-explicit-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-jumpScene-explicit-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-returnScene-root": {
+      "ok": false,
+      "error": "Option refers to scene \"returnScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-returnScene-section": {
+      "ok": false,
+      "error": "Option refers to scene \"returnScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-returnScene-explicit-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-returnScene-explicit-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-backSpecialScene-root": {
+      "ok": false,
+      "error": "Option refers to scene \"backSpecialScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-backSpecialScene-section": {
+      "ok": false,
+      "error": "Option refers to scene \"backSpecialScene\", but neither option nor scene have a title."
+    },
+    "titles-builtin-backSpecialScene-explicit-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-builtin-backSpecialScene-explicit-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-local-prevscene-is-not-exempt-root": {
+      "ok": false,
+      "error": "Option refers to scene \"root.prevScene\", but neither option nor scene have a title."
+    },
+    "titles-local-prevscene-is-not-exempt-section": {
+      "ok": false,
+      "error": "Option refers to scene \"root.prevScene\", but neither option nor scene have a title."
+    },
+    "titles-absolute-prevscene-is-exempt-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.prevScene",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-absolute-prevscene-is-exempt-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "root.prevScene",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-titled-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-titled-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-missing-title-root": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-missing-title-section": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-explicit-option-title-cannot-rescue-root": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-explicit-option-title-cannot-rescue-section": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-property-title-cannot-rescue-root": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-property-title-cannot-rescue-section": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-hidden-still-needs-title-root": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-hidden-still-needs-title-section": {
+      "ok": false,
+      "error": "Scene \"target\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-one-untitled-among-many-root": {
+      "ok": false,
+      "error": "Scene \"other\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-one-untitled-among-many-section": {
+      "ok": false,
+      "error": "Scene \"other\" can be selected as an option for tag \"places\" but has no title."
+    },
+    "titles-tag-unused-no-title-needed-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-unused-no-title-needed-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-dynamic-empty-title-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-dynamic-empty-title-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-numeric-name-root": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-numeric-name-section": {
+      "ok": true,
+      "sceneIds": [
+        "backSpecialScene",
+        "jumpScene",
+        "prevScene",
+        "prevTopScene",
+        "returnScene",
+        "root",
+        "root.part",
+        "target"
+      ],
+      "qualityIds": []
+    },
+    "titles-tag-absent-root": {
+      "ok": false,
+      "error": "We have an option pointing at a tag \"absent\" which has no matching scenes."
+    },
+    "titles-tag-absent-section": {
+      "ok": false,
+      "error": "We have an option pointing at a tag \"absent\" which has no matching scenes."
     }
   }
 }

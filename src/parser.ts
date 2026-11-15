@@ -37,6 +37,7 @@ class DendryHandParser {
   private currentLine: number = 0;
   private nodes: DendryNode[] = [];
   private metadata: DendryAST['metadata'] = {};
+  private rootPropertyRanges = new Map<string, vscode.Range>();
   private errors: { message: string; line: number }[] = [];
 
   constructor(private text: string, private fileName: string) {
@@ -92,27 +93,36 @@ class DendryHandParser {
   }
 
   private parseMetadata() {
+    const properties = new Map<string, any>();
+    this.parseSceneProperties(properties, this.rootPropertyRanges);
+    this.metadata = Object.fromEntries(properties);
+  }
+
+  // Header boundaries, spelling, duplicates and source ranges are shared by
+  // the implicit root and explicit sections. Never rescan prose or magic as headers.
+  private parseSceneProperties(properties: Map<string, any>, ranges: Map<string, vscode.Range>): void {
     while (this.currentLine < this.lines.length) {
-      const line = this.lines[this.currentLine];
-
-      // Stop at first non-metadata line
-      if (line.trim() === '') {
-        this.currentLine++;
+      const lineNum = this.currentLine;
+      const line = this.lines[lineNum];
+      if (!line.trim()) { this.currentLine++; break; }
+      if (line.startsWith('#')) { this.currentLine++; continue; }
+      if (!/^[A-Za-z][A-Za-z_ -]*[A-Za-z]\s*:/.test(line)) {
+        if (!this.isSceneMarker(line)) this.errors.push({
+          message: 'Invalid property definition. A blank line must separate properties and body content.', line: lineNum,
+        });
         break;
       }
-      if (this.isComment(line)) {
-        this.currentLine++;
-        continue;
-      }
-
-      if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
-        const { key, value, endLine } = this.parsePropertyLine(line, this.currentLine);
-        this.metadata[key] = value;
-        this.currentLine = endLine + 1;
+      const property = this.parsePropertyLine(line, lineNum);
+      const key = normalizePropertyName(property.key);
+      if (['id', 'sections', 'content', 'options'].includes(key)) {
+        this.errors.push({ message: `Property '${key}' is a reserved name.`, line: lineNum });
+      } else if (ranges.has(key) || (key === 'type' && ranges === this.rootPropertyRanges)) {
+        this.errors.push({ message: `Duplicate property '${key}' is already defined.`, line: lineNum });
       } else {
-        // Not metadata anymore
-        break;
+        properties.set(key, property.value);
+        ranges.set(key, this.propertyRange(lineNum, property.endLine));
       }
+      this.currentLine = property.endLine + 1;
     }
   }
 
@@ -141,7 +151,7 @@ class DendryHandParser {
       } else {
         properties.set(key, property.value);
         this.metadata[key] = property.value;
-        propertyRanges.set(key, new vscode.Range(lineNum, 0, property.endLine, this.lines[property.endLine].length));
+        propertyRanges.set(key, this.propertyRange(lineNum, property.endLine));
       }
       this.currentLine = property.endLine + 1;
     }
@@ -182,8 +192,9 @@ class DendryHandParser {
       type: 'scene',
       declarationType: 'implicit',
       properties,
+      propertyRanges: this.rootPropertyRanges,
       content,
-      interpolations: this.parseInterpolations(content, body.startLine),
+      interpolations: [...this.parseInterpolations(content, body.startLine), ...this.scenePropertyInterpolations(this.rootPropertyRanges)],
       range: new vscode.Range(0, 0, endLine, endCharacter),
       contentRange: body.startLine > endLine
         ? new vscode.Range(endLine, endCharacter, endLine, endCharacter)
@@ -211,60 +222,21 @@ class DendryHandParser {
 
     this.currentLine++;
 
-    // Parse scene properties
-    while (this.currentLine < this.lines.length) {
-      const line = this.lines[this.currentLine];
-
-      if (line.trim() === '') {
-        this.currentLine++;
-        break;
-      }
-      if (this.isComment(line)) {
-        this.currentLine++;
-        continue;
-      }
-
-      if (this.isProperty(line) && !this.isSceneMarker(line) && !this.isChoice(line)) {
-        const { key, value, endLine } = this.parsePropertyLine(line, this.currentLine);
-        properties.set(key, value);
-        this.currentLine = endLine + 1;
-      } else {
-        break;
-      }
-    }
+    const propertyRanges = new Map<string, vscode.Range>();
+    this.parseSceneProperties(properties, propertyRanges);
 
     const body = this.parseBody(sceneId);
     const content = body.content;
     const contentInterpolations = this.parseInterpolations(content, body.startLine);
 
-    // Also collect interpolations from property values
-    const propertyInterpolations: DendryNode['interpolations'] = [];
-    for (const [key, value] of properties.entries()) {
-        // Check properties that can contain text with interpolations
-        if (key === 'title' || key === 'subtitle' || key === 'unavailable-subtitle') {
-            const propLine = this.findPropertyLine(startLine, key);
-            const propInterps = this.parsePropertyInterpolations(value, key, propLine);
-            // Adjust column offset to account for "key: " prefix
-            const colonOffset = key.length + 2; // "key: "
-            propInterps.forEach(interp => {
-                interp.range = new vscode.Range(
-                    interp.range.start.line,
-                    interp.range.start.character + colonOffset,
-                    interp.range.end.line,
-                    interp.range.end.character + colonOffset
-                );
-            });
-            propertyInterpolations.push(...propInterps);
-        }
-    }
-
-    const allInterpolations = [...contentInterpolations, ...propertyInterpolations];
+    const allInterpolations = [...contentInterpolations, ...this.scenePropertyInterpolations(propertyRanges)];
 
     const endLine = this.currentLine - 1;
     this.nodes.push({
         type: 'scene',
         declarationType: 'explicit',
         properties,
+        propertyRanges,
         content,
         interpolations: allInterpolations,
         range: new vscode.Range(startLine, 0, Math.max(startLine, endLine), 0),
@@ -272,19 +244,6 @@ class DendryHandParser {
     });
 
   }
-
-  private findPropertyLine(startLine: number, propertyKey: string): number {
-      // Search from startLine forward to find the line with this property
-      for (let i = 0; i < 20; i++) { // Search up to 20 lines ahead
-          const lineIndex = startLine + i;
-          if (lineIndex >= this.lines.length) break;
-          const line = this.lines[lineIndex];
-          if (line.trim().startsWith(`${propertyKey}:`)) {
-              return lineIndex;
-          }
-      }
-      return startLine;
-}
 
 
   private parseBody(parentSceneId?: string, stopAtDivider = true): { content: string; startLine: number; endLine: number } {
@@ -358,7 +317,7 @@ class DendryHandParser {
       targets.add(match[1]);
       const properties = new Map<string, any>([['id', match[1]]]);
       if (match[2]) properties.set('title', match[2]);
-      const declarationRange = new vscode.Range(lineNum, 0, endLine, this.lines[endLine].length);
+      const declarationRange = this.propertyRange(lineNum, endLine);
       const node: DendryNode = {
         type: 'choice', parentSceneId, properties, content,
         propertyRanges: match[2] ? new Map([['title', declarationRange]]) : new Map(),
@@ -383,8 +342,8 @@ class DendryHandParser {
       this.errors.push({ message: `Choice property '${key}' is already defined.`, line: lineNum });
     } else {
       previous.properties.set(key, property.value);
-      previous.propertyRanges!.set(key, new vscode.Range(lineNum, 0, property.endLine, this.lines[property.endLine].length));
-      previous.range = new vscode.Range(previous.range.start.line, 0, property.endLine, this.lines[property.endLine].length);
+      previous.propertyRanges!.set(key, this.propertyRange(lineNum, property.endLine));
+      previous.range = this.propertyRange(previous.range.start.line, property.endLine);
       if (['title', 'subtitle', 'unavailable-subtitle'].includes(key)) {
         previous.interpolations.push(...this.parseInterpolations(this.lines.slice(lineNum, property.endLine + 1).join('\n'), lineNum));
       }
@@ -467,28 +426,16 @@ class DendryHandParser {
   }
 
 
-  private parsePropertyInterpolations(propertyValue: any, propertyKey: string, lineNumber: number): DendryNode['interpolations'] {
-      if (typeof propertyValue !== 'string') return [];
-      
-      const interpolations: DendryNode['interpolations'] = [];
-      const regex = /\[\+\s*([^\s:]+)\s*(?::\s*([^\s+]+))?\s*\+\]/g;
-      let match;
-      
-      while ((match = regex.exec(propertyValue)) !== null) {
-          const [fullMatch, variable, qdisplay] = match;
-          const startCol = match.index;
-          
-          interpolations.push({
-              variable,
-              qdisplay,
-              range: new vscode.Range(lineNumber, startCol, lineNumber, startCol + fullMatch.length),
-              fullText: fullMatch
-          });
-      }
-      
-      return interpolations;
-}
-
+  private scenePropertyInterpolations(ranges: Map<string, vscode.Range>): DendryNode['interpolations'] {
+    const result: DendryNode['interpolations'] = [];
+    for (const key of ['title', 'subtitle', 'unavailable-subtitle']) {
+      const range = ranges.get(key);
+      if (range) result.push(...this.parseInterpolations(
+        this.lines.slice(range.start.line, range.end.line + 1).join('\n'), range.start.line,
+      ));
+    }
+    return result;
+  }
 
   // Reads a property line, gobbling continuation lines and tracking
   // magic-block state. Mirrors the upstream dry.js parser: a property
@@ -503,6 +450,13 @@ class DendryHandParser {
   // the common case `view-if: {! foo() !}`. Values that mix Dendry
   // shorthand with `{! ... !}` blocks are returned with braces intact;
   // the validator will chunk-split them in step 3.
+  private propertyRange(start: number, end: number): vscode.Range {
+    // Unclosed blocks may consume the appended parser sentinel. Keep source
+    // ranges in the real document so diagnostics still work while typing.
+    const last = Math.min(end, Math.max(0, this.lines.length - 2));
+    return new vscode.Range(start, 0, last, this.lines[last].length);
+  }
+
   private parsePropertyLine(line: string, lineNum: number): { key: string; value: any; endLine: number } {
     const colonIndex = line.indexOf(':');
     if (colonIndex === -1) {
@@ -544,7 +498,10 @@ class DendryHandParser {
 
     // Backward-compat: unwrap a single, complete magic block.
     const pureBlock = value.match(/^\{!([\s\S]*)!\}$/);
-    if (pureBlock) value = pureBlock[1];
+    // Text fields contain rich content. Keep their delimiters even for empty
+    // blocks: upstream treats these as dynamic titles, not missing titles.
+    const textField = ['title', 'subtitle', 'unavailable-subtitle'].includes(normalizePropertyName(key));
+    if (pureBlock && !textField) value = pureBlock[1];
 
     return { key, value, endLine: lastConsumed };
   }
@@ -553,16 +510,8 @@ class DendryHandParser {
     return line.startsWith('@');
   }
 
-  private isChoice(line: string): boolean {
-    return /^-/.test(line.trim());
-  }
-
   private isDivider(line: string): boolean {
     return /^=+$/.test(line.trim());
-  }
-
-  private isProperty(line: string): boolean {
-    return /^\w+[\w-]*:/.test(line.trim());
   }
 
   private isComment(line: string): boolean {
