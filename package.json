@@ -54,7 +54,8 @@
         "scopeName": "source.dendry",
         "path": "./syntaxes/dendry.tmLanguage.json",
         "embeddedLanguages": {
-          "meta.embedded.block.javascript.dendry": "javascript"
+          "meta.embedded.block.javascript.dendry": "javascript",
+          "meta.embedded.block.html.dendry": "html"
         }
       }
     ],
@@ -167,7 +168,9 @@
     "@vscode/test-web": "^0.0.80",
     "esbuild": "^0.28.0",
     "typescript": "^5.0.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
   },
   "dependencies": {
     "acorn": "^8.16.0"

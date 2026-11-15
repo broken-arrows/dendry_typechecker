@@ -14,8 +14,9 @@ no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
 The corpus contains 1924 independently recorded compiler cases. Together with
-parser and project regressions, the suite has 2150 checks. The helper suite has
-82 checks. These totals describe the editor-lifecycle repair on 2026-11-15; they are not
+parser and project regressions, the suite has 2150 checks. The unit suite has
+226 checks, including 144 TextMate highlighting checks. These totals describe
+the highlighting repair on 2026-11-15; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -48,6 +49,7 @@ npm run test:compat -- src/compatibility/rich-content.compat.ts
 npm run test:compat -- src/compatibility/validation-queue.compat.ts
 npm run test:compat -- src/compatibility/editor-lifecycle.compat.ts
 npm test -- src/qdisplay.test.ts
+npm test -- src/highlighting.test.ts
 ```
 
 Compiler errors and authoring warnings are distinct. Dynamic qualities/functions
@@ -56,7 +58,14 @@ missing-display diagnostics and duplicate-display warnings are authoring policy.
 Built-in formatters need no file. Overlap and source order are legal QDisplay
 semantics, with the first inclusive matching range selected at runtime.
 
-Engine API/member types and real VS Code host/provider execution and highlighting
+Highlighting tests tokenize the shipped grammar using vscode-textmate and the
+Oniguruma WASM engine, retaining rule stacks across lines. They cover field
+inventory/value contexts, normalized spelling, references, option fields,
+shorthand, QDisplay separators, comments, rich content, escaping and embedded
+language boundaries. Small guest grammars check JS/HTML dispatch; complete VS Code
+guest grammars, theme appearance and a running editor host are not exercised.
+
+Engine API/member types and real VS Code host/provider execution
 remain outside the established coverage. Activation and event logic are exercised
 through the host stand-in. Ordinary content magic is opaque HTML; content
 JavaScript is checked only in inserts and predicates. QDisplay traversal checks

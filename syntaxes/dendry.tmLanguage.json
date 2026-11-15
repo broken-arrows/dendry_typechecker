@@ -3,298 +3,483 @@
   "scopeName": "source.dendry",
   "patterns": [
     {
-      "include": "#variable-interpolation"
+      "include": "#root-header"
     },
     {
-      "include": "#inline-conditional"
-    },
-    {
-      "name": "markup.heading.title.dendry",
-      "match": "^\\s*(=+)\\s*(.+)$",
-      "captures": {
-        "1": { "name": "punctuation.definition.heading.dendry" },
-        "2": { "name": "entity.name.section.dendry" }
-      }
-    },
-    {
-      "include": "#scene-id-declaration"
-    },
-    {
-      "include": "#js-property"
+      "include": "#section-header"
     },
     {
       "include": "#comments"
     },
     {
-      "include": "#scene-declaration"
-    },
-    {
-      "include": "#quality-declaration"
-    },
-    {
-      "include": "#choice"
-    },
-    {
-      "include": "#go-to-property"
-    },
-    {
-      "include": "#dendry-logic-property"
-    },
-    {
-      "include": "#html-tags"
-    },
-    {
-      "include": "#markdown-formatting"
-    },
-    {
-      "include": "#property"
+      "include": "#options"
     },
     {
       "include": "#qdisplay-range"
+    },
+    {
+      "include": "#paragraph"
     }
   ],
   "repository": {
-    "variable-interpolation": {
-      "name": "meta.variable-interpolation.dendry",
-      "begin": "\\[\\+",
-      "end": "\\+\\]",
-      "beginCaptures": {
-        "0": { "name": "punctuation.definition.variable.begin.dendry" }
-      },
-      "endCaptures": {
-        "0": { "name": "punctuation.definition.variable.end.dendry" }
-      },
+    "root-header": {
+      "name": "meta.scene.header.dendry",
+      "begin": "\\A(?=[ \\t]*(?:#|[A-Za-z][A-Za-z_ -]*[A-Za-z][ \\t]*:))",
+      "end": "^(?=[ \\t]*$|@)",
       "patterns": [
         {
-          "match": "([a-zA-Z_][a-zA-Z0-9_()]*)\\s*(:)\\s*([a-zA-Z_][a-zA-Z0-9_()]*)",
-          "captures": {
-            "1": { "name": "variable.other.dendry" },
-            "2": { "name": "keyword.operator.separator.dendry" },
-            "3": { "name": "entity.name.type.qdisplay.dendry" }
-          }
+          "include": "#comments"
         },
         {
-          "match": "([a-zA-Z_][a-zA-Z0-9_()]*)",
-          "captures": {
-            "1": { "name": "variable.other.dendry" }
-          }
+          "include": "#properties"
         }
       ]
     },
-    "qdisplay-range": {
-      "name": "meta.qdisplay.range.dendry",
-      "begin": "^\\s*\\(",
-      "end": "\\)",
+    "section-header": {
+      "name": "meta.scene.header.dendry",
+      "begin": "^(@)[ \\t]*([\\w-]+(?:\\.[\\w-]+)*)[ \\t]*$",
+      "end": "^(?=[ \\t]*$|@)",
       "beginCaptures": {
-        "0": { "name": "punctuation.definition.range.dendry" }
-      },
-      "endCaptures": {
-        "0": { "name": "punctuation.definition.range.dendry" }
+        "1": {
+          "name": "punctuation.definition.scene.dendry"
+        },
+        "2": {
+          "name": "entity.name.function.dendry"
+        }
       },
       "patterns": [
         {
-          "name": "constant.numeric.dendry",
-          "match": "(-?(\\d*\\.\\d+)|\\d+)"
+          "include": "#comments"
         },
         {
-          "name": "keyword.operator.range.dendry",
-          "match": "\\.\\."
+          "include": "#properties"
         }
       ]
     },
-    "inline-conditional": {
-      "name": "meta.inline-conditional.dendry",
-      "begin": "\\[\\?",
-      "end": "\\?\\]",
-      "beginCaptures": {
-        "0": { "name": "punctuation.definition.conditional.begin.dendry" }
-      },
-      "endCaptures": {
-        "0": { "name": "punctuation.definition.conditional.end.dendry" }
-      },
+    "properties": {
       "patterns": [
         {
-          "name": "meta.conditional-text.dendry",
-          "begin": ":",
-          "end": "(?=\\?\\])",
+          "name": "meta.property.text.dendry",
+          "begin": "^[ \\t]*((?i:title)|(?i:subtitle)|(?:[uU]navailableSubtitle|(?i:unavailable[_ -]+subtitle)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
           "beginCaptures": {
-            "0": { "name": "keyword.operator.conditional.separator.dendry" }
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
           },
           "patterns": [
             {
-              "include": "#variable-interpolation"
-            },
-            {
-              "include": "#inline-conditional"
-            },
-            {
-              "include": "#html-tags"
-            },
-            {
-              "include": "#markdown-formatting"
+              "include": "#value-text"
             }
           ]
         },
         {
-          "include": "#dendry-logic"
+          "name": "meta.property.logic.dendry",
+          "begin": "^[ \\t]*((?:[vV]iewIf|(?i:view[_ -]+if))|(?:[cC]hooseIf|(?i:choose[_ -]+if))|(?:[fF]requencyVar|(?i:frequency[_ -]+var))|(?:[mM]axVisitsVar|(?i:max[_ -]+visits[_ -]+var))|(?:[oO]nArrival|(?i:on[_ -]+arrival))|(?:[oO]nDeparture|(?i:on[_ -]+departure))|(?:[oO]nDisplay|(?i:on[_ -]+display))|(?:[iI]sValid|(?i:is[_ -]+valid)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-logic"
+            }
+          ]
+        },
+        {
+          "name": "meta.property.destination.dendry",
+          "begin": "^[ \\t]*((?:[gG]oTo|(?i:go[_ -]+to))|(?:[gG]oSub|(?i:go[_ -]+sub))|(?:[gG]oSubStart|(?i:go[_ -]+sub[_ -]+start))|(?:[gG]oSubEnd|(?i:go[_ -]+sub[_ -]+end)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-destination"
+            }
+          ]
+        },
+        {
+          "name": "meta.property.quality-destination.dendry",
+          "begin": "^[ \\t]*((?:[gG]oToRef|(?i:go[_ -]+to[_ -]+ref)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-quality-destination"
+            }
+          ]
+        },
+        {
+          "name": "meta.property.reference.dendry",
+          "begin": "^[ \\t]*((?:[sS]etJump|(?i:set[_ -]+jump))|(?i:call)|(?:[cC]heckSuccessGoTo|(?i:check[_ -]+success[_ -]+go[_ -]+to))|(?:[cC]heckFailureGoTo|(?i:check[_ -]+failure[_ -]+go[_ -]+to))|(?:[fF]irstScene|(?i:first[_ -]+scene))|(?:[rR]ootScene|(?i:root[_ -]+scene)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-reference"
+            }
+          ]
+        },
+        {
+          "name": "meta.property.quality-name.dendry",
+          "begin": "^[ \\t]*((?:[cC]heckQuality|(?i:check[_ -]+quality))|(?:[dD]efaultDisplay|(?i:default[_ -]+display)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-quality-name"
+            }
+          ]
+        },
+        {
+          "name": "meta.property.scalar.dendry",
+          "begin": "^[ \\t]*((?i:order)|(?i:priority)|(?i:frequency)|(?i:signal)|(?i:style)|(?i:tags)|(?:[mM]axVisits|(?i:max[_ -]+visits))|(?:[cC]ountVisitsMax|(?i:count[_ -]+visits[_ -]+max))|(?:[gG]ameOver|(?i:game[_ -]+over))|(?:[nN]ewPage|(?i:new[_ -]+page))|(?:[sS]etRoot|(?i:set[_ -]+root))|(?:[iI]sTop|(?i:is[_ -]+top))|(?:[iI]sSpecial|(?i:is[_ -]+special))|(?:[iI]sDeck|(?i:is[_ -]+deck))|(?:[iI]sPinnedCard|(?i:is[_ -]+pinned[_ -]+card))|(?:[iI]sCard|(?i:is[_ -]+card))|(?:[iI]sHand|(?i:is[_ -]+hand))|(?:[mM]inChoices|(?i:min[_ -]+choices))|(?:[mM]axChoices|(?i:max[_ -]+choices))|(?:[mM]axCards|(?i:max[_ -]+cards))|(?:[sS]etBg|(?i:set[_ -]+bg))|(?:[sS]etMusic|(?i:set[_ -]+music))|(?:[sS]etSprites|(?i:set[_ -]+sprites))|(?:[sS]etSpriteStyles|(?i:set[_ -]+sprite[_ -]+styles))|(?:[sS]etTopLeftStyle|(?i:set[_ -]+top[_ -]+left[_ -]+style))|(?:[sS]etTopRightStyle|(?i:set[_ -]+top[_ -]+right[_ -]+style))|(?:[sS]etBottomLeftStyle|(?i:set[_ -]+bottom[_ -]+left[_ -]+style))|(?:[sS]etBottomRightStyle|(?i:set[_ -]+bottom[_ -]+right[_ -]+style))|(?i:achievement)|(?i:audio)|(?:[cC]ardImage|(?i:card[_ -]+image))|(?:[fF]aceImage|(?i:face[_ -]+image))|(?:[bB]roadDifficulty|(?i:broad[_ -]+difficulty))|(?:[nN]arrowDifficulty|(?i:narrow[_ -]+difficulty))|(?:[dD]ifficultyScaler|(?i:difficulty[_ -]+scaler))|(?:[dD]ifficultyIncrement|(?i:difficulty[_ -]+increment))|(?i:name)|(?i:initial)|(?i:min)|(?i:max)|(?i:type)|(?i:author)|(?i:ifid)|(?i:animate)|(?:[sS]ceneSignal|(?i:scene[_ -]+signal))|(?:[qQ]ualitySignal|(?i:quality[_ -]+signal))|(?:[dD]isplaySidebar|(?i:display[_ -]+sidebar))|(?:[dD]isplayStats|(?i:display[_ -]+stats))|(?:[dD]isplayOptions|(?i:display[_ -]+options))|(?:[sS]idebarStats|(?i:sidebar[_ -]+stats)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.parameter.dendry"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#value-scalar"
+            }
+          ]
         }
       ]
     },
-    "dendry-logic": {
+    "options": {
+      "name": "meta.options.dendry",
+      "begin": "^(?=-[ \\t]*[@#])",
+      "end": "^(?=[ \\t]*$|@)",
       "patterns": [
         {
-          "name": "variable.language.dendry",
-          "match": "\\b(Q|S|V|P)\\."
+          "include": "#comments"
         },
         {
-          "name": "keyword.operator.logical.dendry",
-          "match": "\\b(and|or|not)\\b"
-        },
-        {
-          "name": "keyword.control.dendry",
-          "match": "\\b(if|else|return|function)\\b"
-        },
-        {
-          "name": "constant.language.dendry",
-          "match": "\\b(true|false|null|undefined)\\b"
-        },
-        {
-          "name": "keyword.operator.comparison.dendry",
-          "match": "(===?|!==?|<=?|>=?)"
-        },
-        {
-          "name": "keyword.operator.arithmetic.dendry",
-          "match": "(\\+|\\-|\\*|\\/|%)"
-        },
-        {
-          "name": "keyword.operator.assignment.dendry",
-          "match": "(=|\\+=|\\-=|\\*=|\\/=)"
-        },
-        {
-          "name": "constant.numeric.dendry",
-          "match": "\\b\\d+(\\.\\d+)?\\b"
-        },
-        {
-          "name": "string.quoted.single.dendry",
-          "begin": "'",
-          "end": "'",
+          "name": "meta.property.text.dendry",
+          "begin": "^(-)[ \\t]*((?i:title)|(?i:subtitle)|(?:[uU]navailableSubtitle|(?i:unavailable[_ -]+subtitle)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.choice.dendry"
+            },
+            "2": {
+              "name": "variable.parameter.dendry"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
           "patterns": [
             {
-              "name": "constant.character.escape.dendry",
-              "match": "\\\\."
+              "include": "#value-text"
             }
           ]
         },
         {
-          "name": "string.quoted.double.dendry",
-          "begin": "\"",
-          "end": "\"",
+          "name": "meta.property.logic.dendry",
+          "begin": "^(-)[ \\t]*((?:[vV]iewIf|(?i:view[_ -]+if))|(?:[cC]hooseIf|(?i:choose[_ -]+if))|(?:[fF]requencyVar|(?i:frequency[_ -]+var)))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.choice.dendry"
+            },
+            "2": {
+              "name": "variable.parameter.dendry"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
           "patterns": [
             {
-              "name": "constant.character.escape.dendry",
-              "match": "\\\\."
+              "include": "#value-logic"
             }
           ]
         },
         {
-          "name": "meta.parens.dendry",
-          "begin": "\\(",
-          "end": "\\)",
+          "name": "meta.property.scalar.dendry",
+          "begin": "^(-)[ \\t]*((?i:order)|(?i:priority)|(?i:frequency))([ \\t]*:)[ \\t]*",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.choice.dendry"
+            },
+            "2": {
+              "name": "variable.parameter.dendry"
+            },
+            "3": {
+              "name": "punctuation.separator.key-value.dendry"
+            }
+          },
           "patterns": [
             {
-              "include": "#dendry-logic"
+              "include": "#value-scalar"
             }
           ]
         },
         {
-          "name": "variable.other.dendry",
-          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+          "name": "meta.choice.dendry",
+          "begin": "^(-)[ \\t]*(?:(@)((?:\\.+|[\\w-])[\\w-]*(?:\\.[\\w-]+)*)|(#)([\\w-]+))[ \\t]*(?=:|$)",
+          "end": "(?=^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.choice.dendry"
+            },
+            "2": {
+              "name": "punctuation.definition.scene-reference.dendry"
+            },
+            "3": {
+              "name": "entity.name.function.dendry"
+            },
+            "4": {
+              "name": "punctuation.definition.tag.dendry"
+            },
+            "5": {
+              "name": "entity.name.tag.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "name": "punctuation.separator.key-value.dendry",
+              "match": "\\G[ \\t]*:"
+            },
+            {
+              "include": "#rich-content"
+            }
+          ]
         }
       ]
     },
-    "dendry-logic-property": {
-      "name": "meta.property.dendry-logic.dendry",
-      "begin": "^\\s*(view-if|choose-if|on-arrival|on-display|on-departure|on-choose|check-quality|game-over):\\s+(?!\\{!)",
-      "end": "$",
+    "value-text": {
+      "patterns": [
+        {
+          "include": "#rich-content"
+        }
+      ]
+    },
+    "value-logic": {
+      "patterns": [
+        {
+          "include": "#js-block"
+        },
+        {
+          "include": "#logic"
+        }
+      ]
+    },
+    "value-reference": {
+      "patterns": [
+        {
+          "name": "entity.name.function.dendry",
+          "match": "@?(?:\\.+|[\\w-])[\\w-]*(?:\\.[\\w-]+)*"
+        }
+      ]
+    },
+    "value-quality-name": {
+      "patterns": [
+        {
+          "name": "variable.other.dendry",
+          "match": "[A-Za-z][-A-Za-z0-9_]*"
+        }
+      ]
+    },
+    "value-scalar": {
+      "patterns": [
+        {
+          "name": "constant.language.dendry",
+          "match": "(?i:(?<![\\w-])(?:yes|true|t|y|ok|no|false|f|n)(?![\\w-]))"
+        },
+        {
+          "include": "#number"
+        }
+      ]
+    },
+    "value-destination": {
+      "patterns": [
+        {
+          "name": "meta.destination.clause.dendry",
+          "begin": "(@?)((?:\\.+|[\\w-])[\\w-]*(?:\\.[\\w-]+)*)(?=\\s|;|$)",
+          "end": "(?=;|^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.scene-reference.dendry"
+            },
+            "2": {
+              "name": "entity.name.function.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#destination-predicate"
+            }
+          ]
+        },
+        {
+          "name": "punctuation.separator.dendry",
+          "match": ";"
+        }
+      ]
+    },
+    "value-quality-destination": {
+      "patterns": [
+        {
+          "name": "meta.destination.clause.dendry",
+          "begin": "[A-Za-z][-A-Za-z0-9_]*(?=\\s|;|$)",
+          "end": "(?=;|^[^ \\t]|^[ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "variable.other.dendry"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#destination-predicate"
+            }
+          ]
+        },
+        {
+          "name": "punctuation.separator.dendry",
+          "match": ";"
+        }
+      ]
+    },
+    "destination-predicate": {
+      "name": "meta.predicate.dendry",
+      "begin": "(?<!\\S)(if)(?=\\s)",
+      "end": "(?=;|^[^ \\t]|^[ \\t]*$)",
       "beginCaptures": {
-        "1": { "name": "variable.parameter.dendry" }
+        "1": {
+          "name": "keyword.control.dendry"
+        }
       },
       "patterns": [
         {
           "include": "#js-block"
         },
         {
-          "include": "#dendry-logic"
+          "include": "#logic"
         }
       ]
     },
-    "go-to-property": {
-      "name": "meta.property.go-to.dendry",
-      "begin": "^\\s*(go-to|set-jump|call|check-success-go-to|check-failure-go-to):\\s+",
-      "end": "$",
-      "beginCaptures": {
-        "1": { "name": "variable.parameter.dendry" }
-      },
+    "logic": {
       "patterns": [
         {
-          "name": "meta.qualified-scene-ref.dendry",
-          "match": "([a-zA-Z0-9_][\\w-]*)\\.([a-zA-Z0-9_][\\w-]*)",
-          "captures": {
-            "1": { "name": "entity.name.type.dendry" },
-            "2": { "name": "entity.name.function.dendry" }
-          }
+          "name": "string.quoted.double.dendry",
+          "begin": "\"",
+          "end": "\""
         },
         {
-          "name": "entity.name.function.dendry",
-          "match": "[a-zA-Z0-9_][\\w-]*(?=\\s+if|\\s*;|\\s*$)"
+          "name": "string.quoted.single.dendry",
+          "begin": "'",
+          "end": "'"
+        },
+        {
+          "name": "variable.other.scene-visits.dendry",
+          "match": "@[\\w-]+(?:\\.[\\w-]+)*"
+        },
+        {
+          "name": "keyword.operator.logical.dendry",
+          "match": "(?<![\\w-])(?:and|AND|or|OR|not|NOT)(?![\\w-])"
+        },
+        {
+          "name": "constant.language.dendry",
+          "match": "(?<![\\w-])(?:true|TRUE|false|FALSE)(?![\\w-])"
         },
         {
           "name": "keyword.control.dendry",
-          "match": "\\b(if)\\b"
+          "match": "(?<![\\w-])(?:if|then|else)(?![\\w-])"
+        },
+        {
+          "name": "entity.name.function.dendry",
+          "match": "[A-Za-z][-A-Za-z0-9_]*(?=[ \\t]*\\()"
+        },
+        {
+          "name": "variable.other.dendry",
+          "match": "[A-Za-z][-A-Za-z0-9_]*"
+        },
+        {
+          "include": "#number"
+        },
+        {
+          "name": "keyword.operator.assignment.dendry",
+          "match": "(?:[+*/-]=|=(?!=))"
+        },
+        {
+          "name": "keyword.operator.comparison.dendry",
+          "match": "(?:<=|>=|!=|==|<|>)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.dendry",
+          "match": "[+*/%\\-]"
         },
         {
           "name": "punctuation.separator.dendry",
-          "match": ";"
+          "match": "[,;.]"
         },
         {
-          "include": "#dendry-logic"
+          "name": "punctuation.section.group.dendry",
+          "match": "[()\\[\\]]"
         }
       ]
     },
-    "scene-id-declaration": {
-      "match": "^(@)([a-zA-Z0-9_][a-zA-Z0-9_-]*)(?=\\s|:|$)",
-      "captures": {
-        "1": { "name": "keyword.operator.dendry" },
-        "2": { "name": "entity.name.function.dendry" }
-      }
-    },
-    "js-property": {
-      "name": "meta.property.dendry",
-      "begin": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over|achievement):\\s*(\\{!)",
-      "end": "(!\\})",
-      "beginCaptures": {
-        "1": { "name": "variable.parameter.dendry" },
-        "2": { "name": "punctuation.section.embedded.begin.dendry" }
-      },
-      "endCaptures": {
-        "1": { "name": "punctuation.section.embedded.end.dendry" }
-      },
-      "contentName": "meta.embedded.block.javascript.dendry",
-      "patterns": [
-        {
-          "include": "source.js"
-        }
-      ]
+    "number": {
+      "name": "constant.numeric.dendry",
+      "match": "(?<![\\w.])-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?![\\w.])"
     },
     "js-block": {
-      "name": "meta.embedded.block.javascript.dendry",
-      "begin": "(\\{!)\\s*",
-      "end": "\\s*(!\\})",
+      "name": "meta.logic.javascript.dendry",
+      "contentName": "meta.embedded.block.javascript.dendry",
+      "begin": "\\{!",
+      "end": "!\\}",
       "beginCaptures": {
-        "1": { "name": "punctuation.section.embedded.begin.dendry" }
+        "0": {
+          "name": "punctuation.section.embedded.begin.dendry"
+        }
       },
       "endCaptures": {
-        "1": { "name": "punctuation.section.embedded.end.dendry" }
+        "0": {
+          "name": "punctuation.section.embedded.end.dendry"
+        }
       },
       "patterns": [
         {
@@ -302,38 +487,48 @@
         }
       ]
     },
-    "comments": {
+    "html-block": {
+      "name": "meta.content.html.dendry",
+      "contentName": "meta.embedded.block.html.dendry",
+      "begin": "(?<!\\\\)\\{!",
+      "end": "(?<!\\\\)!\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.dendry"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.dendry"
+        }
+      },
       "patterns": [
         {
-          "name": "comment.line.number-sign.dendry",
-          "match": "^\\s*#(?![a-zA-Z_]).*$"
+          "include": "text.html.basic"
         }
       ]
     },
-    "scene-declaration": {
-      "match": "^(@)(scene|root)\\s+([a-zA-Z0-9_][a-zA-Z0-9_-]*)$",
-      "captures": {
-        "1": { "name": "keyword.operator.dendry" },
-        "2": { "name": "keyword.control.dendry" },
-        "3": { "name": "entity.name.function.dendry" }
-      }
-    },
-    "quality-declaration": {
-      "match": "^(@)(quality)\\s+([a-zA-Z0-9_]+)?$",
-      "captures": {
-        "1": { "name": "keyword.operator.dendry" },
-        "2": { "name": "keyword.control.dendry" },
-        "3": { "name": "entity.name.type.dendry" }
-      }
-    },
-    "property": {
-      "name": "meta.property.dendry",
-      "begin": "^\\s*(id|title|subtitle|tags|order|frequency|max-visits|broad-difficulty|min-choices|max-choices|new-page|signal|content|on-arrival|on-display|on-departure|view-if|choose-if|priority|unavailable-subtitle|name|initial|min|max|on-choose|go-to|set-jump|call|check-success-go-to|check-failure-go-to|is-special|set-bg|audio|is-hand|card-image|face-image|is-deck|max-cards|is-pinned-card|is-card|check-quality|game-over|achievement):\\s*",
-      "end": "$",
-      "beginCaptures": {
-        "1": { "name": "variable.parameter.dendry" }
-      },
+    "paragraph": {
+      "name": "meta.paragraph.dendry",
+      "begin": "^(?!@)(?=[ \\t]*\\S)",
+      "end": "^(?=[ \\t]*$|@)",
       "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#paragraph-markup"
+        },
+        {
+          "include": "#rich-content"
+        }
+      ]
+    },
+    "rich-content": {
+      "patterns": [
+        {
+          "include": "#escape"
+        },
         {
           "include": "#variable-interpolation"
         },
@@ -341,184 +536,225 @@
           "include": "#inline-conditional"
         },
         {
-          "include": "#html-tags"
+          "include": "#html-block"
         },
         {
-          "include": "#markdown-formatting"
+          "include": "#emphasis"
         },
         {
-          "name": "string.unquoted.dendry",
-          "match": "[^\\[<*]+"
+          "include": "#hidden"
+        },
+        {
+          "name": "punctuation.definition.line-break.dendry",
+          "match": "(?<!\\\\)//$"
         }
       ]
     },
-    "choice": {
+    "escape": {
+      "name": "constant.character.escape.dendry",
+      "match": "\\\\(?=[*`\\[\\]{}?+!/=<>])"
+    },
+    "variable-interpolation": {
+      "name": "meta.variable-interpolation.dendry",
+      "begin": "(?<!\\\\)\\[\\+",
+      "end": "(?<!\\\\)\\+\\]",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.variable.begin.dendry"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.variable.end.dendry"
+        }
+      },
       "patterns": [
         {
-          "name": "meta.choice.tag.dendry",
-          "match": "^\\s*(-|\\*)\\s+(#)([a-zA-Z0-9_][a-zA-Z0-9_-]*)\\s*$",
-          "captures": {
-            "1": { "name": "keyword.operator.dendry" },
-            "2": { "name": "keyword.operator.dendry" },
-            "3": { "name": "entity.name.tag.dendry" }
-          }
+          "include": "#content-js-block"
         },
         {
-          "name": "meta.choice.scene-ref.qualified.dendry",
-          "begin": "(-)\\s*(\\@)([a-zA-Z0-9_][\\w-]*)\\.([a-zA-Z0-9_][\\w-]*)(\\:)?\\s*",
-          "end": "$",
+          "name": "meta.formatter.dendry",
+          "begin": ":",
+          "end": "(?=(?<!\\\\)\\+\\])",
           "beginCaptures": {
-            "1": { "name": "keyword.operator.dendry" },
-            "2": { "name": "keyword.operator.dendry" },
-            "3": { "name": "entity.name.type.dendry" },
-            "4": { "name": "entity.name.function.dendry" },
-            "5": { "name": "punctuation.separator.dendry" }
+            "0": {
+              "name": "punctuation.separator.formatter.dendry"
+            }
           },
           "patterns": [
             {
-              "include": "#variable-interpolation"
-            },
-            {
-              "include": "#inline-conditional"
-            },
-            {
-              "include": "#html-tags"
-            },
-            {
-              "include": "#markdown-formatting"
-            },
-            {
-              "name": "string.unquoted.dendry",
-              "match": "[^\\[<*]+"
+              "name": "entity.name.type.qdisplay.dendry",
+              "match": "[A-Za-z][-A-Za-z0-9_]*"
             }
           ]
         },
         {
-          "name": "meta.choice.scene-ref.dendry",
-          "begin": "(-)\\s*(\\@)([a-zA-Z0-9_][\\w-]*)(\\:)?\\s*",
-          "end": "$",
-          "beginCaptures": {
-            "1": { "name": "keyword.operator.dendry" },
-            "2": { "name": "keyword.operator.dendry" },
-            "3": { "name": "entity.name.function.dendry" },
-            "4": { "name": "punctuation.separator.dendry" }
-          },
-          "patterns": [
-            {
-              "include": "#variable-interpolation"
-            },
-            {
-              "include": "#inline-conditional"
-            },
-            {
-              "include": "#html-tags"
-            },
-            {
-              "include": "#markdown-formatting"
-            },
-            {
-              "name": "string.unquoted.dendry",
-              "match": "[^\\[<*]+"
-            }
-          ]
-        },
-        {
-          "name": "meta.choice.conditional.dendry",
-          "begin": "^\\s*(-|\\*)\\s+",
-          "end": "$",
-          "beginCaptures": {
-            "1": { "name": "keyword.operator.dendry" }
-          },
-          "patterns": [
-            {
-              "include": "#variable-interpolation"
-            },
-            {
-              "include": "#inline-conditional"
-            },
-            {
-              "match": "\\s+(if)\\s+",
-              "captures": {
-                "1": { "name": "keyword.control.dendry" }
-              }
-            },
-            {
-              "include": "#dendry-logic"
-            },
-            {
-              "include": "#html-tags"
-            },
-            {
-              "include": "#markdown-formatting"
-            },
-            {
-              "name": "string.unquoted.dendry",
-              "match": "[^\\[<*]+"
-            }
-          ]
+          "include": "#logic"
         }
       ]
     },
-    "html-tags": {
+    "inline-conditional": {
+      "name": "meta.inline-conditional.dendry",
+      "begin": "(?<!\\\\)\\[\\?",
+      "end": "(?<!\\\\)\\?\\]",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.conditional.begin.dendry"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.conditional.end.dendry"
+        }
+      },
       "patterns": [
         {
-          "name": "meta.tag.html.dendry",
-          "begin": "(<)([a-zA-Z][a-zA-Z0-9]*)",
-          "end": "(>)",
+          "include": "#content-js-block"
+        },
+        {
+          "name": "meta.conditional-text.dendry",
+          "begin": ":",
+          "end": "(?=(?<!\\\\)\\?\\])",
           "beginCaptures": {
-            "1": { "name": "punctuation.definition.tag.begin.html" },
-            "2": { "name": "entity.name.tag.html" }
-          },
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.tag.end.html" }
+            "0": {
+              "name": "punctuation.separator.conditional.dendry"
+            }
           },
           "patterns": [
             {
-              "name": "entity.other.attribute-name.html",
-              "match": "\\b[a-zA-Z-]+(?=\\s*=)"
-            },
-            {
-              "name": "string.quoted.double.html",
-              "begin": "\"",
-              "end": "\""
-            },
-            {
-              "name": "string.quoted.single.html",
-              "begin": "'",
-              "end": "'"
+              "include": "#rich-content"
             }
           ]
         },
         {
-          "name": "meta.tag.html.closing.dendry",
-          "match": "(</)([a-zA-Z][a-zA-Z0-9]*)(>)",
-          "captures": {
-            "1": { "name": "punctuation.definition.tag.begin.html" },
-            "2": { "name": "entity.name.tag.html" },
-            "3": { "name": "punctuation.definition.tag.end.html" }
-          }
+          "include": "#logic"
         }
       ]
     },
-    "markdown-formatting": {
+    "hidden": {
+      "name": "meta.hidden.dendry",
+      "begin": "(?<!\\\\)\\[(?![?+])",
+      "end": "(?<!\\\\)\\]",
+      "patterns": [
+        {
+          "include": "#rich-content"
+        }
+      ]
+    },
+    "emphasis": {
       "patterns": [
         {
           "name": "markup.bold.dendry",
-          "match": "(\\*\\*)([^*]+)(\\*\\*)",
-          "captures": {
-            "1": { "name": "punctuation.definition.bold.dendry" },
-            "2": { "name": "markup.bold.dendry" },
-            "3": { "name": "punctuation.definition.bold.dendry" }
-          }
+          "begin": "(?<![\\\\*])\\*\\*(?!\\*)",
+          "end": "(?<!\\\\)\\*\\*",
+          "patterns": [
+            {
+              "include": "#rich-content"
+            }
+          ]
         },
         {
           "name": "markup.italic.dendry",
-          "match": "(\\*)([^*]+)(\\*)",
-          "captures": {
-            "1": { "name": "punctuation.definition.italic.dendry" },
-            "2": { "name": "markup.italic.dendry" },
-            "3": { "name": "punctuation.definition.italic.dendry" }
-          }
+          "begin": "(?<![\\\\*])\\*(?!\\*)",
+          "end": "(?<!\\\\)\\*",
+          "patterns": [
+            {
+              "include": "#rich-content"
+            }
+          ]
+        },
+        {
+          "name": "markup.raw.dendry",
+          "begin": "(?<!\\\\)`",
+          "end": "(?<!\\\\)`",
+          "patterns": [
+            {
+              "include": "#rich-content"
+            }
+          ]
+        }
+      ]
+    },
+    "paragraph-markup": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.thematic-break.dendry",
+          "match": "^[ \\t]*---[ \\t]*$"
+        },
+        {
+          "name": "markup.heading.dendry",
+          "begin": "^[ \\t]*=",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#rich-content"
+            }
+          ]
+        },
+        {
+          "name": "markup.quote.dendry",
+          "begin": "^[ \\t]*>>?",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#rich-content"
+            }
+          ]
+        }
+      ]
+    },
+    "comments": {
+      "name": "comment.line.number-sign.dendry",
+      "match": "^[ \\t]*#.*$"
+    },
+    "content-js-block": {
+      "name": "meta.logic.javascript.dendry",
+      "contentName": "meta.embedded.block.javascript.dendry",
+      "begin": "(?<!\\\\)\\{!",
+      "end": "(?<!\\\\)!\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.dendry"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.dendry"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "qdisplay-range": {
+      "name": "meta.qdisplay.output.dendry",
+      "begin": "^(\\()(-?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+))?[ \\t]*(,|-|to|\\.\\.|\\+)[ \\t]*(-?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+))?(\\))",
+      "end": "(?=^[^ \\t]|^[ \\t]*$)",
+      "beginCaptures": {
+        "0": {
+          "name": "meta.qdisplay.range.dendry"
+        },
+        "1": {
+          "name": "punctuation.definition.range.dendry"
+        },
+        "2": {
+          "name": "constant.numeric.dendry"
+        },
+        "3": {
+          "name": "keyword.operator.range.dendry"
+        },
+        "4": {
+          "name": "constant.numeric.dendry"
+        },
+        "5": {
+          "name": "punctuation.definition.range.dendry"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#rich-content"
         }
       ]
     }
