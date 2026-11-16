@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { spawnSync } from 'child_process';
 import type * as vscode from 'vscode';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -234,6 +234,8 @@ describe('desktop build and launch', () => {
   });
 
   it.each([0, 7])('executes quoted commands and && in the selected build shell after exit %s', async exitCode => {
+    // docs is gitignored, so fresh checkouts need the fixture parent created first.
+    mkdirSync(path.resolve('docs'), { recursive: true });
     const fixture = mkdtempSync(path.resolve('docs', 'build shell-'));
     try {
       const script = path.join(fixture, 'quoted script.cjs');
