@@ -3,7 +3,7 @@
   "displayName": "DendryNexus",
   "description": "Type checking and validation for DendryNexus interactive fiction files",
   "publisher": "BrokenArrow",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.80.0"
@@ -80,6 +80,12 @@
           "default": false,
           "description": "Enable/disable strict validation mode"
         },
+        "dendry.validation.dendrynexusTen": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Validate against DendryNexus TEN, including roles, choice images, game versions and languages. Disabled uses standard DendryNexus validation."
+        },
         "dendry.validation.exclude": {
           "scope": "resource",
           "type": "array",
@@ -124,13 +130,27 @@
       {
         "type": "dendry",
         "label": "Dendry: Build and Launch",
-        "languages": ["dendry"],
+        "languages": [
+          "dendry"
+        ],
         "configurationAttributes": {
           "launch": {
             "properties": {
-              "buildCommand": { "type": "string", "minLength": 1, "description": "Shell build command; defaults to this project's dendry.debug.buildCommand setting." },
-              "outputPath": { "type": "string", "minLength": 1, "description": "HTML output path, absolute or relative to the build folder." },
-              "cwd": { "type": "string", "minLength": 1, "description": "Build folder, absolute or relative to the launch workspace folder. Defaults to the nearest project with source/info.dry." }
+              "buildCommand": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Shell build command; defaults to this project's dendry.debug.buildCommand setting."
+              },
+              "outputPath": {
+                "type": "string",
+                "minLength": 1,
+                "description": "HTML output path, absolute or relative to the build folder."
+              },
+              "cwd": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Build folder, absolute or relative to the launch workspace folder. Defaults to the nearest project with source/info.dry."
+              }
             }
           }
         },

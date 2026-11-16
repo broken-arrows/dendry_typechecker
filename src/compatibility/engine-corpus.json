@@ -1,0 +1,2027 @@
+{
+  "defaults": [
+    {
+      "name": "root.scene.dry",
+      "contents": "title: Root\n\nBody."
+    },
+    {
+      "name": "info.dry",
+      "contents": "title: T\nauthor: A"
+    }
+  ],
+  "cases": [
+    {
+      "id": "root-role-desk",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: desk\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-deck",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: deck\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-deck-gov",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: deck-gov\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-deck-party",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: deck-party\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-deck-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: deck-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-card",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-card-gov",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card-gov\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-card-party",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card-party\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-card-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-pinned-action",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: pinned-action\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-pinned-advisor",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: pinned-advisor\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-pinned-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: pinned-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-newspaper",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: newspaper\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-event",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: event\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-status",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: status\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-info-tab",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: info-tab\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-pause-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: pause-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-title-hub",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: title-hub\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-main-menu-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: main-menu-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-library-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: library-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-setup",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: setup\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-intro",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: intro\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-ending",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: ending\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-default",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: default\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-invalid-role-24",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: \n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-invalid-role-25",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: bogus\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-invalid-role-26",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card_ministry\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-invalid-role-27",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card-ministry\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-invalid-role-28",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: {! return \"card\"; !}\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-invalid-role-29",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: [+ card +]\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "root-image-choice-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nchoice-image: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-image-choiceImage",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nchoiceImage: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-image-ChoiceImage",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nChoiceImage: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-image-CHOICE_IMAGE",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nCHOICE_IMAGE: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-image-Choice Image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nChoice Image: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-empty-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nchoice-image:\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-opaque-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nchoice-image: [+ unknown : absent +]\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-role-with-explicit-flags",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: T\nrole: card\nis-card: false\nis-deck: false\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "root-duplicate-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "choice-image: one\nChoiceImage: two\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Duplicate property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Duplicate property"
+        }
+      }
+    },
+    {
+      "id": "section-role-desk",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: desk\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-deck",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: deck\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-deck-gov",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: deck-gov\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-deck-party",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: deck-party\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-deck-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: deck-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-card",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-card-gov",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card-gov\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-card-party",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card-party\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-card-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-pinned-action",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: pinned-action\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-pinned-advisor",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: pinned-advisor\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-pinned-parliament",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: pinned-parliament\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-newspaper",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: newspaper\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-event",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: event\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-status",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: status\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-info-tab",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: info-tab\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-pause-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: pause-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-title-hub",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: title-hub\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-main-menu-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: main-menu-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-library-item",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: library-item\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-setup",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: setup\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-intro",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: intro\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-ending",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: ending\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-default",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: default\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-invalid-role-63",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: \n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-invalid-role-64",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: bogus\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-invalid-role-65",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card_ministry\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-invalid-role-66",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card-ministry\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-invalid-role-67",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: {! return \"card\"; !}\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-invalid-role-68",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: [+ card +]\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Role must"
+        }
+      }
+    },
+    {
+      "id": "section-image-choice-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nchoice-image: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-image-choiceImage",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nchoiceImage: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-image-ChoiceImage",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nChoiceImage: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-image-CHOICE_IMAGE",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nCHOICE_IMAGE: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-image-Choice Image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nChoice Image: img/face.png\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-empty-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nchoice-image:\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-opaque-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nchoice-image: [+ unknown : absent +]\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-role-with-explicit-flags",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\ntitle: T\nrole: card\nis-card: false\nis-deck: false\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "section-duplicate-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n@part\nchoice-image: one\nChoiceImage: two\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Duplicate property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Duplicate property"
+        }
+      }
+    },
+    {
+      "id": "choice-choice-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- choice-image: img/face.png"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "choice-choiceImage",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- choiceImage: img/face.png"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "choice-CHOICE_IMAGE",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- CHOICE_IMAGE: img/face.png"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "choice-empty-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- choice-image:"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "choice-opaque-image",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- choice-image: [+ unknown : absent +]"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "choice-role-forbidden",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\nBody.\n\n- @root: Again\n- role: card"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown choice property"
+        }
+      }
+    },
+    {
+      "id": "version-valid-1.2",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-1.2.3",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-01.02",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 01.02"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-1.2-alpha",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2-alpha"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-1.2.3-alpha.1",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3-alpha.1"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-1.2.3-tag-extra",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3-tag-extra"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-valid-1.2.3-tag.",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3-tag."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "version-invalid-91",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: "
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-92",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-93",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3.4"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-94",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: v1.2"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-95",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2.3+build"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-96",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2-"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-97",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2-_tag"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-98",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: 1.2 hello"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "version-invalid-99",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nversion: {! return \"1.2\"; !}"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Version must"
+        }
+      }
+    },
+    {
+      "id": "languages-valid-100",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: "
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-101",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en ca"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-102",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en,ca;#fr"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-103",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en-GB"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-104",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en en"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-105",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: _ [ \\ ] ^ `"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-valid-106",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: 123"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "languages-invalid-107",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en/ca"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Invalid languages tag"
+        }
+      }
+    },
+    {
+      "id": "languages-invalid-108",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en.ca"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Invalid languages tag"
+        }
+      }
+    },
+    {
+      "id": "languages-invalid-109",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: en+ca"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Invalid languages tag"
+        }
+      }
+    },
+    {
+      "id": "languages-invalid-110",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nlanguages: {! return \"en\"; !}"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Invalid languages tag"
+        }
+      }
+    },
+    {
+      "id": "scene-forbidden-version",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nversion: 1.2\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        }
+      }
+    },
+    {
+      "id": "scene-forbidden-languages",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\nlanguages: en\n\nBody."
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        },
+        "dendrynexus-ten": {
+          "file": "root.scene.dry",
+          "pattern": "Unknown scene property"
+        }
+      }
+    },
+    {
+      "id": "info-forbidden-role",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nrole: card"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        }
+      }
+    },
+    {
+      "id": "quality-forbidden-role",
+      "files": [
+        {
+          "name": "value.quality.dry",
+          "contents": "name: Value\nrole: card"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "value.quality.dry",
+          "pattern": "Unknown quality property"
+        },
+        "dendrynexus-ten": {
+          "file": "value.quality.dry",
+          "pattern": "Unknown quality property"
+        }
+      }
+    },
+    {
+      "id": "info-forbidden-choice-image",
+      "files": [
+        {
+          "name": "info.dry",
+          "contents": "title: T\nauthor: A\nchoice-image: face.png"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        },
+        "dendrynexus-ten": {
+          "file": "info.dry",
+          "pattern": "Unknown info property"
+        }
+      }
+    },
+    {
+      "id": "quality-forbidden-choice-image",
+      "files": [
+        {
+          "name": "value.quality.dry",
+          "contents": "name: Value\nchoice-image: face.png"
+        }
+      ],
+      "errors": {
+        "dendrynexus": {
+          "file": "value.quality.dry",
+          "pattern": "Unknown quality property"
+        },
+        "dendrynexus-ten": {
+          "file": "value.quality.dry",
+          "pattern": "Unknown quality property"
+        }
+      }
+    },
+    {
+      "id": "content-nested",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\n[? if {! return true; !} : Text [+ 2 +] [? if TRUE: **nested** ?] ?]"
+        }
+      ],
+      "errors": {
+        "dendrynexus": null,
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "content-adjacent",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\n[? if {! return true; !} : [+ 1 +] [+ 2 +] ?]"
+        }
+      ],
+      "errors": {
+        "dendrynexus": null,
+        "dendrynexus-ten": null
+      }
+    },
+    {
+      "id": "content-formatter",
+      "files": [
+        {
+          "name": "root.scene.dry",
+          "contents": "title: Root\n\n[? if {! return true; !} : Text [+ 2 : number +] ?]"
+        }
+      ],
+      "errors": {
+        "dendrynexus": null,
+        "dendrynexus-ten": null
+      }
+    }
+  ]
+}

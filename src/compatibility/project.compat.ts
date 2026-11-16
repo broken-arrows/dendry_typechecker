@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { DendryProjectValidator } from '../project-validator';
 import { corpus, oracle, projectFiles } from './corpus';
-import { DiagnosticSeverity, loadProject } from './vscode-host';
+import { engineOracle } from './engine-corpus';
+import { DiagnosticSeverity, editor, loadProject } from './vscode-host';
 
-describe('project diagnostics match pinned upstream compilation', () => {
+describe.each(['dendrynexus', 'dendrynexus-ten'] as const)('%s project diagnostics match recorded compilation', engine => {
   for (const testCase of corpus.cases) {
     it(`${testCase.id}: ${testCase.description}`, async () => {
-      const upstream = oracle.cases[testCase.id];
+      const upstream = engine === 'dendrynexus' ? oracle.cases[testCase.id] : engineOracle.shared[testCase.id];
       // An invalid-case assertion must not silently become an acceptance test
       // after an accidental oracle change (or vice versa).
       expect(upstream.ok, upstream.error).toBe(!testCase.diagnostic);
+      editor.configure({ 'validation.dendrynexusTen': engine === 'dendrynexus-ten' });
       const uris = loadProject(projectFiles(testCase));
       const results = await new DendryProjectValidator().validateProject(uris);
       const diagnostics = [...results].flatMap(([uri, items]) => items.map(item => ({

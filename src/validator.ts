@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { BUILTIN_QDISPLAYS, parseQDisplay } from './qdisplay';
 import { DendryAST, DendryNode, normalizePropertyName } from './parser';
 import { checkScript, FindingSeverity } from './js-check';
-import { SCENE_SCHEMA } from './scene-schema';
+import { engineProfile, gameVersionError, roleError } from './engine-profile';
 import { ControlSource, controlPropertySource, destinationClauses } from './scene-control';
 import { checkShorthand, LogicKind } from './dendry-logic/shorthand';
 import { splitActionChunks } from './dendry-logic/chunks';
@@ -21,6 +21,7 @@ export class DendryValidator {
   private contextSceneId = '';
   private strictMode = false;
   private extraLibraries: string[] = ['d3'];
+  private profile = engineProfile(false);
   private sceneIds: Set<string> = new Set();
   private sceneNodes = new Map<string, DendryNode>();
   private taggedScenes = new Map<string, DendryNode[]>();
@@ -28,23 +29,11 @@ export class DendryValidator {
 
   private readonly QUALITY_PROPERTIES = new Set(['id', 'type', 'name', 'initial', 'min', 'max', 'signal', 'is-valid', 'default-display']);
 
-  private readonly CHOICE_PROPERTIES = new Set([
-    'id',
-    'title',
-    'subtitle',
-    'view-if',
-    'choose-if',
-    'order',
-    'frequency',
-    'frequency-var',
-    'priority',
-    'unavailable-subtitle'
-  ]);
-
   private configure(resource: vscode.Uri): void {
     const settings = validationSettings(resource);
     this.strictMode = settings.strict;
     this.extraLibraries = settings.libraries;
+    this.profile = engineProfile(settings.dendrynexusTen);
   }
 
   validate(
@@ -151,7 +140,8 @@ export class DendryValidator {
       const rawValue = raw.slice(raw.indexOf(':') + 1).trim();
       // Scalar validators must see delimiters: `{! 2 !}` is not an integer.
       const scalar = containsMagicMarker(rawValue) ? rawValue : String(value);
-      const kind = Object.prototype.hasOwnProperty.call(SCENE_SCHEMA, key) ? SCENE_SCHEMA[key] : undefined;
+      const schema = this.profile.sceneSchema;
+      const kind = Object.prototype.hasOwnProperty.call(schema, key) ? schema[key] : undefined;
       switch (kind) {
         case undefined:
           diagnostics.push(this.createDiagnostic(range, `Unknown scene property: "${key}"`, vscode.DiagnosticSeverity.Error));
@@ -159,6 +149,11 @@ export class DendryValidator {
         case 'boolean':
           this.validateBoolean(scalar, range, key, diagnostics);
           break;
+        case 'role': {
+          const error = roleError(scalar);
+          if (error) diagnostics.push(this.createDiagnostic(range, error, vscode.DiagnosticSeverity.Error));
+          break;
+        }
         case 'integer': case 'float': case 'visits': {
           const number = kind === 'float' ? parseFloat(scalar) : parseInt(scalar);
           if (kind === 'visits') visitLimits.set(key, number);
@@ -312,8 +307,7 @@ export class DendryValidator {
 
   private validateInfo(node: DendryNode, document: SourceDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
-    const fields = new Set(['id', 'type', 'title', 'author', 'ifid', 'first-scene', 'root-scene',
-      'animate', 'scene-signal', 'quality-signal', 'display-sidebar', 'display-stats', 'display-options', 'sidebar-stats']);
+    const schema = this.profile.infoSchema;
     for (const required of ['title', 'author']) {
       if (!node.properties.has(required)) diagnostics.push(this.createDiagnostic(
         node.range, `Required info property "${required}" missing.`, vscode.DiagnosticSeverity.Error,
@@ -321,26 +315,31 @@ export class DendryValidator {
     }
     for (const [key, value] of node.properties) {
       const range = this.findRangeForProperty(document, node.propertyRanges?.get(key) || node.range, key);
-      if (!fields.has(key)) diagnostics.push(this.createDiagnostic(range, `Unknown info property: "${key}"`, vscode.DiagnosticSeverity.Error));
-      if (key === 'type' && String(value).trim() !== 'info') {
+      const kind = Object.prototype.hasOwnProperty.call(schema, key) ? schema[key] : undefined;
+      if (kind === undefined) diagnostics.push(this.createDiagnostic(range, `Unknown info property: "${key}"`, vscode.DiagnosticSeverity.Error));
+      if (kind === 'type' && String(value).trim() !== 'info') {
         diagnostics.push(this.createDiagnostic(range, 'Info file type must equal "info".', vscode.DiagnosticSeverity.Error));
       }
-      if (['animate', 'display-sidebar', 'display-stats', 'display-options'].includes(key)) {
+      if (kind === 'boolean') {
         const boolean = String(value).trim().toLowerCase();
         if (!/^(yes|true|t|y|ok|no|false|f|n)$/.test(boolean) && Number.isNaN(parseInt(boolean))) {
           diagnostics.push(this.createDiagnostic(range, `Info property '${key}' must be a valid yes/no value.`, vscode.DiagnosticSeverity.Error));
         }
       }
-      if (key === 'sidebar-stats') {
+      if (kind === 'version') {
+        const error = gameVersionError(String(value));
+        if (error) diagnostics.push(this.createDiagnostic(range, error, vscode.DiagnosticSeverity.Error));
+      }
+      if (kind === 'tags') {
         // This is upstream's tag-list syntax (including its A-z character range),
         // not a declaration-only quality lookup: dynamic Q entries remain legal.
         for (const tag of String(value).split(/[\s;,]+/).filter(Boolean)) {
           if (!/^#?([0-9a-zA-z_-]+)$/.test(tag)) diagnostics.push(this.createDiagnostic(
-            range, `Invalid sidebar-stats tag '${tag}'.`, vscode.DiagnosticSeverity.Error,
+            range, `Invalid ${key} tag '${tag}'.`, vscode.DiagnosticSeverity.Error,
           ));
         }
       }
-      if (key === 'first-scene' || key === 'root-scene') {
+      if (kind === 'reference') {
         const target = String(value).trim().replace(/^@/, '');
         if (!ABSOLUTE_SCENE_ID.test(target)) diagnostics.push(this.createDiagnostic(
           range, `Info property '${key}' must contain one absolute scene ID.`, vscode.DiagnosticSeverity.Error,
@@ -363,7 +362,7 @@ export class DendryValidator {
     for (const [key, value] of node.properties.entries()) {
       const r = this.findRangeForProperty(document, node.propertyRanges?.get(key) || node.range, key);
 
-      if (!this.CHOICE_PROPERTIES.has(key)) {
+      if (!this.profile.choiceProperties.has(key)) {
         diagnostics.push(
           this.createDiagnostic(
             r,

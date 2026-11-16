@@ -22,6 +22,7 @@ This extension is published as both a desktop and a **web** extension from a sin
 ## Configuration
 
 - `dendry.validation.enable`: Enable/disable validation (default: `true`).
+- `dendry.validation.dendrynexusTen`: Validate against DendryNexus TEN instead of standard DendryNexus (default: `false`).
 - `dendry.validation.strict`: Raise undefined JavaScript identifier findings from hints to warnings (default: `false`).
 - `dendry.validation.exclude`: Glob patterns for files/folders to exclude from DendryNexus validation.
 - `dendry.validation.jsLibraries`: An array of strings representing additional global JavaScript variables that should be recognized during validation (default: `["d3"]`). This is useful when your project uses external JavaScript libraries that introduce global variables.

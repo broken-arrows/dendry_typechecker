@@ -1,4 +1,4 @@
-# Upstream compatibility tests
+# Engine compatibility tests
 
 Run from the repository root:
 
@@ -13,10 +13,12 @@ The compatibility suite is an offline CI gate. It uses ordinary assertions;
 no expected-failure annotations or skips hide defects. A green helper suite
 alone does not establish compiler compatibility.
 
-The corpus contains 1924 independently recorded compiler cases. Together with
-parser, project and build/launch regressions, the suite has 2201 checks. The unit suite has
-284 checks, including 202 TextMate highlighting checks. The unit totals include
-inline HTML, qualified-reference scopes and long-line highlighting repairs on 2026-11-16; they are not
+The shared corpus contains 1924 independently recorded compiler cases, replayed
+under both engine profiles. Another 120 feature fixtures have compiler recordings
+for each engine. Together with parser, project, lifecycle and build/launch
+regressions, the suite has 4434 checks. The unit suite has 297 checks, including
+215 TextMate highlighting checks. The unit totals include
+profile fields, inline HTML, qualified-reference scopes and long-line highlighting repairs on 2026-11-16; they are not
 proof that every language construct or editor behavior is covered.
 
 Coverage includes root/section/choice structure, quality/info schemas, contextual
@@ -88,6 +90,49 @@ JavaScript is checked only in inserts and predicates. QDisplay traversal checks
 the output actually captured by upstream, including its continuation quirks.
 The preserved audit findings and dated developer diary record earlier red
 baselines; they do not describe the current implementation status.
+
+## Engine profiles
+
+`dendry.validation.dendrynexusTen` defaults to `false`; `true` opts into
+the fork's scene roles, scene/choice images and info version/language fields.
+`project.compat.ts` replays all 1924 common compiler cases under both profiles.
+`engine-corpus.json` adds 120 feature fixtures, independently compiled under
+both engines. `engine-results.json` records those results and the common corpus
+executed against TEN; the original `upstream-results.json` is unchanged.
+Fixture hashes and case IDs are checked before tests run. All ordinary tests
+remain offline and need no sibling checkout or ignored developer files.
+
+Source/dependency fingerprints are
+stored in the recording; the new recorder normalizes CRLF to LF for source
+hashes. The unchanged upstream recorder retains its original hash policy.
+
+The extension additionally targets the explicitly agreed **case-insensitive
+role contract**, accepting mixed-case role names. The inspected TEN snapshot
+still requires lowercase input. Mixed-case role checks in
+`engine-profiles.compat.ts` are contract tests, not outcomes attributed to that
+compiler snapshot. No engine source is patched or simulated by the recorder.
+Once the engine change lands, review/repin the source and move mixed-case cases
+into the recorded corpus too.
+
+Public regressions cover normalized names, invalid values/locations, opaque
+images, source positions, AST preservation, fallback settings, incremental
+rechecks, configuration switches in both directions, cached QDisplay output,
+standalone and multi-root settings, and obsolete-publication suppression during
+an in-flight read. Shared rich-content acceptance and nested dependency positions
+are checked under both profiles. Static highlighting recognizes the union of
+the two inventories, while diagnostics enforce the selected engine's schema.
+
+To verify or regenerate these additional recordings:
+
+```sh
+node src/compatibility/record-engines.cjs <upstream-root> <ten-root> <dependency-node_modules>
+node src/compatibility/record-engines.cjs <upstream-root> <ten-root> <dependency-node_modules> --write
+```
+
+Use lodash 3.10.1 and async 1.5.2. Both source snapshots must match the existing
+fingerprints even with `--write`; an engine revision change requires an explicit
+review/repin. Each compiler invocation runs in an isolated process. Feature cases
+run first, followed by the shared TEN corpus.
 
 ## Boundaries and assertions
 

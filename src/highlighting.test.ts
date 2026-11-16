@@ -122,6 +122,24 @@ describe('TextMate highlighting', () => {
     hasScope(`${key}: value`, 0, key, 'variable.parameter.dendry');
   });
 
+  it.each(['role', 'ROLE', 'choice-image', 'choiceImage', 'ChoiceImage', 'CHOICE_IMAGE', 'Choice Image', 'version', 'languages'])
+    ('recognizes profile header %s as a scalar in roots and sections', key => {
+      for (const prefix of ['', '\n@part\n']) {
+        const source = `${prefix}${key}: value`;
+        const line = prefix ? 2 : 0;
+        hasScope(source, line, key, 'variable.parameter.dendry');
+        hasScope(source, line, 'value', 'meta.property.scalar.dendry');
+      }
+    });
+
+  it.each(['choice-image', 'choiceImage', 'Choice Image', 'CHOICE_IMAGE'])('recognizes opaque option %s and continuations', key => {
+    const source = `\n- @target: Choose\n- ${key}: img/face.png\n  [+ not-an-expression +]`;
+    hasScope(source, 2, key, 'variable.parameter.dendry');
+    hasScope(source, 2, 'img/face.png', 'meta.property.scalar.dendry');
+    lacksScope(source, 3, 'not-an-expression', 'variable.other.dendry');
+    lacksScope('\n- @target\n- role: card\n- languages: en\n- version: 1.2', 2, 'role', 'variable.parameter.dendry');
+  });
+
   it.each(['frequencyVar', 'FrequencyVar', 'FREQUENCY_VAR', 'Frequency Var', 'frequency__var', 'Frequency - VAR'])
     ('recognizes normalized header %s as an expression', key => {
       hasScope(`${key}: skill-name + 2`, 0, key, 'variable.parameter.dendry');
