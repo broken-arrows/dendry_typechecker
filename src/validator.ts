@@ -135,6 +135,10 @@ export class DendryValidator {
     for (const [key, value] of node.properties) {
       if (key === 'id') continue;
       const sourceRange = node.propertyRanges?.get(key) || node.range;
+      const replacement = this.profile.deprecatedSceneProperties.get(key);
+      if (replacement) diagnostics.push(this.createDiagnostic(
+        sourceRange, `Deprecated: use "${replacement}".`, vscode.DiagnosticSeverity.Warning,
+      ));
       const range = this.findRangeForProperty(document, sourceRange, key);
       const raw = document.getText(sourceRange);
       const rawValue = raw.slice(raw.indexOf(':') + 1).trim();

@@ -58,6 +58,61 @@ describe('TEN agreed case-insensitive role contract', () => {
   });
 });
 
+describe('TEN legacy field warnings', () => {
+  const replacements = [
+    ['is-hand', 'desk'], ['is-card', 'card'],
+    ['is-deck', 'deck'], ['is-pinned-card', 'pinned-action'],
+  ];
+  for (const prefix of ['', 'title: Root\n\nBody.\n\n@part\n']) {
+    it.each(replacements)(`warns once for %s in ${prefix ? 'sections' : 'root scenes'}`, async (property, role) => {
+      const declaration = `${property}: true`;
+      const contents = `${prefix}title: T\n${declaration}\n\nBody.`;
+      const diagnostics = await validate(contents);
+      expect(diagnostics).toHaveLength(1);
+      const line = prefix.split('\n').length;
+      expect(diagnostics[0]).toMatchObject({
+        message: `Deprecated: use "role: ${role}".`, severity: DiagnosticSeverity.Warning,
+        range: { start: { line, character: 0 }, end: { line, character: declaration.length } },
+      });
+    });
+  }
+  it('keeps all four fields valid without warnings in standard mode', async () => {
+    const contents = replacements.map(([property]) => `${property}: true`).join('\n');
+    expect(await validate(contents, 'dendrynexus')).toEqual([]);
+  });
+  it('warns on normalized names and explicit false overrides', async () => {
+    expect(await validate('title: T\nrole: desk\nIs_Hand: false')).toMatchObject([{
+      message: 'Deprecated: use "role: desk".', severity: DiagnosticSeverity.Warning,
+      range: { start: { line: 2, character: 0 }, end: { line: 2, character: 14 } },
+    }]);
+  });
+  it('still rejects invalid boolean values on deprecated fields', async () => {
+    const diagnostics = await validate('is-hand: bogus');
+    expect(diagnostics.filter(item => item.severity === DiagnosticSeverity.Warning)).toHaveLength(1);
+    expect(diagnostics.filter(item => item.severity === DiagnosticSeverity.Error)).toHaveLength(1);
+  });
+  it('does not warn on role-only scenes, prose or JavaScript strings', async () => {
+    expect(await validate('title: T\nrole: desk\non-arrival: {! var text = "is-card: true"; !}\n\nis-hand: true')).toEqual([]);
+  });
+  it('keeps legacy fields invalid on choices rather than reporting deprecation', async () => {
+    const diagnostics = await validate('title: T\n\nBody.\n\n- @root\n- is-hand: true');
+    expect(diagnostics).toMatchObject([{
+      message: 'Unknown choice property: "is-hand"', severity: DiagnosticSeverity.Error,
+    }]);
+  });
+  it('adds and clears warnings on cached files when toggling TEN', async () => {
+    const uris = loadProject([{ name: 'root.scene.dry', contents: 'is-hand: true' }]);
+    const validator = new DendryProjectValidator();
+    expect(flatten(await validator.validateProject(uris))).toEqual([]);
+    editor.configure({ 'validation.dendrynexusTen': true });
+    expect(flatten(await validator.validateProject(uris, []))).toMatchObject([{
+      message: 'Deprecated: use "role: desk".', severity: DiagnosticSeverity.Warning,
+    }]);
+    editor.configure({ 'validation.dendrynexusTen': false });
+    expect(flatten(await validator.validateProject(uris, []))).toEqual([]);
+  });
+});
+
 describe('engine selection and authoring diagnostics', () => {
   it('contributes an opt-in resource setting with the existing engine as default', () => {
     const manifest = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));

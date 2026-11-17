@@ -16,7 +16,7 @@ alone does not establish compiler compatibility.
 The shared corpus contains 1924 independently recorded compiler cases, replayed
 under both engine profiles. Another 120 feature fixtures have compiler recordings
 for each engine. Together with parser, project, lifecycle and build/launch
-regressions, the suite has 4434 checks. The unit suite has 297 checks, including
+regressions, the suite has 4448 checks. The unit suite has 297 checks, including
 215 TextMate highlighting checks. The unit totals include
 profile fields, inline HTML, qualified-reference scopes and long-line highlighting repairs on 2026-11-16; they are not
 proof that every language construct or editor behavior is covered.
@@ -95,6 +95,11 @@ baselines; they do not describe the current implementation status.
 
 `dendry.validation.dendrynexusTen` defaults to `false`; `true` opts into
 the fork's scene roles, scene/choice images and info version/language fields.
+TEN also warns on authored `is-hand`, `is-card`, `is-deck` and `is-pinned-card`
+fields, with concise role guidance. These are authoring deprecations, not compiler
+errors; ordinary boolean validation still applies. Fourteen regressions check
+root/section ranges, normalized spelling, explicit false overrides, default-mode
+acceptance, non-header content, choice errors and cached-file profile switches.
 `project.compat.ts` replays all 1924 common compiler cases under both profiles.
 `engine-corpus.json` adds 120 feature fixtures, independently compiled under
 both engines. `engine-results.json` records those results and the common corpus

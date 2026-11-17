@@ -6,6 +6,7 @@ type InfoPropertyKind = 'opaque' | 'type' | 'boolean' | 'tags' | 'reference' | '
 export interface EngineProfile {
   readonly id: EngineId;
   readonly sceneSchema: Readonly<Record<string, ScenePropertyKind | 'role'>>;
+  readonly deprecatedSceneProperties: ReadonlyMap<string, string>;
   readonly choiceProperties: ReadonlySet<string>;
   readonly infoSchema: Readonly<Record<string, InfoPropertyKind>>;
 }
@@ -24,11 +25,16 @@ const infoSchema: EngineProfile['infoSchema'] = {
 
 const upstream: EngineProfile = {
   id: 'dendrynexus', sceneSchema: SCENE_SCHEMA,
+  deprecatedSceneProperties: new Map(),
   choiceProperties: new Set(choiceProperties), infoSchema,
 };
 const ten: EngineProfile = {
   id: 'dendrynexus-ten',
   sceneSchema: { ...SCENE_SCHEMA, role: 'role', 'choice-image': 'opaque' },
+  deprecatedSceneProperties: new Map([
+    ['is-hand', 'role: desk'], ['is-card', 'role: card'],
+    ['is-deck', 'role: deck'], ['is-pinned-card', 'role: pinned-action'],
+  ]),
   choiceProperties: new Set([...choiceProperties, 'choice-image']),
   infoSchema: { ...infoSchema, version: 'version', languages: 'tags' },
 };
